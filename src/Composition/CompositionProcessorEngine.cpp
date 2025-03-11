@@ -710,6 +710,7 @@ void CCompositionProcessorEngine::SetKeystrokeTable(_Inout_ CSampleImeArray<_KEY
 //+---------------------------------------------------------------------------
 //
 // SetupPreserved
+// Setup hotkeys
 //
 //----------------------------------------------------------------------------
 
@@ -777,7 +778,7 @@ void CCompositionProcessorEngine::SetPreservedKey(const CLSID clsid, TF_PRESERVE
 //
 // InitPreservedKey
 //
-// Register a hot key.
+// Register a hotkey.
 //
 //----------------------------------------------------------------------------
 
@@ -859,6 +860,12 @@ void CCompositionProcessorEngine::OnPreservedKey(REFGUID rguid, _Out_ BOOL *pIsE
         CompartmentKeyboardOpen._GetCompartmentBOOL(isOpen);
         CompartmentKeyboardOpen._SetCompartmentBOOL(isOpen ? FALSE : TRUE);
 
+        // Also toggle punctuation mode
+        BOOL isPunctuation = FALSE;
+        CCompartment CompartmentPunctuation(pThreadMgr, tfClientId, Global::SampleIMEGuidCompartmentPunctuation);
+        CompartmentPunctuation._GetCompartmentBOOL(isPunctuation);
+        CompartmentPunctuation._SetCompartmentBOOL(isPunctuation ? FALSE : TRUE);
+
         *pIsEaten = TRUE;
     }
     else if (IsEqualGUID(rguid, _PreservedKey_DoubleSingleByte.Guid))
@@ -882,6 +889,7 @@ void CCompositionProcessorEngine::OnPreservedKey(REFGUID rguid, _Out_ BOOL *pIsE
             *pIsEaten = FALSE;
             return;
         }
+        // Ctrl + .: toggle Chinese/English punctuation
         BOOL isPunctuation = FALSE;
         CCompartment CompartmentPunctuation(pThreadMgr, tfClientId, Global::SampleIMEGuidCompartmentPunctuation);
         CompartmentPunctuation._GetCompartmentBOOL(isPunctuation);

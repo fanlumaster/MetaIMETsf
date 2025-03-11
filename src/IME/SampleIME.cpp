@@ -266,6 +266,9 @@ STDAPI CSampleIME::ActivateEx(ITfThreadMgr *pThreadMgr, TfClientId tfClientId, D
         goto ExitError;
     }
 
+    // Reset to Chinese mode whenever switch back to this IME.
+    _pCompositionProcessorEngine->InitializeSampleIMECompartment(pThreadMgr, tfClientId);
+
     SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
     Global::D2DSource.CreateGlobalD2DResources();
 

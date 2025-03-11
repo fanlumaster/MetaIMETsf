@@ -20,6 +20,8 @@
 
 class CCompositionProcessorEngine
 {
+    friend class CSampleIME;
+
   public:
     CCompositionProcessorEngine(void);
     ~CCompositionProcessorEngine(void);
