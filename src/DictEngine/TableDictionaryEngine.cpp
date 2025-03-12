@@ -52,11 +52,11 @@ VOID CTableDictionaryEngine::CollectWord(_In_ CStringRange *pKeyCode,
     keyCodeWString.append(pKeyCode->Get(), pKeyCode->GetLength()); // 添加 pwch 的内容
     std::string keyCodeString = Global::wstring_to_string(keyCodeWString);
 
-#ifdef FAN_DEBUG
-    Global::LogMessageW(L"fany pKeyCode starts...");
+#ifdef FANY_DEBUG
+    Global::LogMessageW(L"Fany pKeyCode starts...");
     Global::LogWideString(pKeyCode->Get(), pKeyCode->GetLength());
     Global::LogMessageW(keyCodeWString.c_str());
-    Global::LogMessageW(L"fany pKeyCode ends...");
+    Global::LogMessageW(L"Fany pKeyCode ends...");
 #endif
 
     // 获取硬编码数据的数量

@@ -73,6 +73,9 @@ class CKeyStateCategory
     // HandleKeyFinalizeCandidatelist
     virtual HRESULT HandleKeyFinalizeCandidatelist(KeyHandlerEditSessionDTO dto);
 
+    // HandleKeyFinalizeCandidatelist
+    virtual HRESULT HandleKeyFinalizeCandidatelistForVKReturn(KeyHandlerEditSessionDTO dto);
+
     // HandleKeyConvert
     virtual HRESULT HandleKeyConvert(KeyHandlerEditSessionDTO dto);
 
@@ -153,6 +156,8 @@ class CKeyStateCandidate : public CKeyStateCategory
     // HandleKeyFinalizeCandidatelist
     HRESULT HandleKeyFinalizeCandidatelist(KeyHandlerEditSessionDTO dto);
 
+    HRESULT HandleKeyFinalizeCandidatelistForVKReturn(KeyHandlerEditSessionDTO dto);
+
     // HandleKeyFinalizeCandidatelistAndInput
     HRESULT HandleKeyFinalizeCandidatelistAndInput(KeyHandlerEditSessionDTO dto);
 
@@ -192,7 +197,7 @@ class CKeyStatePhrase : public CKeyStateCategory
 class CKeyStateNull : public CKeyStateCategory
 {
   public:
-    CKeyStateNull(_In_ CSampleIME *pTextService) : CKeyStateCategory(pTextService){};
+    CKeyStateNull(_In_ CSampleIME *pTextService) : CKeyStateCategory(pTextService) {};
 
   protected:
     // _HandleNullInput

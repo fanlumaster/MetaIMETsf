@@ -89,7 +89,7 @@ BOOL CSampleIME::_IsKeyEaten(_In_ ITfContext *pContext, UINT codeIn, _Out_ UINT 
         *pwch = L'\0';
     }
 
-    // if the keyboard is disabled, we don't eat keys.
+    // If the keyboard is disabled(means IME is English mode), we don't eat keys.
     if (_IsKeyboardDisabled())
     {
         return FALSE;
@@ -128,7 +128,7 @@ BOOL CSampleIME::_IsKeyEaten(_In_ ITfContext *pContext, UINT codeIn, _Out_ UINT 
     CCompositionProcessorEngine *pCompositionProcessorEngine;
     pCompositionProcessorEngine = _pCompositionProcessorEngine;
 
-    if (isOpen)
+    if (isOpen) // Chinese mode
     {
         //
         // The candidate or phrase list handles the keys through ITfKeyEventSink.
@@ -318,8 +318,15 @@ STDAPI CSampleIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lParam,
 
     *pIsEaten = _IsKeyEaten(pContext, (UINT)wParam, &code, &wch, &KeystrokeState);
 
+#ifdef FANY_DEBUG
+    Global::LogMessageW(L"Whether to eat it?");
+#endif
+
     if (*pIsEaten)
     {
+#ifdef FANY_DEBUG
+        Global::LogMessageW(L"Yes, eat it.");
+#endif
         bool needInvokeKeyHandler = true;
         //
         // Invoke key handler edit session

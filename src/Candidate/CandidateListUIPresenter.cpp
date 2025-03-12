@@ -1,10 +1,4 @@
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
-// Copyright (c) Microsoft Corporation. All rights reserved
-
+#include "Globals.h"
 #include "Private.h"
 #include "SampleIME.h"
 #include "CandidateWindow.h"
@@ -22,6 +16,7 @@ const int MOVEUP_ONE = -1;
 const int MOVEDOWN_ONE = 1;
 const int MOVETO_TOP = 0;
 const int MOVETO_BOTTOM = -1;
+
 //+---------------------------------------------------------------------------
 //
 // _HandleCandidateFinalize
@@ -43,6 +38,49 @@ HRESULT CSampleIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfContext *p
     candidateLen = _pCandidateListUIPresenter->_GetSelectedCandidateString(&pCandidateString);
 
     candidateString.Set(pCandidateString, candidateLen);
+
+    if (candidateLen)
+    {
+        hr = _AddComposingAndChar(ec, pContext, &candidateString);
+
+        if (FAILED(hr))
+        {
+            return hr;
+        }
+    }
+
+NoPresenter:
+
+    _HandleComplete(ec, pContext);
+
+    return hr;
+}
+
+//+---------------------------------------------------------------------------
+//
+// _HandleCandidateFinalizeForVKReturn
+//
+//----------------------------------------------------------------------------
+
+HRESULT CSampleIME::_HandleCandidateFinalizeForVKReturn(TfEditCookie ec, _In_ ITfContext *pContext)
+{
+    HRESULT hr = S_OK;
+
+    CStringRange keyStrokebuffer = _pCompositionProcessorEngine->GetKeystrokeBuffer();
+    DWORD_PTR keystrokeBufLen = keyStrokebuffer.GetLength();
+    Global::LogWideString(keyStrokebuffer.Get(), keystrokeBufLen);
+
+    DWORD_PTR candidateLen = keystrokeBufLen;
+    CStringRange candidateString(keyStrokebuffer);
+
+    if (nullptr == _pCandidateListUIPresenter)
+    {
+        goto NoPresenter;
+    }
+
+#ifdef FANY_DEBUG
+    Global::LogWideString(candidateString.Get(), candidateLen);
+#endif
 
     if (candidateLen)
     {
@@ -253,6 +291,9 @@ HRESULT CSampleIME::_HandlePhraseFinalize(TfEditCookie ec, _In_ ITfContext *pCon
 
     CStringRange phraseString;
     phraseString.Set(pPhraseString, phraseLen);
+
+    std::wstring msg(pPhraseString, phraseLen);
+    Global::LogMessageW(msg.c_str());
 
     if (phraseLen)
     {

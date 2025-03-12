@@ -129,6 +129,16 @@ CStringRange::CStringRange()
     _pStringBuf = nullptr;
 }
 
+CStringRange::CStringRange(const CStringRange &sr) : _stringBufLen(0), _pStringBuf(nullptr)
+{
+    if (sr._stringBufLen > 0 && sr._pStringBuf != nullptr)
+    {
+        _pStringBuf = new WCHAR[sr._stringBufLen];
+        _stringBufLen = sr._stringBufLen;
+        std::memcpy((void *)_pStringBuf, sr._pStringBuf, sr._stringBufLen * sizeof(WCHAR));
+    }
+}
+
 CStringRange::~CStringRange()
 {
 }

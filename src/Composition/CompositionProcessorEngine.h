@@ -52,6 +52,10 @@ class CCompositionProcessorEngine
     {
         return _keystrokeBuffer.GetLength();
     }
+    CStringRange &GetKeystrokeBuffer()
+    {
+        return _keystrokeBuffer;
+    };
     WCHAR GetVirtualKey(DWORD_PTR dwIndex);
 
     void GetReadingStrings(_Inout_ CSampleImeArray<CStringRange> *pReadingStrings, _Out_ BOOL *pIsWildcardIncluded);

@@ -23,6 +23,7 @@ CompileFlags:
     "-IC:\\Users\\SonnyCalcr\\EDisk\\CppCodes\\IMECodes\\DeerWritingBrush\\sqlite",
     -DUNICODE,
     -D_UNICODE,
+    -DFANY_DEBUG,
     -Wno-unused-includes,
     -Wno-microsoft-goto,
     -Wno-unused-value,

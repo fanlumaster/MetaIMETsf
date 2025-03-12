@@ -129,12 +129,12 @@ HRESULT CSampleIME::_AddCharAndFinalize(TfEditCookie ec, _In_ ITfContext *pConte
     if ((hr = pContext->GetSelection(ec, TF_DEFAULT_SELECTION, 1, &tfSelection, &fetched)) != S_OK || fetched != 1)
         return hr;
 
-    // we use SetText here instead of InsertTextAtSelection because we've already started a composition
-    // we don't want to the app to adjust the insertion point inside our composition
+    // We use SetText here instead of InsertTextAtSelection because we've already started a composition
+    // We don't want to the app to adjust the insertion point inside our composition
     hr = tfSelection.range->SetText(ec, 0, pstrAddString->Get(), (LONG)pstrAddString->GetLength());
     if (hr == S_OK)
     {
-        // update the selection, we'll make it an insertion point just past
+        // Update the selection, we'll make it an insertion point just past
         // the inserted text.
         tfSelection.range->Collapse(ec, TF_ANCHOR_END);
         pContext->SetSelection(ec, 1, &tfSelection);

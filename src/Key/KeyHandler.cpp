@@ -11,6 +11,7 @@
 #include "SampleIME.h"
 #include "CandidateListUIPresenter.h"
 #include "CompositionProcessorEngine.h"
+#include <string>
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -535,7 +536,12 @@ Exit:
 HRESULT CSampleIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITfContext *pContext, WCHAR wch)
 {
     HRESULT hr = S_OK;
-
+#ifdef FANY_DEBUG
+    std::wstring msg = L"You pressed punctuation key: ";
+    msg += wch;
+    Global::LogMessageW(msg.c_str());
+    Global::LogMessageW(L".");
+#endif
     if (_candidateMode != CANDIDATE_NONE && _pCandidateListUIPresenter)
     {
         DWORD_PTR candidateLen = 0;

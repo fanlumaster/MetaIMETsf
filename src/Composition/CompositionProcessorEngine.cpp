@@ -1061,7 +1061,9 @@ BOOL CCompositionProcessorEngine::SetupDictionaryFile()
     dictionaryDbPathW = pwszDBFileName;
     dictionaryDbPath = Global::wstring_to_string(dictionaryDbPathW);
 
+#ifdef FANY_DEBUG
     Global::LogMessageW(pwszDBFileName);
+#endif
 
     // open dictonary db
     if (_pDictionaryDb == nullptr)
@@ -1660,8 +1662,11 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCH
 
     if (fComposing || candidateMode == CANDIDATE_INCREMENTAL || candidateMode == CANDIDATE_NONE)
     {
-        if (IsVirtualKeyKeystrokeComposition(uCode, pKeyState, FUNCTION_NONE))
+        if (IsVirtualKeyKeystrokeComposition(uCode, pKeyState, FUNCTION_NONE)) // 26 basic English chars
         {
+#ifdef FANY_DEBUG
+            Global::LogMessageW(L"Basic 26 chars key pressed.");
+#endif
             return TRUE;
         }
         else if ((IsWildcard() && IsWildcardChar(*pwch) && !IsDisableWildcardAtFirst()) ||
@@ -1837,7 +1842,7 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCH
                 return TRUE;
             }
         }
-        else if ((candidateMode == CANDIDATE_INCREMENTAL))
+        else if (candidateMode == CANDIDATE_INCREMENTAL)
         {
             switch (uCode)
             {
@@ -1855,10 +1860,14 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCH
                 return FALSE;
 
             case VK_RETURN:
+// Do something when user press return key
+#ifdef FANY_DEBUG
+                Global::LogMessageW(L"VK_RETURN pressed.");
+#endif
                 if (pKeyState)
                 {
                     pKeyState->Category = CATEGORY_CANDIDATE;
-                    pKeyState->Function = FUNCTION_FINALIZE_CANDIDATELIST;
+                    pKeyState->Function = FUNCTION_FINALIZE_CANDIDATELISTForVKReturn;
                 }
                 return TRUE;
             case VK_ESCAPE:
@@ -2166,6 +2175,7 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyKeystrokeComposition(UINT uCode, _
     pKeyState->Category = CATEGORY_NONE;
     pKeyState->Function = FUNCTION_NONE;
 
+    // 26 basic English characters
     for (UINT i = 0; i < _KeystrokeComposition.Count(); i++)
     {
         _KEYSTROKE *pKeystroke = nullptr;

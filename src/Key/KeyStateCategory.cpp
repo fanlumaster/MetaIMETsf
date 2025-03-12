@@ -6,6 +6,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved
 
 #include "KeyStateCategory.h"
+#include "Globals.h"
 
 CKeyStateCategoryFactory *CKeyStateCategoryFactory::_instance;
 
@@ -93,6 +94,11 @@ HRESULT CKeyStateCategory::KeyStateHandler(KEYSTROKE_FUNCTION function, KeyHandl
 
     case FUNCTION_FINALIZE_CANDIDATELIST:
         return HandleKeyFinalizeCandidatelist(dto);
+    case FUNCTION_FINALIZE_CANDIDATELISTForVKReturn:
+#ifdef FANY_DEBUG
+        Global::LogMessageW(L"Use VK_RETURN to commit original keystroke string.");
+#endif
+        return HandleKeyFinalizeCandidatelistForVKReturn(dto);
 
     case FUNCTION_CONVERT:
         return HandleKeyConvert(dto);
@@ -167,6 +173,13 @@ HRESULT CKeyStateCategory::HandleKeyFinalizeCandidatelistAndInput(KeyHandlerEdit
 
 // HandleKeyCompositionFinalizeCandidatelist
 HRESULT CKeyStateCategory::HandleKeyFinalizeCandidatelist(KeyHandlerEditSessionDTO dto)
+{
+    dto;
+    return E_NOTIMPL;
+}
+
+// HandleKeyCompositionFinalizeCandidatelistForVKReturn
+HRESULT CKeyStateCategory::HandleKeyFinalizeCandidatelistForVKReturn(KeyHandlerEditSessionDTO dto)
 {
     dto;
     return E_NOTIMPL;
@@ -307,6 +320,15 @@ CKeyStateCandidate::CKeyStateCandidate(_In_ CSampleIME *pTextService) : CKeyStat
 HRESULT CKeyStateCandidate::HandleKeyFinalizeCandidatelist(KeyHandlerEditSessionDTO dto)
 {
     return _pTextService->_HandleCandidateFinalize(dto.ec, dto.pContext);
+}
+
+// _HandleCandidateInput
+HRESULT CKeyStateCandidate::HandleKeyFinalizeCandidatelistForVKReturn(KeyHandlerEditSessionDTO dto)
+{
+#ifdef FANY_DEBUG
+    Global::LogMessageW(L"Will commit original keystroke string.");
+#endif
+    return _pTextService->_HandleCandidateFinalizeForVKReturn(dto.ec, dto.pContext);
 }
 
 // HandleKeyFinalizeCandidatelistAndInput
