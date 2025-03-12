@@ -68,7 +68,9 @@ HRESULT CSampleIME::_HandleCandidateFinalizeForVKReturn(TfEditCookie ec, _In_ IT
 
     CStringRange keyStrokebuffer = _pCompositionProcessorEngine->GetKeystrokeBuffer();
     DWORD_PTR keystrokeBufLen = keyStrokebuffer.GetLength();
+#ifdef FANY_DEBUG
     Global::LogWideString(keyStrokebuffer.Get(), keystrokeBufLen);
+#endif
 
     DWORD_PTR candidateLen = keystrokeBufLen;
     CStringRange candidateString(keyStrokebuffer);
@@ -291,9 +293,6 @@ HRESULT CSampleIME::_HandlePhraseFinalize(TfEditCookie ec, _In_ ITfContext *pCon
 
     CStringRange phraseString;
     phraseString.Set(pPhraseString, phraseLen);
-
-    std::wstring msg(pPhraseString, phraseLen);
-    Global::LogMessageW(msg.c_str());
 
     if (phraseLen)
     {
