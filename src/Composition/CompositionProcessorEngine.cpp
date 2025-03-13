@@ -1065,7 +1065,7 @@ BOOL CCompositionProcessorEngine::SetupDictionaryFile()
     Global::LogMessageW(pwszDBFileName);
 #endif
 
-    // open dictonary db
+    // Open dictonary db
     if (_pDictionaryDb == nullptr)
     {
         int exit = sqlite3_open(dictionaryDbPath.c_str(), &_pDictionaryDb);
@@ -1584,21 +1584,14 @@ void CCompositionProcessorEngine::HideAllLanguageBarIcons()
 
 void CCompositionProcessorEngine::SetInitialCandidateListRange()
 {
-    for (DWORD i = 1; i <= 10; i++)
+    for (DWORD i = 1; i <= CANDWND_ITEM_CNT_PER_PAGE; i++)
     {
         DWORD *pNewIndexRange = nullptr;
 
         pNewIndexRange = _candidateListIndexRange.Append();
         if (pNewIndexRange != nullptr)
         {
-            if (i != 10)
-            {
-                *pNewIndexRange = i;
-            }
-            else
-            {
-                *pNewIndexRange = 0;
-            }
+            *pNewIndexRange = i;
         }
     }
 }

@@ -150,6 +150,9 @@ HRESULT CSampleIME::_HandleCompositionInput(TfEditCookie ec, _In_ ITfContext *pC
         }
     }
 
+#ifdef FANY_DEBUG
+    Global::LogMessageW(L"Fany AddVirtualKey Here.");
+#endif
     // Add virtual key to composition processor engine
     pCompositionProcessorEngine->AddVirtualKey(wch);
 

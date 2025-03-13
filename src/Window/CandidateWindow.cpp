@@ -541,7 +541,7 @@ void CCandidateWindow::_DrawList(_In_ HDC dcHandle, _In_ UINT iIndex, _In_ RECT 
 
         FillRect(dcHandle, &rc, (HBRUSH)(COLOR_3DHIGHLIGHT + 1));
     }
-    // 恢复原来的字体
+    // Restore original fonts
     SelectObject(dcHandle, hOldFont);
     DeleteObject(hFont);
 }
@@ -562,7 +562,6 @@ void CCandidateWindow::_DrawListWithD2D(_In_ UINT iIndex)
     const int LeftPadding = 5;
 
     pRenderTarget->BeginDraw();
-    // RGB(25, 25, 25)
     pRenderTarget->Clear(D2D1::ColorF(0, 0, 0, 0));
 
     // Draw background rectangle
