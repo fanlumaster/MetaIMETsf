@@ -3,7 +3,9 @@
 #include "BaseWindow.h"
 #include "Globals.h"
 #include <d2d1helper.h>
+#include <string>
 #include "CandidateWindow.h"
+#include "CompositionProcessorEngine.h"
 
 COLORREF _AdjustTextColor(_In_ COLORREF crColor, _In_ COLORREF crBkColor);
 
@@ -14,7 +16,7 @@ COLORREF _AdjustTextColor(_In_ COLORREF crColor, _In_ COLORREF crBkColor);
 //----------------------------------------------------------------------------
 
 CCandidateWindow::CCandidateWindow(_In_ CANDWNDCALLBACK pfnCallback, _In_ void *pv, _In_ CCandidateRange *pIndexRange,
-                                   _In_ BOOL isStoreAppMode)
+                                   _In_ BOOL isStoreAppMode, _In_ CSampleIME *pTextService)
 {
     _currentSelection = 0;
 
@@ -36,6 +38,8 @@ CCandidateWindow::CCandidateWindow(_In_ CANDWNDCALLBACK pfnCallback, _In_ void *
     _dontAdjustOnEmptyItemPage = FALSE;
 
     _isStoreAppMode = isStoreAppMode;
+
+    _pTextService = pTextService;
 }
 
 //+---------------------------------------------------------------------------
@@ -144,7 +148,7 @@ void CCandidateWindow::_ResizeWindow()
     _cxTitle = 500;
 
     int candidateListPageCnt = _pIndexRange->Count();
-    CBaseWindow::_Resize(0, 0, _cxTitle - 222, _cyRow * candidateListPageCnt + 38);
+    CBaseWindow::_Resize(0, 0, _cxTitle - 222, _cyRow * candidateListPageCnt + 38 + 40);
 
     RECT rcCandRect = {0, 0, 0, 0};
     _GetClientRect(&rcCandRect);
@@ -552,6 +556,8 @@ void CCandidateWindow::_DrawListWithD2D(_In_ UINT iIndex)
     int currentPageItemCnt =
         _candidateList.Count() - iIndex > candidateListPageCnt ? candidateListPageCnt : _candidateList.Count() - iIndex;
 
+    CStringRange preeditStringRange = _pTextService->GetCompositionProcessorEngine()->GetKeystrokeBuffer();
+
     const size_t lenOfPageCount = 16;
     const int LineHeight = 22;
     const int LeftPadding = 5;
@@ -562,36 +568,58 @@ void CCandidateWindow::_DrawListWithD2D(_In_ UINT iIndex)
     // Draw background rectangle
     pBrush->SetColor(D2D1::ColorF(25.0f / 255.0f, 25.0f / 255.0f, 25.0f / 255.0f, 1.0f));
     D2D1_RECT_F rect = D2D1::RectF(0.0f, 2.0f, 100.0f, 182.0f);
-    rect = D2D1::RectF(0.0f, 2.0f, 100.0f, 10 + LineHeight * currentPageItemCnt + 2);
+    rect = D2D1::RectF(0.0f,                                            //
+                       2.0f,                                            //
+                       100.0f,                                          //
+                       10 + (LineHeight) * (currentPageItemCnt + 1) + 2 //
+    );
     D2D1_ROUNDED_RECT rounded_rect = D2D1::RoundedRect(rect, 8, 8);
     pRenderTarget->FillRoundedRectangle(rounded_rect, pBrush);
 
     // Set brush color for text
     pBrush->SetColor(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
+
+    //
+    // Draw preedit string
+    //
+    std::wstring preeditString(preeditStringRange.Get(), preeditStringRange.GetLength());
+    pRenderTarget->DrawText(preeditString.c_str(),                        //
+                            lenOfPageCount,                               //
+                            pTextFormat,                                  //
+                            D2D1::RectF(LeftPadding,                      ///
+                                        2 + LineHeight * pageCount + 2,   ///
+                                        270 + LeftPadding,                ///
+                                        10 + LineHeight * pageCount + 2), //
+                            pBrush                                        //
+    );
+
+    //
+    // Draw candidate list
+    //
     for (; (iIndex < _candidateList.Count()) && (pageCount < candidateListPageCnt); iIndex++, pageCount++)
     {
         WCHAR pageCountString[lenOfPageCount] = {'\0'};
         CCandidateListItem *pItemList = nullptr;
 
         StringCchPrintf(pageCountString, ARRAYSIZE(pageCountString), L"%d.", (LONG)*_pIndexRange->GetAt(pageCount));
-        pRenderTarget->DrawText(pageCountString,                              //
-                                lenOfPageCount,                               //
-                                pTextFormat,                                  //
-                                D2D1::RectF(LeftPadding,                      ///
-                                            2 + LineHeight * pageCount + 2,   ///
-                                            30 + LeftPadding,                 ///
-                                            10 + LineHeight * pageCount + 2), //
-                                pBrush                                        //
+        pRenderTarget->DrawText(pageCountString,                                    //
+                                lenOfPageCount,                                     //
+                                pTextFormat,                                        //
+                                D2D1::RectF(LeftPadding,                            ///
+                                            2 + LineHeight * (pageCount + 1) + 2,   ///
+                                            30 + LeftPadding,                       ///
+                                            10 + LineHeight * (pageCount + 1) + 2), //
+                                pBrush                                              //
         );
         pItemList = _candidateList.GetAt(iIndex);
-        pRenderTarget->DrawText(pItemList->_ItemString.Get(),                 //
-                                (DWORD)pItemList->_ItemString.GetLength(),    //
-                                pTextFormat,                                  //
-                                D2D1::RectF(22 + LeftPadding,                 ///
-                                            2 + LineHeight * pageCount + 2,   ///
-                                            270 + LeftPadding,                ///
-                                            10 + LineHeight * pageCount + 2), //
-                                pBrush                                        //
+        pRenderTarget->DrawText(pItemList->_ItemString.Get(),                       //
+                                (DWORD)pItemList->_ItemString.GetLength(),          //
+                                pTextFormat,                                        //
+                                D2D1::RectF(22 + LeftPadding,                       ///
+                                            2 + LineHeight * (pageCount + 1) + 2,   ///
+                                            270 + LeftPadding,                      ///
+                                            10 + LineHeight * (pageCount + 1) + 2), //
+                                pBrush                                              //
         );
     }
     HRESULT hr = pRenderTarget->EndDraw();

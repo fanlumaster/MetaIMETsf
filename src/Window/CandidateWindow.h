@@ -9,6 +9,7 @@
 
 #include "Private.h"
 #include "BaseWindow.h"
+#include "SampleIME.h"
 #include "ShadowWindow.h"
 #include "ScrollBarWindow.h"
 #include "SampleIMEBaseStructure.h"
@@ -24,7 +25,7 @@ class CCandidateWindow : public CBaseWindow
 {
   public:
     CCandidateWindow(_In_ CANDWNDCALLBACK pfnCallback, _In_ void *pv, _In_ CCandidateRange *pIndexRange,
-                     _In_ BOOL isStoreAppMode);
+                     _In_ BOOL isStoreAppMode, _In_ CSampleIME *pTextService);
     virtual ~CCandidateWindow();
 
     BOOL _Create(ATOM atom, _In_ UINT wndWidth, _In_opt_ HWND parentWndHandle);
@@ -94,6 +95,7 @@ class CCandidateWindow : public CBaseWindow
     UINT _currentSelection;
     CSampleImeArray<CCandidateListItem> _candidateList;
     CSampleImeArray<UINT> _PageIndex;
+    CSampleIME *_pTextService;
 
     COLORREF _crTextColor;
     COLORREF _crBkColor;
