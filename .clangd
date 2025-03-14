@@ -26,7 +26,7 @@ CompileFlags:
     -DFANY_DEBUG,
     -Wno-unused-includes,
     -Wno-microsoft-goto,
-    -Wno-unused-value,
+    # -Wno-unused-value,
     -Wno-nonportable-include-path,
     -Wno-microsoft-extra-qualification,
     -Wno-invalid-token-paste

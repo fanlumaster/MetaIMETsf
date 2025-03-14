@@ -584,7 +584,7 @@ void CCandidateWindow::_DrawListWithD2D(_In_ UINT iIndex)
     //
     std::wstring preeditString(preeditStringRange.Get(), preeditStringRange.GetLength());
     pRenderTarget->DrawText(preeditString.c_str(),                        //
-                            lenOfPageCount,                               //
+                            preeditString.length(),                       //
                             pTextFormat,                                  //
                             D2D1::RectF(LeftPadding,                      ///
                                         2 + LineHeight * pageCount + 2,   ///

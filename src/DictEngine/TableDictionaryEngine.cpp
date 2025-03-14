@@ -63,9 +63,6 @@ VOID CTableDictionaryEngine::CollectWord(_In_ CStringRange *pKeyCode,
     Global::LogMessageW(L"Fany pKeyCode ends...");
 #endif
 
-    // 获取硬编码数据的数量
-    UINT hardcodedDataCount = 4;
-
     Global::CandidateList = fanDictionaryDb.Generate(keyCodeString);
     Global::WStringCandidateList.clear();
     Global::FindKeyCode = keyCodeWString;
