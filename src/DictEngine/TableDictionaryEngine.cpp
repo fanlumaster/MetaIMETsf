@@ -9,6 +9,7 @@
 #include "TableDictionaryEngine.h"
 #include "DictionarySearch.h"
 #include "Globals.h"
+#include <algorithm>
 #include <string>
 #include <vector>
 #include "FanDictionaryDbUtils.h"
@@ -49,8 +50,11 @@ VOID CTableDictionaryEngine::CollectWord(_In_ CStringRange *pKeyCode,
     FanDictionaryDb fanDictionaryDb(_pDictionaryDb);
 
     std::wstring keyCodeWString = L"";
-    keyCodeWString.append(pKeyCode->Get(), pKeyCode->GetLength()); // 添加 pwch 的内容
+    keyCodeWString.append(pKeyCode->Get(), pKeyCode->GetLength()); // Append the key code to the string
     std::string keyCodeString = Global::wstring_to_string(keyCodeWString);
+    // Convert the key code string to lower case
+    std::transform(keyCodeString.begin(), keyCodeString.end(), keyCodeString.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
 
 #ifdef FANY_DEBUG
     Global::LogMessageW(L"Fany pKeyCode starts...");
