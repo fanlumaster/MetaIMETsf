@@ -347,9 +347,6 @@ STDAPI CSampleIME::Deactivate()
         _pDocMgrLastFocused = nullptr;
     }
 
-    Global::D2DSource.ReleaseGlobalD2DResources();
-    Global::D2DSource.ReleaseWindowD2DResources();
-
     return S_OK;
 }
 

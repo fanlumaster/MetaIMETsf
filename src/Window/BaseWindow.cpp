@@ -56,14 +56,14 @@ BOOL CBaseWindow::_InitWindowClass(_In_ LPCWSTR lpwszClassName, _Out_ ATOM *pato
 {
     WNDCLASS wc;
 
-    wc.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW | CS_IME;
+    wc.style = CS_HREDRAW | CS_VREDRAW; // We do not need CS_IME
     wc.lpfnWndProc = CBaseWindow::_WindowProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = Global::dllInstanceHandle;
     wc.hIcon = nullptr;
     wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-    wc.hbrBackground = NULL;
+    wc.hbrBackground = NULL; // We do not need background color for this window
     wc.lpszMenuName = nullptr;
     wc.lpszClassName = lpwszClassName;
 
@@ -101,11 +101,20 @@ BOOL CBaseWindow::_Create(ATOM atom, DWORD dwExStyle, DWORD dwStyle, _In_opt_ CB
     if (atom != 0)
     {
         // create real window
-
-        _wndHandle = CreateWindowEx(dwExStyle, (LPCTSTR)atom, NULL, dwStyle, 0, 0, wndWidth, wndHeight,
-                                    _pParentWnd ? _pParentWnd->_GetWnd() : parentWndHandle, // parentWndHandle
-                                    NULL, Global::dllInstanceHandle,
-                                    this); // lpParam
+        _wndHandle = CreateWindowEx(                                //
+            dwExStyle,                                              //
+            (LPCTSTR)atom,                                          //
+            NULL,                                                   //
+            dwStyle,                                                //
+            0,                                                      //
+            0,                                                      //
+            wndWidth,                                               //
+            wndHeight,                                              //
+            _pParentWnd ? _pParentWnd->_GetWnd() : parentWndHandle, // parentWndHandle
+            NULL,                                                   //
+            Global::dllInstanceHandle,                              //
+            this                                                    //
+        );                                                          // lpParam
 
         if (!_wndHandle)
         {

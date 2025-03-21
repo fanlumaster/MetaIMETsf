@@ -2,10 +2,13 @@
 #include "Globals.h"
 #include "BaseWindow.h"
 #include "Globals.h"
-#include <d2d1helper.h>
 #include <string>
+#include <winuser.h>
+#include <dwmapi.h>
 #include "CandidateWindow.h"
 #include "CompositionProcessorEngine.h"
+
+#pragma comment(lib, "dwmapi.lib")
 
 COLORREF _AdjustTextColor(_In_ COLORREF crColor, _In_ COLORREF crBkColor);
 
@@ -80,11 +83,6 @@ BOOL CCandidateWindow::_Create(ATOM atom, _In_ UINT wndWidth, _In_opt_ HWND pare
 
     _ResizeWindow();
 
-    //
-    // Create D2D target
-    //
-    Global::D2DSource.CreateWindowD2DResources(this->_GetWnd());
-
 Exit:
     return TRUE;
 }
@@ -96,27 +94,31 @@ void CCandidateWindow::_Destroy()
         DestroyWindow(this->_GetWnd());
         this->_SetWnd(nullptr);
     }
-
-    //
-    // Release D2D target
-    //
-    Global::D2DSource.ReleaseWindowD2DResources();
 }
 
 BOOL CCandidateWindow::_CreateMainWindow(ATOM atom, _In_opt_ HWND parentWndHandle)
 {
     _SetUIWnd(this);
 
-    if (!CBaseWindow::_Create(atom, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED, WS_POPUP, NULL, 0, 0,
-                              parentWndHandle))
+    if (!CBaseWindow::_Create(                                          //
+            atom,                                                       //
+            WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED, WS_POPUP, //
+            NULL,                                                       //
+            0,                                                          //
+            0,                                                          //
+            parentWndHandle))                                           //
     {
         return FALSE;
     }
     else
     {
-        SetLayeredWindowAttributes(this->_GetWnd(), RGB(0, 0, 0), 255, LWA_ALPHA);
-        MARGINS margins = {-1}; // -1 表示整个窗口
-        DwmExtendFrameIntoClientArea(this->_GetWnd(), &margins);
+        //
+        // Default layerd window is transparent, if you want to show it,
+        // you need to set the alpha value, so uncomment the following code
+        //
+        // SetLayeredWindowAttributes(this->_GetWnd(), RGB(0, 0, 0), 255, LWA_ALPHA);
+        // MARGINS margins = {-1}; // -1 表示整个窗口
+        // DwmExtendFrameIntoClientArea(this->_GetWnd(), &margins);
     }
 
     return TRUE;
@@ -142,21 +144,7 @@ BOOL CCandidateWindow::_CreateBackGroundShadowWindow()
 
 void CCandidateWindow::_ResizeWindow()
 {
-    SIZE size = {0, 0};
-
-    // _cxTitle = max(_cxTitle, size.cx + 2 * GetSystemMetrics(SM_CXFRAME));
-    _cxTitle = 500;
-
-    int candidateListPageCnt = _pIndexRange->Count();
-    CBaseWindow::_Resize(0, 0, _cxTitle - 222, _cyRow * candidateListPageCnt + 38 + 40);
-
-    RECT rcCandRect = {0, 0, 0, 0};
-    _GetClientRect(&rcCandRect);
-
-    int letf = rcCandRect.right - GetSystemMetrics(SM_CXVSCROLL) * 2 - CANDWND_BORDER_WIDTH;
-    int top = rcCandRect.top + CANDWND_BORDER_WIDTH;
-    int width = GetSystemMetrics(SM_CXVSCROLL) * 2;
-    int height = rcCandRect.bottom - rcCandRect.top - CANDWND_BORDER_WIDTH * 2 + 10;
+    CBaseWindow::_Resize(0, 0, 20, 10); // Mock size, nonsense
 }
 
 //+---------------------------------------------------------------------------
@@ -275,8 +263,7 @@ LRESULT CALLBACK CCandidateWindow::_WindowProcCallback(_In_ HWND wndHandle, UINT
         break;
 
     case WM_PAINT: {
-        // Global::D2DSource.DrawWithDirect2D(this->_GetWnd());
-        _OnPaintWithD2D();
+        // _OnPaintWithWebview2();
     }
         return 0;
 
@@ -376,7 +363,7 @@ cleanup:
     SelectObject(dcHandle, hFontOld);
 }
 
-void CCandidateWindow::_OnPaintWithD2D()
+void CCandidateWindow::_OnPaintWithWebview2()
 {
     UINT currentPageIndex = 0;
     UINT currentPage = 0;
@@ -387,7 +374,7 @@ void CCandidateWindow::_OnPaintWithD2D()
     }
 
     _AdjustPageIndex(currentPage, currentPageIndex);
-    _DrawListWithD2D(currentPageIndex);
+    _DrawListWithWebview2(currentPageIndex);
 }
 
 //+---------------------------------------------------------------------------
@@ -543,86 +530,29 @@ void CCandidateWindow::_DrawList(_In_ HDC dcHandle, _In_ UINT iIndex, _In_ RECT 
     DeleteObject(hFont);
 }
 
-void CCandidateWindow::_DrawListWithD2D(_In_ UINT iIndex)
+void CCandidateWindow::_DrawListWithWebview2(_In_ UINT iIndex)
 {
-    ID2D1Factory *pD2DFactory = Global::D2DSource.pD2DFactory;
-    ID2D1HwndRenderTarget *pRenderTarget = Global::D2DSource.pRenderTarget;
-    ID2D1SolidColorBrush *pBrush = Global::D2DSource.pBrush;
-    IDWriteFactory *pDWriteFactory = Global::D2DSource.pDWriteFactory;
-    IDWriteTextFormat *pTextFormat = Global::D2DSource.pTextFormat;
-
     int pageCount = 0;
     int candidateListPageCnt = _pIndexRange->Count();
-    int currentPageItemCnt =
-        _candidateList.Count() - iIndex > candidateListPageCnt ? candidateListPageCnt : _candidateList.Count() - iIndex;
+    int currentPageItemCnt = _candidateList.Count() - iIndex > candidateListPageCnt //
+                                 ? candidateListPageCnt                             //
+                                 : _candidateList.Count() - iIndex;
+
+    const size_t lenOfPageCount = 16;
 
     CStringRange preeditStringRange = _pTextService->GetCompositionProcessorEngine()->GetKeystrokeBuffer();
 
-    const size_t lenOfPageCount = 16;
-    const int LineHeight = 22;
-    const int LeftPadding = 5;
-
-    pRenderTarget->BeginDraw();
-    pRenderTarget->Clear(D2D1::ColorF(0, 0, 0, 0));
-
-    // Draw background rectangle
-    pBrush->SetColor(D2D1::ColorF(25.0f / 255.0f, 25.0f / 255.0f, 25.0f / 255.0f, 1.0f));
-    D2D1_RECT_F rect = D2D1::RectF(0.0f, 2.0f, 100.0f, 182.0f);
-    rect = D2D1::RectF(0.0f,                                            //
-                       2.0f,                                            //
-                       100.0f,                                          //
-                       10 + (LineHeight) * (currentPageItemCnt + 1) + 2 //
-    );
-    D2D1_ROUNDED_RECT rounded_rect = D2D1::RoundedRect(rect, 8, 8);
-    pRenderTarget->FillRoundedRectangle(rounded_rect, pBrush);
-
-    // Set brush color for text
-    pBrush->SetColor(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
-
-    //
-    // Draw preedit string
-    //
     std::wstring preeditString(preeditStringRange.Get(), preeditStringRange.GetLength());
-    pRenderTarget->DrawText(preeditString.c_str(),                        //
-                            preeditString.length(),                       //
-                            pTextFormat,                                  //
-                            D2D1::RectF(LeftPadding,                      ///
-                                        2 + LineHeight * pageCount + 2,   ///
-                                        270 + LeftPadding,                ///
-                                        10 + LineHeight * pageCount + 2), //
-                            pBrush                                        //
-    );
 
     //
     // Draw candidate list
     //
     for (; (iIndex < _candidateList.Count()) && (pageCount < candidateListPageCnt); iIndex++, pageCount++)
     {
-        WCHAR pageCountString[lenOfPageCount] = {'\0'};
-        CCandidateListItem *pItemList = nullptr;
-
-        StringCchPrintf(pageCountString, ARRAYSIZE(pageCountString), L"%d.", (LONG)*_pIndexRange->GetAt(pageCount));
-        pRenderTarget->DrawText(pageCountString,                                    //
-                                lenOfPageCount,                                     //
-                                pTextFormat,                                        //
-                                D2D1::RectF(LeftPadding,                            ///
-                                            2 + LineHeight * (pageCount + 1) + 2,   ///
-                                            30 + LeftPadding,                       ///
-                                            10 + LineHeight * (pageCount + 1) + 2), //
-                                pBrush                                              //
-        );
-        pItemList = _candidateList.GetAt(iIndex);
-        pRenderTarget->DrawText(pItemList->_ItemString.Get(),                       //
-                                (DWORD)pItemList->_ItemString.GetLength(),          //
-                                pTextFormat,                                        //
-                                D2D1::RectF(22 + LeftPadding,                       ///
-                                            2 + LineHeight * (pageCount + 1) + 2,   ///
-                                            270 + LeftPadding,                      ///
-                                            10 + LineHeight * (pageCount + 1) + 2), //
-                                pBrush                                              //
-        );
+        std::wstring pageCountString = std::to_wstring(*_pIndexRange->GetAt(pageCount));
+        CCandidateListItem *pItemList = _candidateList.GetAt(iIndex);
+        std::wstring itemString(pItemList->_ItemString.Get(), pItemList->_ItemString.GetLength());
     }
-    HRESULT hr = pRenderTarget->EndDraw();
 }
 
 //+---------------------------------------------------------------------------

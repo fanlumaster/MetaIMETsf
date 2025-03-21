@@ -5,6 +5,7 @@
 #include "CandidateListUIPresenter.h"
 #include "CompositionProcessorEngine.h"
 #include "SampleIMEBaseStructure.h"
+#include <winuser.h>
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -1297,6 +1298,12 @@ HRESULT CCandidateListUIPresenter::EndUIElement()
 Exit:
     return hr;
 }
+
+//+---------------------------------------------------------------------------
+// MakeCandidateWindow
+//
+// Create the candidate window
+//----------------------------------------------------------------------------
 
 HRESULT CCandidateListUIPresenter::MakeCandidateWindow(_In_ ITfContext *pContextDocument, _In_ UINT wndWidth)
 {
