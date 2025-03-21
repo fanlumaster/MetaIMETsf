@@ -17,10 +17,13 @@
 #include <iostream>
 #include <string>
 #include "FanDictionaryDbUtils.h"
-#include "D2DSource.h"
+#include <wrl.h>
+#include "WebView2.h"
 
 void DllAddRef();
 void DllRelease();
+
+using namespace Microsoft::WRL;
 
 namespace Global
 {
@@ -178,6 +181,9 @@ inline std::vector<FanDictionaryDb::DbWordItem> CandidateList;
 inline std::vector<std::wstring> WStringCandidateList;
 inline std::wstring FindKeyCode;
 
-// Direct2D
-inline Direct2DSource D2DSource;
+// Global Window
+inline HWND MainWindowHandle;
+
+// Webview2
+inline ComPtr<ICoreWebView2> webview2Control;
 } // namespace Global

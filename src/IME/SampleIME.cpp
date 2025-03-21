@@ -11,7 +11,8 @@
 #include "CandidateListUIPresenter.h"
 #include "CompositionProcessorEngine.h"
 #include "Compartment.h"
-#include "D2DSource.h"
+#include <winuser.h>
+#include <Windows.h>
 
 //+---------------------------------------------------------------------------
 //
@@ -266,12 +267,28 @@ STDAPI CSampleIME::ActivateEx(ITfThreadMgr *pThreadMgr, TfClientId tfClientId, D
         goto ExitError;
     }
 
-    // Reset to Chinese mode whenever switch back to this IME.
+    // Reset to Chinese mode whenever switch back to this IME
     _pCompositionProcessorEngine->InitializeSampleIMECompartment(pThreadMgr, tfClientId);
 
     SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
-    Global::D2DSource.CreateGlobalD2DResources();
 
+    // Initialize the global candidate window
+/*
+    Global::MainWindowHandle = CreateWindowEx(            //
+        WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED, //
+        (LPCTSTR)Global::AtomCandidateWindow,             //
+        NULL,                                             //
+        WS_POPUP,                                         //
+        0,                                                //
+        0,                                                //
+        (108 + 15) * 1.5,                                 //
+        (246 + 15) * 1.5,                                 //
+        NULL,                                             // parentWndHandle
+        NULL,                                             //
+        Global::dllInstanceHandle,                        //
+        this                                              //
+    );
+*/
     return S_OK;
 
 ExitError:
