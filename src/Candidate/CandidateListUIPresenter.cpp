@@ -875,6 +875,7 @@ void CCandidateListUIPresenter::_SetText(_In_ CSampleImeArray<CCandidateListItem
     if (_isShowMode)
     {
         _pCandidateWnd->_InvalidateRect();
+        // ShowWindow(Global::MainWindowHandle, SW_SHOW);
     }
     else
     {
@@ -1346,6 +1347,11 @@ void CCandidateListUIPresenter::DisposeCandidateWindow()
     {
         return;
     }
+
+    //
+    // Hide the global candidate window
+    //
+    // ShowWindow(Global::MainWindowHandle, SW_HIDE);
 
     _pCandidateWnd->_Destroy();
 

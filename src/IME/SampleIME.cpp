@@ -11,6 +11,7 @@
 #include "CandidateListUIPresenter.h"
 #include "CompositionProcessorEngine.h"
 #include "Compartment.h"
+#include <winnt.h>
 #include <winuser.h>
 #include <Windows.h>
 
@@ -211,6 +212,170 @@ STDAPI_(ULONG) CSampleIME::Release()
     return cr;
 }
 
+void InitWebview(HWND hWnd)
+{
+    CreateCoreWebView2EnvironmentWithOptions(
+        nullptr, nullptr, nullptr,
+        Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>([hWnd](HRESULT result,
+                                                                                    ICoreWebView2Environment *env)
+                                                                                 -> HRESULT {
+            if (result != S_OK)
+            {
+                Global::LogMessageW(L"Failed to create WebView2 environment.");
+                return result;
+            }
+
+            // Create a CoreWebView2Controller and get the associated
+            // CoreWebView2
+            env->CreateCoreWebView2Controller(
+                hWnd, Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
+                          [hWnd](HRESULT result, ICoreWebView2Controller *controller) -> HRESULT {
+                              if (controller == nullptr || FAILED(result))
+                              {
+#ifdef FANY_DEBUG
+                                  Global::LogMessageW(L"Failed to create WebView2 controller.");
+#endif
+                                  return E_FAIL;
+                              }
+                              else
+                              {
+#ifdef FANY_DEBUG
+                                  Global::LogMessageW(L"Succeeded to create WebView2 controller.");
+#endif
+                              }
+
+                              Global::UIWebview2Control = controller;
+                              Global::UIWebview2Control->get_CoreWebView2(Global::UIWebview2.GetAddressOf());
+
+                              if (Global::UIWebview2 == nullptr)
+                              {
+                                  Global::LogMessageW(L"Failed to get WebView2 instance.");
+                                  return E_FAIL;
+                              }
+
+                              ComPtr<ICoreWebView2_3> webview3;
+                              // Add a few settings for the webview
+                              ICoreWebView2Settings *settings;
+                              Global::UIWebview2->get_Settings(&settings);
+                              settings->put_IsScriptEnabled(TRUE);
+                              settings->put_AreDefaultScriptDialogsEnabled(TRUE);
+                              settings->put_IsWebMessageEnabled(TRUE);
+                              settings->put_AreHostObjectsAllowed(TRUE);
+
+                              if (Global::UIWebview2->QueryInterface(IID_PPV_ARGS(&webview3)) == S_OK)
+                              {
+                                  webview3->SetVirtualHostNameToFolderMapping(
+                                      L"appassets", // 虚拟主机名
+                                      L"C:"
+                                      L"\\Users\\SonnyCalcr\\AppData\\Roaming\\Po"
+                                      L"tPla"
+                                      L"yerMini64\\Capture",                           // 本地文件夹路径
+                                      COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_DENY_CORS // 访问权限
+                                  );
+                              }
+
+                              ComPtr<ICoreWebView2Controller2> webviewController2;
+                              if (controller->QueryInterface(IID_PPV_ARGS(&webviewController2)) == S_OK)
+                              {
+                                  COREWEBVIEW2_COLOR backgroundColor = {0, 0, 0, 0};
+                                  webviewController2->put_DefaultBackgroundColor(backgroundColor);
+                              }
+
+                              // Resize WebView to fit the bounds of the parent
+                              // window
+                              RECT bounds;
+                              GetClientRect(hWnd, &bounds);
+                              Global::UIWebview2Control->put_Bounds(bounds);
+                              // Navigate to a simple HTML string
+                              auto hr = Global::UIWebview2->NavigateToString(Global::HTMLString.c_str());
+                              if (FAILED(hr))
+                              {
+                                  Global::LogMessageW(L"Failed to navigate to string.");
+                              }
+
+                              return S_OK;
+                          })
+                          .Get());
+            return S_OK;
+        }).Get());
+}
+
+static LRESULT CALLBACK GlobalCandidateWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message)
+    {
+    default:
+        return DefWindowProc(hWnd, message, wParam, lParam);
+    }
+
+    return 0;
+}
+
+HWND CreateGlobalCandidateWindow()
+{
+    WNDCLASSEX wcex;
+
+    WCHAR szWindowClass[] = L"global_candidate_window";
+
+    wcex.cbSize = sizeof(WNDCLASSEX);
+    wcex.style = CS_HREDRAW | CS_VREDRAW;
+    wcex.lpfnWndProc = GlobalCandidateWndProc;
+    wcex.cbClsExtra = 0;
+    wcex.cbWndExtra = 0;
+    wcex.hInstance = Global::dllInstanceHandle;
+    wcex.hIcon = nullptr;
+    wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wcex.hbrBackground = NULL;
+    wcex.lpszMenuName = NULL;
+    wcex.lpszClassName = szWindowClass;
+    wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
+
+    if (Global::dllInstanceHandle == nullptr)
+    {
+        Global::LogMessageW(L"Global::dllInstanceHandle is nullptr!");
+    }
+
+    if (GetClassInfoEx(Global::dllInstanceHandle, szWindowClass, &wcex))
+    {
+#ifdef FANY_DEBUG
+        Global::LogMessageW(L"Class already registered!");
+#endif
+    }
+    else
+    {
+        if (!RegisterClassEx(&wcex))
+        {
+            Global::LogMessageW(L"RegisterClassEx failed!");
+        }
+    }
+
+    HWND hwnd = CreateWindowEx(                              //
+        WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE, //
+        szWindowClass,                                       //
+        L"fanycandidatewindow",                              //
+        WS_POPUP,                                            //
+        100,                                                 //
+        100,                                                 //
+        (108 + 15) * 1.5,                                    //
+        (246 + 15) * 1.5,                                    //
+        nullptr,                                             //
+        nullptr,                                             //
+        wcex.hInstance,                                      //
+        nullptr                                              //
+    );                                                       //
+
+    if (!hwnd)
+    {
+        Global::LogMessageW(L"CreateWindow failed!");
+    }
+
+    MoveWindow(hwnd, 100, 100, (108 + 15) * 1.5, (246 + 15) * 1.5, TRUE);
+    ShowWindow(hwnd, SW_SHOWNOACTIVATE);
+    UpdateWindow(hwnd);
+    InitWebview(hwnd);
+    return hwnd;
+}
+
 //+---------------------------------------------------------------------------
 //
 // ITfTextInputProcessorEx::ActivateEx
@@ -272,23 +437,10 @@ STDAPI CSampleIME::ActivateEx(ITfThreadMgr *pThreadMgr, TfClientId tfClientId, D
 
     SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
-    // Initialize the global candidate window
-/*
-    Global::MainWindowHandle = CreateWindowEx(            //
-        WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED, //
-        (LPCTSTR)Global::AtomCandidateWindow,             //
-        NULL,                                             //
-        WS_POPUP,                                         //
-        0,                                                //
-        0,                                                //
-        (108 + 15) * 1.5,                                 //
-        (246 + 15) * 1.5,                                 //
-        NULL,                                             // parentWndHandle
-        NULL,                                             //
-        Global::dllInstanceHandle,                        //
-        this                                              //
-    );
-*/
+    if (Global::MainWindowHandle == nullptr)
+    {
+        Global::MainWindowHandle = CreateGlobalCandidateWindow();
+    }
     return S_OK;
 
 ExitError:
@@ -362,6 +514,23 @@ STDAPI CSampleIME::Deactivate()
     {
         _pDocMgrLastFocused->Release();
         _pDocMgrLastFocused = nullptr;
+    }
+
+    if (Global::MainWindowHandle != nullptr)
+    {
+        DestroyWindow(Global::MainWindowHandle);
+        Global::MainWindowHandle = nullptr;
+    }
+
+    if (Global::UIWebview2Control != nullptr)
+    {
+        Global::UIWebview2Control->Close();
+        Global::UIWebview2Control = nullptr;
+    }
+
+    if (Global::UIWebview2 != nullptr)
+    {
+        Global::UIWebview2 = nullptr;
     }
 
     return S_OK;

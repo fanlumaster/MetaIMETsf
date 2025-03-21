@@ -263,7 +263,7 @@ LRESULT CALLBACK CCandidateWindow::_WindowProcCallback(_In_ HWND wndHandle, UINT
         break;
 
     case WM_PAINT: {
-        // _OnPaintWithWebview2();
+        _OnPaintWithWebview2();
     }
         return 0;
 
@@ -532,6 +532,7 @@ void CCandidateWindow::_DrawList(_In_ HDC dcHandle, _In_ UINT iIndex, _In_ RECT 
 
 void CCandidateWindow::_DrawListWithWebview2(_In_ UINT iIndex)
 {
+    // MoveWindow(Global::MainWindowHandle, 100, 100, (108 + 15) * 1.5, (246 + 15) * 1.5, TRUE);
     int pageCount = 0;
     int candidateListPageCnt = _pIndexRange->Count();
     int currentPageItemCnt = _candidateList.Count() - iIndex > candidateListPageCnt //
