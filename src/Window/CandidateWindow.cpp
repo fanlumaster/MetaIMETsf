@@ -2,7 +2,9 @@
 #include "Globals.h"
 #include "BaseWindow.h"
 #include "Globals.h"
+#include <corecrt_wstring.h>
 #include <string>
+#include <winnt.h>
 #include <winuser.h>
 #include <dwmapi.h>
 #include "CandidateWindow.h"
@@ -545,6 +547,8 @@ void CCandidateWindow::_DrawListWithWebview2(_In_ UINT iIndex)
 
     std::wstring preeditString(preeditStringRange.Get(), preeditStringRange.GetLength());
 
+    std::wstring candWString = preeditString;
+
     //
     // Draw candidate list
     //
@@ -553,6 +557,30 @@ void CCandidateWindow::_DrawListWithWebview2(_In_ UINT iIndex)
         std::wstring pageCountString = std::to_wstring(*_pIndexRange->GetAt(pageCount));
         CCandidateListItem *pItemList = _candidateList.GetAt(iIndex);
         std::wstring itemString(pItemList->_ItemString.Get(), pItemList->_ItemString.GetLength());
+        candWString = candWString + L"," + pageCountString + L". " + itemString;
+    }
+
+    if (Global::CandidateWString != candWString)
+    {
+        Global::CandidateWString = candWString;
+
+        HWND UIHwnd = FindWindow(L"global_candidate_window", NULL);
+        if (UIHwnd == NULL)
+        {
+            DWORD error = GetLastError();
+            std::wstring errorString = L"FindWindow failed with error: " + std::to_wstring(error);
+            Global::LogMessageW(errorString.c_str());
+        }
+        COPYDATASTRUCT cds;
+        cds.dwData = 1;
+        cds.cbData = (candWString.size() + 1) * sizeof(WCHAR);
+        cds.lpData = (PVOID)candWString.c_str();
+        if (!SendMessage(UIHwnd, WM_COPYDATA, (WPARAM)UIHwnd, (LPARAM)&cds))
+        {
+            DWORD error = GetLastError();
+            std::wstring errorString = L"PostMessage failed with error: " + std::to_wstring(error);
+            Global::LogMessageW(errorString.c_str());
+        }
     }
 }
 

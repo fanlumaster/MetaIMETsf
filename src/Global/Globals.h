@@ -175,4 +175,5 @@ inline std::vector<std::wstring> WStringCandidateList;
 inline std::wstring FindKeyCode;
 
 inline POINT PointDTO = {0, 0};
+inline std::wstring CandidateWString = L"";
 } // namespace Global
