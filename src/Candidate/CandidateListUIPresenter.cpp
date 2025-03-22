@@ -1075,11 +1075,20 @@ VOID CCandidateListUIPresenter::_LayoutChangeNotification(_In_ RECT *lpRect)
     cds.dwData = 0;
     cds.cbData = sizeof(POINT);
     cds.lpData = &Global::PointDTO;
-    if (!SendMessage(UIHwnd, WM_COPYDATA, (WPARAM)UIHwnd, (LPARAM)&cds))
+
+    LRESULT result = SendMessage(UIHwnd, WM_COPYDATA, (WPARAM)UIHwnd, (LPARAM)&cds);
+    if (result == 0)
     {
         DWORD error = GetLastError();
-        std::wstring errorString = L"PostMessage failed with error: " + std::to_wstring(error);
-        Global::LogMessageW(errorString.c_str());
+        if (error != 0)
+        {
+            std::wstring errorString = L"SendMessage POINT failed with error: " + std::to_wstring(error);
+            Global::LogMessageW(errorString.c_str());
+        }
+        else
+        {
+            Global::LogMessageW(L"SendMessage POINT success, but result is 0");
+        }
     }
 }
 

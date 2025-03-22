@@ -575,11 +575,19 @@ void CCandidateWindow::_DrawListWithWebview2(_In_ UINT iIndex)
         cds.dwData = 1;
         cds.cbData = (candWString.size() + 1) * sizeof(WCHAR);
         cds.lpData = (PVOID)candWString.c_str();
-        if (!SendMessage(UIHwnd, WM_COPYDATA, (WPARAM)UIHwnd, (LPARAM)&cds))
+        LRESULT result = SendMessage(UIHwnd, WM_COPYDATA, (WPARAM)UIHwnd, (LPARAM)&cds);
+        if (result == 0)
         {
             DWORD error = GetLastError();
-            std::wstring errorString = L"PostMessage failed with error: " + std::to_wstring(error);
-            Global::LogMessageW(errorString.c_str());
+            if (error != 0)
+            {
+                std::wstring errorString = L"SendMessage CandidateWString failed with error: " + std::to_wstring(error);
+                Global::LogMessageW(errorString.c_str());
+            }
+            else
+            {
+                Global::LogMessageW(L"SendMessage CandidateWString success, but result is 0");
+            }
         }
     }
 }
