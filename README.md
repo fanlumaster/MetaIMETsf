@@ -1,5 +1,7 @@
 ## What is FanIME
 
+![](https://s2.loli.net/2025/03/22/eDUYa3gR9V4Qziy.png)
+
 Based on Microsoft [TSF IME Demo](https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/IME/cpp/SampleIME)。
 
 Mainly to develop a Chinese Input Method Editor without ads and likely some other disturbing things we users hate really.

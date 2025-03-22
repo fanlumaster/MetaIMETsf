@@ -1,3 +1,4 @@
+#include "PinyinUtils.h"
 #include "Private.h"
 #include "Globals.h"
 #include "BaseWindow.h"
@@ -534,7 +535,6 @@ void CCandidateWindow::_DrawList(_In_ HDC dcHandle, _In_ UINT iIndex, _In_ RECT 
 
 void CCandidateWindow::_DrawListWithWebview2(_In_ UINT iIndex)
 {
-    // MoveWindow(Global::MainWindowHandle, 100, 100, (108 + 15) * 1.5, (246 + 15) * 1.5, TRUE);
     int pageCount = 0;
     int candidateListPageCnt = _pIndexRange->Count();
     int currentPageItemCnt = _candidateList.Count() - iIndex > candidateListPageCnt //
@@ -546,6 +546,10 @@ void CCandidateWindow::_DrawListWithWebview2(_In_ UINT iIndex)
     CStringRange preeditStringRange = _pTextService->GetCompositionProcessorEngine()->GetKeystrokeBuffer();
 
     std::wstring preeditString(preeditStringRange.Get(), preeditStringRange.GetLength());
+
+    std::string preeditStringUtf8 = Global::wstring_to_string(preeditString);
+    preeditStringUtf8 = PinyinUtils::PinyinSegmentation(preeditStringUtf8);
+    preeditString = Global::string_to_wstring(preeditStringUtf8);
 
     std::wstring candWString = preeditString;
 
