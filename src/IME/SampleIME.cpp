@@ -11,6 +11,7 @@
 #include "CandidateListUIPresenter.h"
 #include "CompositionProcessorEngine.h"
 #include "Compartment.h"
+#include "define.h"
 #include <winnt.h>
 #include <winuser.h>
 #include <Windows.h>
@@ -304,6 +305,33 @@ static LRESULT CALLBACK GlobalCandidateWndProc(HWND hWnd, UINT message, WPARAM w
 {
     switch (message)
     {
+    case WM_ACTIVATE:
+        if (LOWORD(wParam) != WA_INACTIVE)
+        {
+            ShowWindow(hWnd, SW_SHOWNOACTIVATE);
+        }
+        break;
+    case WM_SHOW_MAIN_WINDOW: {
+        ShowWindow(hWnd, SW_SHOWNOACTIVATE);
+        return 0;
+    }
+    case WM_HIDE_MAIN_WINDOW: {
+        ShowWindow(hWnd, SW_HIDE);
+        return 0;
+    }
+    case WM_MOVE_CANDIDATE_WINDOW: {
+        POINT *pt = (POINT *)lParam;
+        MoveWindow(hWnd, pt->x, pt->y, (108 + 15) * 1.5, (246 + 15) * 1.5, TRUE);
+        if (pt != nullptr)
+        {
+            delete pt;
+        }
+        return 0;
+    }
+    // case WM_SET_PARENT_HWND: {
+    //     SetParent(hWnd, (HWND)lParam);
+    //     return 0;
+    // }
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
@@ -349,20 +377,21 @@ HWND CreateGlobalCandidateWindow()
         }
     }
 
-    HWND hwnd = CreateWindowEx(                              //
-        WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE, //
-        szWindowClass,                                       //
-        L"fanycandidatewindow",                              //
-        WS_POPUP,                                            //
-        100,                                                 //
-        100,                                                 //
-        (108 + 15) * 1.5,                                    //
-        (246 + 15) * 1.5,                                    //
-        nullptr,                                             //
-        nullptr,                                             //
-        wcex.hInstance,                                      //
-        nullptr                                              //
-    );                                                       //
+    HWND hParent = GetForegroundWindow();
+    HWND hwnd = CreateWindowEx(                                              //
+        WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_TOPMOST, //
+        szWindowClass,                                                       //
+        L"fanycandidatewindow",                                              //
+        WS_POPUP | WS_CHILDWINDOW,                                           //
+        100,                                                                 //
+        100,                                                                 //
+        (108 + 15) * 1.5,                                                    //
+        (246 + 15) * 1.5,                                                    //
+        hParent,                                                             //
+        nullptr,                                                             //
+        wcex.hInstance,                                                      //
+        nullptr                                                              //
+    );                                                                       //
 
     if (!hwnd)
     {
