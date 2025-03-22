@@ -6,6 +6,7 @@
 #include "CompositionProcessorEngine.h"
 #include "SampleIMEBaseStructure.h"
 #include "define.h"
+#include <intsafe.h>
 #include <winuser.h>
 
 //////////////////////////////////////////////////////////////////////
@@ -877,7 +878,9 @@ void CCandidateListUIPresenter::_SetText(_In_ CSampleImeArray<CCandidateListItem
     {
         _pCandidateWnd->_InvalidateRect();
         // ShowWindow(Global::MainWindowHandle, SW_SHOW);
-        PostMessage(Global::MainWindowHandle, WM_SHOW_MAIN_WINDOW, 0, 0);
+        HWND UIHwnd = FindWindow(L"global_candidate_window", NULL);
+        UINT WM_SHOW_MAIN_WINDOW = RegisterWindowMessage(L"WM_SHOW_MAIN_WINDOW");
+        PostMessage(UIHwnd, WM_SHOW_MAIN_WINDOW, 0, 0);
     }
     else
     {
@@ -1061,7 +1064,9 @@ VOID CCandidateListUIPresenter::_LayoutChangeNotification(_In_ RECT *lpRect)
     POINT *ppt = new (std::nothrow) POINT;
     ppt->x = ptCandidate.x;
     ppt->y = ptCandidate.y;
-    PostMessage(Global::MainWindowHandle, WM_MOVE_CANDIDATE_WINDOW, 0, (LPARAM)ppt);
+    HWND UIHwnd = FindWindow(L"global_candidate_window", NULL);
+    // UINT WM_MOVE_CANDIDATE_WINDOW = RegisterWindowMessage(L"WM_MOVE_CANDIDATE_WINDOW");
+    // PostMessage(UIHwnd, WM_MOVE_CANDIDATE_WINDOW, 0, (LPARAM)ppt);
 }
 
 //+---------------------------------------------------------------------------
@@ -1337,8 +1342,6 @@ HRESULT CCandidateListUIPresenter::MakeCandidateWindow(_In_ ITfContext *pContext
         pView->GetWnd(&parentWndHandle);
     }
 
-    PostMessage(Global::MainWindowHandle, WM_SET_PARENT_HWND, 0, (LPARAM)parentWndHandle);
-
     if (!_pCandidateWnd->_Create(_atom, wndWidth, parentWndHandle))
     {
         hr = E_OUTOFMEMORY;
@@ -1360,7 +1363,9 @@ void CCandidateListUIPresenter::DisposeCandidateWindow()
     // Hide the global candidate window
     //
     // ShowWindow(Global::MainWindowHandle, SW_HIDE);
-    PostMessage(Global::MainWindowHandle, WM_HIDE_MAIN_WINDOW, 0, 0);
+    HWND UIHwnd = FindWindow(L"global_candidate_window", NULL);
+    UINT WM_HIDE_MAIN_WINDOW = RegisterWindowMessage(L"WM_HIDE_MAIN_WINDOW");
+    PostMessage(UIHwnd, WM_HIDE_MAIN_WINDOW, 0, 0);
 
     _pCandidateWnd->_Destroy();
 

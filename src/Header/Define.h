@@ -63,7 +63,7 @@
 //
 // Message define
 //
-#define WM_SHOW_MAIN_WINDOW (WM_APP + 1)
-#define WM_HIDE_MAIN_WINDOW (WM_APP + 2)
-#define WM_MOVE_CANDIDATE_WINDOW (WM_APP + 3)
-#define WM_SET_PARENT_HWND (WM_APP + 4)
+// #define WM_SHOW_MAIN_WINDOW
+// #define WM_HIDE_MAIN_WINDOW
+// #define WM_MOVE_CANDIDATE_WINDOW
+// #define WM_SET_PARENT_HWND
