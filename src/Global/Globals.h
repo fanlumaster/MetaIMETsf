@@ -1,10 +1,3 @@
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
-// Copyright (c) Microsoft Corporation. All rights reserved
-
 #pragma once
 
 #ifndef UNICODE
@@ -180,4 +173,6 @@ std::string wstring_to_string(const std::wstring &wstr);
 inline std::vector<FanDictionaryDb::DbWordItem> CandidateList;
 inline std::vector<std::wstring> WStringCandidateList;
 inline std::wstring FindKeyCode;
+
+inline POINT PointDTO = {0, 0};
 } // namespace Global

@@ -7,6 +7,7 @@
 #include "SampleIMEBaseStructure.h"
 #include "define.h"
 #include <intsafe.h>
+#include <minwindef.h>
 #include <winuser.h>
 
 //////////////////////////////////////////////////////////////////////
@@ -1061,12 +1062,25 @@ VOID CCandidateListUIPresenter::_LayoutChangeNotification(_In_ RECT *lpRect)
     _pCandidateWnd->_GetClientRect(&rectCandidate);
     _pCandidateWnd->_GetWindowExtent(lpRect, &rectCandidate, &ptCandidate);
     _pCandidateWnd->_Move(ptCandidate.x, ptCandidate.y);
-    POINT *ppt = new (std::nothrow) POINT;
-    ppt->x = ptCandidate.x;
-    ppt->y = ptCandidate.y;
     HWND UIHwnd = FindWindow(L"global_candidate_window", NULL);
-    // UINT WM_MOVE_CANDIDATE_WINDOW = RegisterWindowMessage(L"WM_MOVE_CANDIDATE_WINDOW");
-    // PostMessage(UIHwnd, WM_MOVE_CANDIDATE_WINDOW, 0, (LPARAM)ppt);
+    if (UIHwnd == NULL)
+    {
+        DWORD error = GetLastError();
+        std::wstring errorString = L"FindWindow failed with error: " + std::to_wstring(error);
+        Global::LogMessageW(errorString.c_str());
+    }
+    Global::PointDTO.x = ptCandidate.x;
+    Global::PointDTO.y = ptCandidate.y;
+    COPYDATASTRUCT cds;
+    cds.dwData = 0;
+    cds.cbData = sizeof(POINT);
+    cds.lpData = &Global::PointDTO;
+    if (!SendMessage(UIHwnd, WM_COPYDATA, (WPARAM)UIHwnd, (LPARAM)&cds))
+    {
+        DWORD error = GetLastError();
+        std::wstring errorString = L"PostMessage failed with error: " + std::to_wstring(error);
+        Global::LogMessageW(errorString.c_str());
+    }
 }
 
 //+---------------------------------------------------------------------------
