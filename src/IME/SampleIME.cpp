@@ -270,9 +270,8 @@ void InitWebview(HWND hWnd)
                                       L"C:"
                                       L"\\Users\\SonnyCalcr\\AppData\\Roaming\\Po"
                                       L"tPla"
-                                      L"yerMini64\\Capture",                           // 本地文件夹路径
-                                      COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_DENY_CORS // 访问权限
-                                  );
+                                      L"yerMini64\\Capture",
+                                      COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_DENY_CORS);
                               }
 
                               ComPtr<ICoreWebView2Controller2> webviewController2;

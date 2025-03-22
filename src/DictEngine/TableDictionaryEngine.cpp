@@ -14,6 +14,10 @@
 #include <vector>
 #include "FanDictionaryDbUtils.h"
 
+#ifdef FANY_DEBUG
+#include <chrono>
+#endif
+
 //+---------------------------------------------------------------------------
 //
 // CollectWord
@@ -63,7 +67,16 @@ VOID CTableDictionaryEngine::CollectWord(_In_ CStringRange *pKeyCode,
     Global::LogMessageW(L"Fany pKeyCode ends...");
 #endif
 
+#ifdef FANY_DEBUG
+    auto start = std::chrono::high_resolution_clock::now();
+#endif
     Global::CandidateList = fanDictionaryDb.Generate(keyCodeString);
+#ifdef FANY_DEBUG
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    std::wstring message = L"Generate time: " + std::to_wstring(duration.count()) + L" μs";
+    Global::LogMessageW(message.c_str());
+#endif
     Global::WStringCandidateList.clear();
     Global::FindKeyCode = keyCodeWString;
     for (UINT i = 0; i < Global::CandidateList.size(); i++)
