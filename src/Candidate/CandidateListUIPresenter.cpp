@@ -927,7 +927,7 @@ void CCandidateListUIPresenter::SetPageIndexWithScrollInfo(_In_ CSampleImeArray<
 void CCandidateListUIPresenter::_ClearList()
 {
     _pCandidateWnd->_ClearList();
-    _pCandidateWnd->_InvalidateRect();
+    // _pCandidateWnd->_InvalidateRect();
 }
 
 //+---------------------------------------------------------------------------
@@ -996,7 +996,7 @@ BOOL CCandidateListUIPresenter::_SetSelection(_In_ int selectedIndex)
     {
         if (_isShowMode)
         {
-            _pCandidateWnd->_InvalidateRect();
+            // _pCandidateWnd->_InvalidateRect();
         }
         else
         {
