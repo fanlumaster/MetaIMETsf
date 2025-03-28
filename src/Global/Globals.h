@@ -11,7 +11,6 @@
 #include <string>
 #include "FanDictionaryDbUtils.h"
 #include <wrl.h>
-#include "WebView2.h"
 
 void DllAddRef();
 void DllRelease();

@@ -84,8 +84,6 @@ add_library(DeerWritingBrush SHARED
     # Drawing
     "./src/Drawing/D2DSource.cpp"
     "./src/Drawing/D2DSource.h"
-    "./src/Drawing/UIWebview2.h"
-    "./src/Drawing/UIWebview2.cpp"
     # Edit
     "./src/Edit/EditSession.cpp"
     "./src/Edit/EditSession.h"
@@ -164,7 +162,3 @@ add_library(DeerWritingBrush SHARED
     "./src/DictEngine/PinyinUtils.cpp"
     "./src/DictEngine/PinyinUtils.h"
 )
-
-set_target_properties(DeerWritingBrush PROPERTIES VS_GLOBAL_WebView2LoaderPreference "Static")
-set_target_properties(DeerWritingBrush PROPERTIES VS_USER_PROPS "${CMAKE_SOURCE_DIR}/DeerWritingBrush.props")
-set_target_properties(DeerWritingBrush PROPERTIES VS_PACKAGE_REFERENCES "Microsoft.Web.WebView2_1.0.3124.44;Microsoft.Windows.ImplementationLibrary_1.0.240803.1")
