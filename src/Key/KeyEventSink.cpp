@@ -303,7 +303,7 @@ STDAPI CSampleIME::OnTestKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lPa
 //
 // ITfKeyEventSink::OnKeyDown
 //
-// Called by the system to offer this service a keystroke.  If *pIsEaten == TRUE
+// Called by the system to offer this service a keystroke.
 // on exit, the application will not handle the keystroke.
 //----------------------------------------------------------------------------
 

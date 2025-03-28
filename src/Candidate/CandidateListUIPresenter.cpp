@@ -879,9 +879,9 @@ void CCandidateListUIPresenter::_SetText(_In_ CSampleImeArray<CCandidateListItem
     {
         _pCandidateWnd->_InvalidateRect();
         // ShowWindow(Global::MainWindowHandle, SW_SHOW);
-        HWND UIHwnd = FindWindow(L"global_candidate_window", NULL);
-        UINT WM_SHOW_MAIN_WINDOW = RegisterWindowMessage(L"WM_SHOW_MAIN_WINDOW");
-        PostMessage(UIHwnd, WM_SHOW_MAIN_WINDOW, 0, 0);
+        // HWND UIHwnd = FindWindow(L"global_candidate_window", NULL);
+        // UINT WM_SHOW_MAIN_WINDOW = RegisterWindowMessage(L"WM_SHOW_MAIN_WINDOW");
+        // PostMessage(UIHwnd, WM_SHOW_MAIN_WINDOW, 0, 0);
     }
     else
     {
