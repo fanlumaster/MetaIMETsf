@@ -15,7 +15,7 @@
 #include "FileMapping.h"
 #include "Compartment.h"
 #include "define.h"
-#include "sqlite3.h"
+#include "sqlite3/sqlite3.h"
 #include "FanDictionaryDbUtils.h"
 
 class CCompositionProcessorEngine

@@ -1,6 +1,7 @@
 CompileFlags:
   Add: [
       "-std=c++17", # needed when using MSVC
+      "-IC:/Users/SonnyCalcr/EDisk/CppCodes/Libraries/AllLibs/include",
       "-IC:\\Users\\SonnyCalcr\\EDisk\\CppCodes\\IMECodes\\DeerWritingBrush\\src",
       "-IC:\\Users\\SonnyCalcr\\EDisk\\CppCodes\\IMECodes\\DeerWritingBrush\\src\\Candidate",
       "-IC:\\Users\\SonnyCalcr\\EDisk\\CppCodes\\IMECodes\\DeerWritingBrush\\src\\Compartment",

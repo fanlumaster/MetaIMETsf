@@ -15,10 +15,12 @@ add_definitions(
 #     /DFANY_DEBUG=1
 # )
 
-set(SQLITE_INCLUDE_DIR "./sqlite")
 set(USERNAME "$ENV{USERNAME}")
 set(BOOST_VERSION "1.87.0")
 set(BOOST_INCLUDE_DIR "C:/Users/${USERNAME}/scoop/apps/boost/${BOOST_VERSION}")
+
+set(CMAKE_PREFIX_PATH "C:/Users/SonnyCalcr/EDisk/CppCodes/Libraries/AllLibs")
+find_package(SQLite3 REQUIRED CONFIG)
 
 include_directories("./src")
 include_directories("./src/Candidate")
@@ -39,7 +41,6 @@ include_directories("./src/Tf")
 include_directories("./src/Thread")
 include_directories("./src/Utils")
 include_directories("./src/Window")
-include_directories(${SQLITE_INCLUDE_DIR})
 include_directories(${BOOST_INCLUDE_DIR})
 
 add_library(DeerWritingBrush SHARED
@@ -152,9 +153,6 @@ add_library(DeerWritingBrush SHARED
     # Main
     "./src/DllMain.cpp"
     "./src/Server.cpp"
-    # Sqlite
-    "./sqlite/sqlite3.c"
-    "./sqlite/sqlite3.h"
     # Database
     "./src/DictEngine/FanDictionaryDbUtils.cpp"
     "./src/DictEngine/FanDictionaryDbUtils.h"
@@ -162,3 +160,5 @@ add_library(DeerWritingBrush SHARED
     "./src/DictEngine/PinyinUtils.cpp"
     "./src/DictEngine/PinyinUtils.h"
 )
+
+target_link_libraries(DeerWritingBrush PRIVATE SQLite3::sqlite3)

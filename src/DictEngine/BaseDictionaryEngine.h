@@ -9,7 +9,7 @@
 
 #include "File.h"
 #include "SampleIMEBaseStructure.h"
-#include "sqlite3.h"
+#include "sqlite3/sqlite3.h"
 
 class CBaseDictionaryEngine
 {

@@ -7,7 +7,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
 
-#include "sqlite3.h"
+#include "sqlite3/sqlite3.h"
 
 class FanDictionaryDb
 {
