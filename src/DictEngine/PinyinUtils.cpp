@@ -131,7 +131,7 @@ std::string PinyinUtils::PinyinSegmentation(std::string spStr)
         if ((rangeStart + 2) <= spStr.size())
         {
             std::string curSp = spStr.substr(rangeStart, 2);
-            if (QuanpinSet.count(CvtSingleShuangpinToQuanpin(curSp)) > 0)
+            if (QuanpinSet.count(CvtSingleShuangpinToQuanpin(boost::algorithm::to_lower_copy(curSp))) > 0)
             {
                 res = res + "'" + curSp;
                 rangeStart += 2;
