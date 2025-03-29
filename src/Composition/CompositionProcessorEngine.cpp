@@ -22,6 +22,8 @@
 #include "RegKey.h"
 #include "define.h"
 #include <string>
+#include "fmt/format.h"
+#include "fmt/xchar.h"
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -2204,6 +2206,9 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCH
         return FALSE;
     }
 
+#ifdef FANY_DEBUG
+    Global::LogMessageW(L"Unknown keystroke.");
+#endif
     return FALSE;
 }
 
@@ -2216,6 +2221,11 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCH
 BOOL CCompositionProcessorEngine::IsVirtualKeyKeystrokeComposition(UINT uCode, _Out_opt_ _KEYSTROKE_STATE *pKeyState,
                                                                    KEYSTROKE_FUNCTION function)
 {
+#ifdef FANY_DEBUG
+    Global::LogMessageW(L"Fany Here: IsVirtualKeyKeystrokeComposition 26.");
+    std::wstring modifiers = fmt::format(L"Global Modifiers: {}", Global::ModifiersValue);
+    Global::LogMessageW(modifiers.c_str());
+#endif
     if (pKeyState == nullptr)
     {
         return FALSE;
@@ -2231,7 +2241,9 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyKeystrokeComposition(UINT uCode, _
 
         pKeystroke = _KeystrokeComposition.GetAt(i);
 
-        if ((pKeystroke->VirtualKey == uCode) && Global::CheckModifiers(Global::ModifiersValue, pKeystroke->Modifiers))
+        if ((pKeystroke->VirtualKey == uCode) &&
+            (Global::ModifiersValue == 292 || Global::ModifiersValue == 36 ||
+             Global::CheckModifiers(Global::ModifiersValue, pKeystroke->Modifiers)))
         {
             if (function == FUNCTION_NONE)
             {

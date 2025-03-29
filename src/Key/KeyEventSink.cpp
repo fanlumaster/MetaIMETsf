@@ -12,6 +12,8 @@
 #include "CompositionProcessorEngine.h"
 #include "KeyHandlerEditSession.h"
 #include "Compartment.h"
+#include "fmt/format.h"
+#include "fmt/xchar.h"
 
 // 0xF003, 0xF004 are the keys that the touch keyboard sends for next/previous
 #define THIRDPARTY_NEXTPAGE static_cast<WORD>(0xF003)
@@ -100,6 +102,10 @@ BOOL CSampleIME::_IsKeyEaten(_In_ ITfContext *pContext, UINT codeIn, _Out_ UINT 
     BOOL isTouchKeyboardSpecialKeys = FALSE;
     WCHAR wch = ConvertVKey(codeIn);
     *pCodeOut = VKeyFromVKPacketAndWchar(codeIn, wch);
+#ifdef FANY_DEBUG
+    std::wstring logMessage = fmt::format(L"fany iseat: codeIn: {}, wch: {}, *pCodeOut: {}", codeIn, wch, *pCodeOut);
+    Global::LogMessageW(logMessage.c_str());
+#endif
     if ((wch == THIRDPARTY_NEXTPAGE) || (wch == THIRDPARTY_PREVPAGE))
     {
         // We always eat the above softkeyboard special keys
@@ -318,7 +324,8 @@ STDAPI CSampleIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lParam,
     *pIsEaten = _IsKeyEaten(pContext, (UINT)wParam, &code, &wch, &KeystrokeState);
 
 #ifdef FANY_DEBUG
-    Global::LogMessageW(L"Whether to eat it?");
+    std::wstring msg = L"Whether to eat it?" + std::to_wstring(*pIsEaten);
+    Global::LogMessageW(msg.c_str());
 #endif
 
     if (*pIsEaten)
