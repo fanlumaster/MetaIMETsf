@@ -2242,7 +2242,7 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyKeystrokeComposition(UINT uCode, _
         pKeystroke = _KeystrokeComposition.GetAt(i);
 
         if ((pKeystroke->VirtualKey == uCode) &&
-            (Global::ModifiersValue == 292 || Global::ModifiersValue == 36 ||
+            (Global::ModifiersValue == 36 || Global::ModifiersValue == 260 || Global::ModifiersValue == 292 ||
              Global::CheckModifiers(Global::ModifiersValue, pKeystroke->Modifiers)))
         {
             if (function == FUNCTION_NONE)
