@@ -23,9 +23,8 @@ find_package(Boost REQUIRED COMPONENTS locale)
 set(CMAKE_PREFIX_PATH "C:/Users/SonnyCalcr/EDisk/CppCodes/Libraries/AllLibs")
 # sqlite3
 find_package(SQLite3 REQUIRED CONFIG)
-# fmd and spdlog
+# fmd
 find_package(fmt REQUIRED)
-find_package(spdlog REQUIRED)
 
 include_directories("./src")
 include_directories("./src/Candidate")
@@ -165,4 +164,4 @@ add_library(DeerWritingBrush SHARED
     "./src/DictEngine/PinyinUtils.h"
 )
 
-target_link_libraries(DeerWritingBrush PRIVATE SQLite3::sqlite3 fmt::fmt spdlog::spdlog Boost::locale)
+target_link_libraries(DeerWritingBrush PRIVATE SQLite3::sqlite3 fmt::fmt Boost::locale)

@@ -274,6 +274,10 @@ STDAPI CSampleIME::ActivateEx(ITfThreadMgr *pThreadMgr, TfClientId tfClientId, D
 
     SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
+#ifdef FANY_DEBUG
+    Global::LogMessageW(L"CSampleIME::ActivateEx");
+#endif
+
     return S_OK;
 
 ExitError:
