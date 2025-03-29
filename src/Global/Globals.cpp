@@ -9,6 +9,7 @@
 #include <string>
 #include <ctime>
 #include "FanyUtils.h"
+#include <boost/locale.hpp>
 
 namespace Global
 {
@@ -525,50 +526,12 @@ void LogWideString(const WCHAR *pwch, DWORD_PTR dwLength)
 
 std::wstring string_to_wstring(const std::string &str)
 {
-    if (str.empty())
-        return L"";
-
-    // Get buffer size needed
-    int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), nullptr, 0);
-    if (size_needed <= 0)
-    {
-        throw std::runtime_error("MultiByteToWideChar failed");
-    }
-
-    // allocate size for buffer
-    std::wstring wstr(size_needed, 0);
-
-    // Do convert here
-    int result = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), &wstr[0], size_needed);
-    if (result <= 0)
-    {
-        throw std::runtime_error("MultiByteToWideChar failed");
-    }
-
-    return wstr;
+    return boost::locale::conv::utf_to_utf<wchar_t>(str);
 }
 
 std::string wstring_to_string(const std::wstring &wstr)
 {
-    if (wstr.empty())
-        return "";
-
-    int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
-    if (size_needed <= 0)
-    {
-        throw std::runtime_error("WideCharToMultiByte failed");
-    }
-
-    std::string str(size_needed, 0);
-
-    int result =
-        WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(), &str[0], size_needed, nullptr, nullptr);
-    if (result <= 0)
-    {
-        throw std::runtime_error("WideCharToMultiByte failed");
-    }
-
-    return str;
+    return boost::locale::conv::utf_to_utf<std::string::value_type>(wstr);
 }
 
 } // namespace Global

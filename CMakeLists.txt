@@ -15,12 +15,17 @@ add_definitions(
 #     /DFANY_DEBUG=1
 # )
 
-set(USERNAME "$ENV{USERNAME}")
-set(BOOST_VERSION "1.87.0")
-set(BOOST_INCLUDE_DIR "C:/Users/${USERNAME}/scoop/apps/boost/${BOOST_VERSION}")
+# Boost
+set(Boost_ROOT "C:/Users/SonnyCalcr/scoop/apps/boost/1.87.0")
+set (Boost_USE_STATIC_LIBS ON)
+find_package(Boost REQUIRED COMPONENTS locale)
 
 set(CMAKE_PREFIX_PATH "C:/Users/SonnyCalcr/EDisk/CppCodes/Libraries/AllLibs")
+# sqlite3
 find_package(SQLite3 REQUIRED CONFIG)
+# fmd and spdlog
+find_package(fmt REQUIRED)
+find_package(spdlog REQUIRED)
 
 include_directories("./src")
 include_directories("./src/Candidate")
@@ -41,7 +46,6 @@ include_directories("./src/Tf")
 include_directories("./src/Thread")
 include_directories("./src/Utils")
 include_directories("./src/Window")
-include_directories(${BOOST_INCLUDE_DIR})
 
 add_library(DeerWritingBrush SHARED
     # Candidate
@@ -161,4 +165,4 @@ add_library(DeerWritingBrush SHARED
     "./src/DictEngine/PinyinUtils.h"
 )
 
-target_link_libraries(DeerWritingBrush PRIVATE SQLite3::sqlite3)
+target_link_libraries(DeerWritingBrush PRIVATE SQLite3::sqlite3 fmt::fmt spdlog::spdlog Boost::locale)
