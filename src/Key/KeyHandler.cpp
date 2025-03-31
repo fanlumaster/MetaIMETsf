@@ -560,7 +560,6 @@ HRESULT CSampleIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITfConte
     std::wstring msg = L"You pressed punctuation key: ";
     msg += wch;
     Global::LogMessageW(msg.c_str());
-    Global::LogMessageW(L".");
 #endif
     if (_candidateMode != CANDIDATE_NONE && _pCandidateListUIPresenter)
     {
@@ -586,7 +585,18 @@ HRESULT CSampleIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITfConte
     WCHAR punctuation = pCompositionProcessorEngine->GetPunctuation(wch);
 
     CStringRange punctuationString;
-    punctuationString.Set(&punctuation, 1);
+    if (punctuation == L'…')
+    {
+        punctuationString.Set(L"……", 2);
+    }
+    else if (punctuation == L'—')
+    {
+        punctuationString.Set(L"——", 2);
+    }
+    else
+    {
+        punctuationString.Set(&punctuation, 1);
+    }
 
     // Finalize character
     hr = _AddCharAndFinalize(ec, pContext, &punctuationString);

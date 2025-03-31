@@ -1145,7 +1145,9 @@ void CCompositionProcessorEngine::SetupPunctuationPair()
 {
     // Punctuation pair
     const int pair_count = 2;
+    // Left quotation mark and right quotation mark “”
     CPunctuationPair punc_quotation_mark(L'"', 0x201C, 0x201D);
+    // Left single quotation mark and right single quotation mark ‘’
     CPunctuationPair punc_apostrophe(L'\'', 0x2018, 0x2019);
 
     CPunctuationPair puncPairs[pair_count] = {
