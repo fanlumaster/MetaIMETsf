@@ -130,6 +130,8 @@ extern USHORT ModifiersValue;
 extern BOOL IsShiftKeyDownOnly;
 extern BOOL IsControlKeyDownOnly;
 extern BOOL IsAltKeyDownOnly;
+extern BOOL PureShiftKeyDown;
+extern BOOL PureShiftKeyUp;
 
 extern const GUID SampleIMEGuidCompartmentDoubleSingleByte;
 extern const GUID SampleIMEGuidCompartmentPunctuation;

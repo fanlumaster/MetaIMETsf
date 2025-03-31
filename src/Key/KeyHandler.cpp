@@ -11,7 +11,9 @@
 #include "SampleIME.h"
 #include "CandidateListUIPresenter.h"
 #include "CompositionProcessorEngine.h"
+#include "SampleIMEBaseStructure.h"
 #include <string>
+#include "Utils/FanyUtils.h"
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -98,6 +100,28 @@ HRESULT CSampleIME::_HandleCancel(TfEditCookie ec, _In_ ITfContext *pContext)
     _DeleteCandidateList(FALSE, pContext);
 
     _TerminateComposition(ec, pContext);
+
+    return S_OK;
+}
+
+HRESULT CSampleIME::_HandleToogleIMEMode(TfEditCookie ec, _In_ ITfContext *pContext)
+{
+    CStringRange keyStrokebuffer = _pCompositionProcessorEngine->GetKeystrokeBuffer();
+    if (keyStrokebuffer.GetLength())
+    {
+        std::wstring keyStrokeString(keyStrokebuffer.Get(), keyStrokebuffer.GetLength());
+        FanyUtuils::SendKeys(keyStrokeString);
+    }
+    _RemoveDummyCompositionForComposing(ec, _pComposition);
+
+    _DeleteCandidateList(FALSE, pContext);
+
+    _TerminateComposition(ec, pContext);
+
+    CCompositionProcessorEngine *pCompositionProcessorEngine;
+    pCompositionProcessorEngine = _pCompositionProcessorEngine;
+
+    pCompositionProcessorEngine->ToggleIMEMode(_GetThreadMgr(), _GetClientId());
 
     return S_OK;
 }

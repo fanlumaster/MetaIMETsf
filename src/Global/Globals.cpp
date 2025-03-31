@@ -338,6 +338,8 @@ USHORT ModifiersValue = 0;
 BOOL IsShiftKeyDownOnly = FALSE;
 BOOL IsControlKeyDownOnly = FALSE;
 BOOL IsAltKeyDownOnly = FALSE;
+BOOL PureShiftKeyDown = FALSE;
+BOOL PureShiftKeyUp = FALSE;
 
 BOOL UpdateModifiers(WPARAM wParam, LPARAM lParam)
 {
@@ -346,6 +348,8 @@ BOOL UpdateModifiers(WPARAM wParam, LPARAM lParam)
     SHORT sksMenu = GetKeyState(VK_MENU);
     SHORT sksCtrl = GetKeyState(VK_CONTROL);
     SHORT sksShft = GetKeyState(VK_SHIFT);
+
+    PureShiftKeyUp = FALSE;
 
     switch (wParam & 0xff)
     {
@@ -413,10 +417,11 @@ BOOL UpdateModifiers(WPARAM wParam, LPARAM lParam)
         }
         break;
 
-    case VK_SHIFT:
+    case VK_SHIFT: {
         // is VK_SHIFT down?
         if (sksShft & 0x8000)
         {
+            PureShiftKeyDown = TRUE;
             // is scan code 0x36(right shift)?
             if (((lParam >> 16) & 0x00ff) == 0x36)
             {
@@ -443,12 +448,19 @@ BOOL UpdateModifiers(WPARAM wParam, LPARAM lParam)
                 }
             }
         }
+        else
+        {
+            if (PureShiftKeyDown)
+                PureShiftKeyUp = TRUE;
+        }
         break;
+    }
 
     default:
         IsShiftKeyDownOnly = FALSE;
         IsControlKeyDownOnly = FALSE;
         IsAltKeyDownOnly = FALSE;
+        PureShiftKeyDown = FALSE;
         break;
     }
 

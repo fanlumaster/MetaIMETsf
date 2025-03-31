@@ -718,11 +718,11 @@ void CCompositionProcessorEngine::SetKeystrokeTable(_Inout_ CSampleImeArray<_KEY
 
 void CCompositionProcessorEngine::SetupPreserved(_In_ ITfThreadMgr *pThreadMgr, TfClientId tfClientId)
 {
-    TF_PRESERVEDKEY preservedKeyImeMode;
-    preservedKeyImeMode.uVKey = VK_SHIFT;
-    preservedKeyImeMode.uModifiers = _TF_MOD_ON_KEYUP_SHIFT_ONLY;
-    SetPreservedKey(Global::SampleIMEGuidImeModePreserveKey, preservedKeyImeMode, Global::ImeModeDescription,
-                    &_PreservedKey_IMEMode);
+    // TF_PRESERVEDKEY preservedKeyImeMode;
+    // preservedKeyImeMode.uVKey = VK_SHIFT;
+    // preservedKeyImeMode.uModifiers = _TF_MOD_ON_KEYUP_SHIFT_ONLY;
+    // SetPreservedKey(Global::SampleIMEGuidImeModePreserveKey, preservedKeyImeMode, Global::ImeModeDescription,
+    //                 &_PreservedKey_IMEMode);
 
     TF_PRESERVEDKEY preservedKeyDoubleSingleByte;
     preservedKeyDoubleSingleByte.uVKey = VK_SPACE;
@@ -736,7 +736,7 @@ void CCompositionProcessorEngine::SetupPreserved(_In_ ITfThreadMgr *pThreadMgr, 
     SetPreservedKey(Global::SampleIMEGuidPunctuationPreserveKey, preservedKeyPunctuation,
                     Global::PunctuationDescription, &_PreservedKey_Punctuation);
 
-    InitPreservedKey(&_PreservedKey_IMEMode, pThreadMgr, tfClientId);
+    // InitPreservedKey(&_PreservedKey_IMEMode, pThreadMgr, tfClientId);
     InitPreservedKey(&_PreservedKey_DoubleSingleByte, pThreadMgr, tfClientId);
     InitPreservedKey(&_PreservedKey_Punctuation, pThreadMgr, tfClientId);
 
@@ -903,6 +903,25 @@ void CCompositionProcessorEngine::OnPreservedKey(REFGUID rguid, _Out_ BOOL *pIsE
         *pIsEaten = FALSE;
     }
     *pIsEaten = TRUE;
+}
+
+//+---------------------------------------------------------------------------
+//
+// ToggleIMEMode
+//
+//----------------------------------------------------------------------------
+void CCompositionProcessorEngine::ToggleIMEMode(_In_ ITfThreadMgr *pThreadMgr, TfClientId tfClientId)
+{
+    BOOL isOpen = FALSE;
+    CCompartment CompartmentKeyboardOpen(pThreadMgr, tfClientId, GUID_COMPARTMENT_KEYBOARD_OPENCLOSE);
+    CompartmentKeyboardOpen._GetCompartmentBOOL(isOpen);
+    CompartmentKeyboardOpen._SetCompartmentBOOL(isOpen ? FALSE : TRUE);
+
+    // Also toggle punctuation mode
+    BOOL isPunctuation = FALSE;
+    CCompartment CompartmentPunctuation(pThreadMgr, tfClientId, Global::SampleIMEGuidCompartmentPunctuation);
+    CompartmentPunctuation._GetCompartmentBOOL(isPunctuation);
+    CompartmentPunctuation._SetCompartmentBOOL(isPunctuation ? FALSE : TRUE);
 }
 
 //+---------------------------------------------------------------------------
@@ -1681,6 +1700,10 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCH
                 pKeyState->Category = CATEGORY_COMPOSING;
                 pKeyState->Function = FUNCTION_CONVERT_WILDCARD;
             }
+            return TRUE;
+        }
+        if (Global::PureShiftKeyUp)
+        {
             return TRUE;
         }
     }

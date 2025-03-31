@@ -67,6 +67,9 @@ class CCompositionProcessorEngine
     // Preserved key handler
     void OnPreservedKey(REFGUID rguid, _Out_ BOOL *pIsEaten, _In_ ITfThreadMgr *pThreadMgr, TfClientId tfClientId);
 
+    // Toggle IME Mode
+    void ToggleIMEMode(_In_ ITfThreadMgr *pThreadMgr, TfClientId tfClientId);
+
     // Punctuation
     BOOL IsPunctuation(WCHAR wch);
     WCHAR GetPunctuation(WCHAR wch);

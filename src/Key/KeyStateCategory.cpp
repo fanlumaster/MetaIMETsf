@@ -7,6 +7,7 @@
 
 #include "KeyStateCategory.h"
 #include "Globals.h"
+#include "SampleIMEBaseStructure.h"
 
 CKeyStateCategoryFactory *CKeyStateCategoryFactory::_instance;
 
@@ -109,6 +110,9 @@ HRESULT CKeyStateCategory::KeyStateHandler(KEYSTROKE_FUNCTION function, KeyHandl
     case FUNCTION_CANCEL:
         return HandleKeyCancel(dto);
 
+    case FUNCTION_TOGGLE_IME_MODE:
+        return HandleKeyToogleIMEMode(dto);
+
     case FUNCTION_BACKSPACE:
         return HandleKeyBackspace(dto);
 
@@ -206,6 +210,12 @@ HRESULT CKeyStateCategory::HandleKeyCancel(KeyHandlerEditSessionDTO dto)
     return E_NOTIMPL;
 }
 
+HRESULT CKeyStateCategory::HandleKeyToogleIMEMode(KeyHandlerEditSessionDTO dto)
+{
+    dto;
+    return E_NOTIMPL;
+}
+
 //_HandleCompositionBackspace
 HRESULT CKeyStateCategory::HandleKeyBackspace(KeyHandlerEditSessionDTO dto)
 {
@@ -289,6 +299,11 @@ HRESULT CKeyStateComposing::HandleKeyCancel(KeyHandlerEditSessionDTO dto)
     return _pTextService->_HandleCancel(dto.ec, dto.pContext);
 }
 
+HRESULT CKeyStateComposing::HandleKeyToogleIMEMode(KeyHandlerEditSessionDTO dto)
+{
+    return _pTextService->_HandleToogleIMEMode(dto.ec, dto.pContext);
+}
+
 HRESULT CKeyStateComposing::HandleKeyBackspace(KeyHandlerEditSessionDTO dto)
 {
     return _pTextService->_HandleCompositionBackspace(dto.ec, dto.pContext);
@@ -341,6 +356,7 @@ HRESULT CKeyStateCandidate::HandleKeyFinalizeCandidatelistAndInput(KeyHandlerEdi
 //_HandleCandidateConvert
 HRESULT CKeyStateCandidate::HandleKeyConvert(KeyHandlerEditSessionDTO dto)
 {
+    // Send candidate string to client when pressing space
     return _pTextService->_HandleCandidateConvert(dto.ec, dto.pContext);
 }
 

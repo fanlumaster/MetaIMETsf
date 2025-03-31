@@ -112,6 +112,7 @@ class CSampleIME : public ITfTextInputProcessorEx,
     // key event handlers for composition/candidate/phrase common objects.
     HRESULT _HandleComplete(TfEditCookie ec, _In_ ITfContext *pContext);
     HRESULT _HandleCancel(TfEditCookie ec, _In_ ITfContext *pContext);
+    HRESULT _HandleToogleIMEMode(TfEditCookie ec, _In_ ITfContext *pContext);
 
     // key event handlers for composition object.
     HRESULT _HandleCompositionInput(TfEditCookie ec, _In_ ITfContext *pContext, WCHAR wch);

@@ -12,6 +12,7 @@
 #include "CompositionProcessorEngine.h"
 #include "KeyHandlerEditSession.h"
 #include "Compartment.h"
+#include "SampleIMEBaseStructure.h"
 #include "fmt/format.h"
 #include "fmt/xchar.h"
 
@@ -400,10 +401,25 @@ STDAPI CSampleIME::OnKeyUp(ITfContext *pContext, WPARAM wParam, LPARAM lParam, B
 {
     Global::UpdateModifiers(wParam, lParam);
 
+    _KEYSTROKE_STATE KeystrokeState;
     WCHAR wch = '\0';
     UINT code = 0;
+    *pIsEaten = _IsKeyEaten(pContext, (UINT)wParam, &code, &wch, &KeystrokeState);
 
-    *pIsEaten = _IsKeyEaten(pContext, (UINT)wParam, &code, &wch, NULL);
+#ifdef FANY_DEBUG
+    Global::LogMessageW(L"fanyfull ITfKeyEventSink::OnKeyUp");
+    Global::LogMessageW(fmt::format(L"Global::PureShiftKeyUp: {}", Global::PureShiftKeyUp).c_str());
+#endif
+
+    if (code == VK_SHIFT)
+    {
+        if (Global::PureShiftKeyUp)
+        {
+            KeystrokeState.Category = CATEGORY_COMPOSING;
+            KeystrokeState.Function = FUNCTION_TOGGLE_IME_MODE;
+            _InvokeKeyHandler(pContext, code, wch, (DWORD)lParam, KeystrokeState);
+        }
+    }
 
     return S_OK;
 }

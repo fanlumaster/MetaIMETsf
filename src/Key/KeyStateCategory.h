@@ -85,6 +85,9 @@ class CKeyStateCategory
     // HandleKeyCancel
     virtual HRESULT HandleKeyCancel(KeyHandlerEditSessionDTO dto);
 
+    // _HandleKeyToogleIMEMode
+    virtual HRESULT HandleKeyToogleIMEMode(KeyHandlerEditSessionDTO dto);
+
     // HandleKeyBackspace
     virtual HRESULT HandleKeyBackspace(KeyHandlerEditSessionDTO dto);
 
@@ -133,6 +136,9 @@ class CKeyStateComposing : public CKeyStateCategory
 
     // HandleCancel
     HRESULT HandleKeyCancel(KeyHandlerEditSessionDTO dto);
+
+    // HandleKeyToogleIMEMode
+    HRESULT HandleKeyToogleIMEMode(KeyHandlerEditSessionDTO dto);
 
     // HandleCompositionBackspace
     HRESULT HandleKeyBackspace(KeyHandlerEditSessionDTO dto);
