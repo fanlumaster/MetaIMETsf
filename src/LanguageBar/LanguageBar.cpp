@@ -313,8 +313,14 @@ void CLangBarItemButton::SetStatus(DWORD dwStatus, BOOL fSet)
     {
         if (!(_status & dwStatus))
         {
-            _status |= dwStatus;
+            // _status |= dwStatus;
+            _status &= ~dwStatus;
             isChange = TRUE;
+        }
+
+        if (isChange && _pLangBarItemSink)
+        {
+            _pLangBarItemSink->OnUpdate(TF_LBI_STATUS | TF_LBI_ICON);
         }
     }
     else
@@ -324,11 +330,11 @@ void CLangBarItemButton::SetStatus(DWORD dwStatus, BOOL fSet)
             _status &= ~dwStatus;
             isChange = TRUE;
         }
-    }
 
-    if (isChange && _pLangBarItemSink)
-    {
-        _pLangBarItemSink->OnUpdate(TF_LBI_STATUS | TF_LBI_ICON);
+        if (isChange && _pLangBarItemSink)
+        {
+            _pLangBarItemSink->OnUpdate(TF_LBI_STATUS | TF_LBI_ICON);
+        }
     }
 
     return;
