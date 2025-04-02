@@ -1,3 +1,4 @@
+#include "FanyUtils.h"
 #include "Private.h"
 #include "Globals.h"
 #include "SampleIME.h"
@@ -8,6 +9,9 @@
 #include "SampleIMEBaseStructure.h"
 #include "fmt/format.h"
 #include "fmt/xchar.h"
+#include <atlbase.h>
+#include <string>
+#include <boost/lexical_cast.hpp>
 
 // 0xF003, 0xF004 are the keys that the touch keyboard sends for next/previous
 #define THIRDPARTY_NEXTPAGE static_cast<WORD>(0xF003)
@@ -345,6 +349,24 @@ STDAPI CSampleIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lParam,
 
         if (needInvokeKeyHandler)
         {
+            TF_STATUS tfStatus;
+            if (SUCCEEDED(pContext->GetStatus(&tfStatus)))
+            {
+                if (tfStatus.dwDynamicFlags & TF_SD_READONLY)
+                {
+                    FanyUtuils::SendKeys(boost::lexical_cast<std::wstring>(wch));
+#ifdef FANY_DEBUG
+                    Global::LogMessageW(L"pContext is read-only");
+#endif
+                }
+                else
+                {
+#ifdef FANY_DEBUG
+                    Global::LogMessageW(L"pContext is editable");
+#endif
+                }
+            }
+
             _InvokeKeyHandler(pContext, code, wch, (DWORD)lParam, KeystrokeState);
         }
     }
