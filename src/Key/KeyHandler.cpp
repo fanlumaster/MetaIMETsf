@@ -113,8 +113,6 @@ HRESULT CSampleIME::_HandleToogleIMEMode(TfEditCookie ec, _In_ ITfContext *pCont
 
     _TerminateComposition(ec, pContext);
 
-    Global::LogMessageW(L"Here?");
-
     // CCompositionProcessorEngine *pCompositionProcessorEngine;
     // pCompositionProcessorEngine = _pCompositionProcessorEngine;
 
