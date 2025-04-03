@@ -841,7 +841,7 @@ BOOL CCompositionProcessorEngine::CheckShiftKeyOnly(_In_ CSampleImeArray<TF_PRES
 //----------------------------------------------------------------------------
 
 void CCompositionProcessorEngine::OnPreservedKey(ITfContext *pContext, REFGUID rguid, _Out_ BOOL *pIsEaten, _In_ ITfThreadMgr *pThreadMgr,
-                                                 TfClientId tfClientId)
+                                                 TfClientId tfClientId, BOOL *pNeedToggleIMEMode)
 {
     if (IsEqualGUID(rguid, _PreservedKey_IMEMode.Guid))
     {
@@ -862,6 +862,7 @@ void CCompositionProcessorEngine::OnPreservedKey(ITfContext *pContext, REFGUID r
         CompartmentPunctuation._SetCompartmentBOOL(isPunctuation ? FALSE : TRUE);
 
         *pIsEaten = TRUE;
+        *pNeedToggleIMEMode = TRUE;
     }
     else if (IsEqualGUID(rguid, _PreservedKey_DoubleSingleByte.Guid))
     {

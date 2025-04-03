@@ -426,15 +426,15 @@ STDAPI CSampleIME::OnKeyUp(ITfContext *pContext, WPARAM wParam, LPARAM lParam, B
     Global::LogMessageW(fmt::format(L"Global::PureShiftKeyUp: {}", Global::PureShiftKeyUp).c_str());
 #endif
 
-    if (code == VK_SHIFT)
-    {
-        if (Global::PureShiftKeyUp)
-        {
-            KeystrokeState.Category = CATEGORY_COMPOSING;
-            KeystrokeState.Function = FUNCTION_TOGGLE_IME_MODE;
-            _InvokeKeyHandler(pContext, code, wch, (DWORD)lParam, KeystrokeState);
-        }
-    }
+    // if (code == VK_SHIFT)
+    // {
+    //     if (Global::PureShiftKeyUp)
+    //     {
+    //         KeystrokeState.Category = CATEGORY_COMPOSING;
+    //         KeystrokeState.Function = FUNCTION_TOGGLE_IME_MODE;
+    //         _InvokeKeyHandler(pContext, code, wch, (DWORD)lParam, KeystrokeState);
+    //     }
+    // }
 
     return S_OK;
 }
@@ -450,17 +450,23 @@ STDAPI CSampleIME::OnPreservedKey(ITfContext *pContext, REFGUID rguid, BOOL *pIs
 {
     pContext;
 
-    _KEYSTROKE_STATE KeystrokeState;
-    WCHAR wch = '\0';
-    UINT code = 0;
-    KeystrokeState.Category = CATEGORY_COMPOSING;
-    KeystrokeState.Function = FUNCTION_TOGGLE_IME_MODE;
-    _InvokeKeyHandler(pContext, code, wch, (DWORD)0, KeystrokeState);
-
     CCompositionProcessorEngine *pCompositionProcessorEngine;
     pCompositionProcessorEngine = _pCompositionProcessorEngine;
 
-    pCompositionProcessorEngine->OnPreservedKey(pContext, rguid, pIsEaten, _GetThreadMgr(), _GetClientId());
+    BOOL pNeedToggleIMEMode = FALSE;
+
+    pCompositionProcessorEngine->OnPreservedKey(pContext, rguid, pIsEaten, _GetThreadMgr(), _GetClientId(),
+                                                &pNeedToggleIMEMode);
+
+    if (pNeedToggleIMEMode)
+    {
+        _KEYSTROKE_STATE KeystrokeState;
+        WCHAR wch = '\0';
+        UINT code = 0;
+        KeystrokeState.Category = CATEGORY_COMPOSING;
+        KeystrokeState.Function = FUNCTION_TOGGLE_IME_MODE;
+        _InvokeKeyHandler(pContext, code, wch, (DWORD)0, KeystrokeState);
+    }
 
     return S_OK;
 }

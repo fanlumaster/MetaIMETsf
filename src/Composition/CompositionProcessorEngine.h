@@ -59,7 +59,7 @@ class CCompositionProcessorEngine
 
     // Preserved key handler
     void OnPreservedKey(ITfContext *pContext, REFGUID rguid, _Out_ BOOL *pIsEaten, _In_ ITfThreadMgr *pThreadMgr,
-                        TfClientId tfClientId);
+                        TfClientId tfClientId, BOOL *pNeedToggleIMEMode);
 
     // Toggle IME Mode
     void ToggleIMEMode(_In_ ITfThreadMgr *pThreadMgr, TfClientId tfClientId);
