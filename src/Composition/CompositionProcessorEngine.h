@@ -58,7 +58,8 @@ class CCompositionProcessorEngine
                                        _In_ CSampleImeArray<CCandidateListItem> *pCandidateList);
 
     // Preserved key handler
-    void OnPreservedKey(REFGUID rguid, _Out_ BOOL *pIsEaten, _In_ ITfThreadMgr *pThreadMgr, TfClientId tfClientId);
+    void OnPreservedKey(ITfContext *pContext, REFGUID rguid, _Out_ BOOL *pIsEaten, _In_ ITfThreadMgr *pThreadMgr,
+                        TfClientId tfClientId);
 
     // Toggle IME Mode
     void ToggleIMEMode(_In_ ITfThreadMgr *pThreadMgr, TfClientId tfClientId);

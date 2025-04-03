@@ -711,11 +711,11 @@ void CCompositionProcessorEngine::SetKeystrokeTable(_Inout_ CSampleImeArray<_KEY
 
 void CCompositionProcessorEngine::SetupPreserved(_In_ ITfThreadMgr *pThreadMgr, TfClientId tfClientId)
 {
-    // TF_PRESERVEDKEY preservedKeyImeMode;
-    // preservedKeyImeMode.uVKey = VK_SHIFT;
-    // preservedKeyImeMode.uModifiers = _TF_MOD_ON_KEYUP_SHIFT_ONLY;
-    // SetPreservedKey(Global::SampleIMEGuidImeModePreserveKey, preservedKeyImeMode, Global::ImeModeDescription,
-    //                 &_PreservedKey_IMEMode);
+    TF_PRESERVEDKEY preservedKeyImeMode;
+    preservedKeyImeMode.uVKey = VK_SHIFT;
+    preservedKeyImeMode.uModifiers = _TF_MOD_ON_KEYUP_SHIFT_ONLY;
+    SetPreservedKey(Global::SampleIMEGuidImeModePreserveKey, preservedKeyImeMode, Global::ImeModeDescription,
+                    &_PreservedKey_IMEMode);
 
     TF_PRESERVEDKEY preservedKeyDoubleSingleByte;
     preservedKeyDoubleSingleByte.uVKey = VK_SPACE;
@@ -729,7 +729,7 @@ void CCompositionProcessorEngine::SetupPreserved(_In_ ITfThreadMgr *pThreadMgr, 
     SetPreservedKey(Global::SampleIMEGuidPunctuationPreserveKey, preservedKeyPunctuation,
                     Global::PunctuationDescription, &_PreservedKey_Punctuation);
 
-    // InitPreservedKey(&_PreservedKey_IMEMode, pThreadMgr, tfClientId);
+    InitPreservedKey(&_PreservedKey_IMEMode, pThreadMgr, tfClientId);
     InitPreservedKey(&_PreservedKey_DoubleSingleByte, pThreadMgr, tfClientId);
     InitPreservedKey(&_PreservedKey_Punctuation, pThreadMgr, tfClientId);
 
@@ -840,7 +840,7 @@ BOOL CCompositionProcessorEngine::CheckShiftKeyOnly(_In_ CSampleImeArray<TF_PRES
 //
 //----------------------------------------------------------------------------
 
-void CCompositionProcessorEngine::OnPreservedKey(REFGUID rguid, _Out_ BOOL *pIsEaten, _In_ ITfThreadMgr *pThreadMgr,
+void CCompositionProcessorEngine::OnPreservedKey(ITfContext *pContext, REFGUID rguid, _Out_ BOOL *pIsEaten, _In_ ITfThreadMgr *pThreadMgr,
                                                  TfClientId tfClientId)
 {
     if (IsEqualGUID(rguid, _PreservedKey_IMEMode.Guid))

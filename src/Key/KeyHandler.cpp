@@ -113,10 +113,12 @@ HRESULT CSampleIME::_HandleToogleIMEMode(TfEditCookie ec, _In_ ITfContext *pCont
 
     _TerminateComposition(ec, pContext);
 
-    CCompositionProcessorEngine *pCompositionProcessorEngine;
-    pCompositionProcessorEngine = _pCompositionProcessorEngine;
+    Global::LogMessageW(L"Here?");
 
-    pCompositionProcessorEngine->ToggleIMEMode(_GetThreadMgr(), _GetClientId());
+    // CCompositionProcessorEngine *pCompositionProcessorEngine;
+    // pCompositionProcessorEngine = _pCompositionProcessorEngine;
+
+    // pCompositionProcessorEngine->ToggleIMEMode(_GetThreadMgr(), _GetClientId());
 
     return S_OK;
 }
@@ -663,10 +665,8 @@ HRESULT CSampleIME::_InvokeKeyHandler(_In_ ITfContext *pContext, UINT code, WCHA
 
     // we'll insert a char ourselves in place of this keystroke
     pEditSession = new (std::nothrow) CKeyHandlerEditSession(this, pContext, code, wch, keyState);
-    Global::LogMessageW(L"fanyfull01 _InvokeKeyHandler");
     if (pEditSession == nullptr)
     {
-        Global::LogMessageW(L"fanyfull02 _InvokeKeyHandler");
         goto Exit;
     }
 
@@ -676,12 +676,6 @@ HRESULT CSampleIME::_InvokeKeyHandler(_In_ ITfContext *pContext, UINT code, WCHA
     // Do not specify TF_ES_SYNC so edit session is not invoked on WinWord
     //
     hr = pContext->RequestEditSession(_tfClientId, pEditSession, TF_ES_ASYNCDONTCARE | TF_ES_READWRITE, &hr);
-    if (FAILED(hr))
-    {
-        Global::LogMessageW(L"fanyfull03 _InvokeKeyHandler");
-    }
-
-    Global::LogMessageW(fmt::format(L"fanyfull04 _InvokeKeyHandler hr: {}", hr).c_str());
 
     pEditSession->Release();
 

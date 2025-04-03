@@ -450,10 +450,17 @@ STDAPI CSampleIME::OnPreservedKey(ITfContext *pContext, REFGUID rguid, BOOL *pIs
 {
     pContext;
 
+    _KEYSTROKE_STATE KeystrokeState;
+    WCHAR wch = '\0';
+    UINT code = 0;
+    KeystrokeState.Category = CATEGORY_COMPOSING;
+    KeystrokeState.Function = FUNCTION_TOGGLE_IME_MODE;
+    _InvokeKeyHandler(pContext, code, wch, (DWORD)0, KeystrokeState);
+
     CCompositionProcessorEngine *pCompositionProcessorEngine;
     pCompositionProcessorEngine = _pCompositionProcessorEngine;
 
-    pCompositionProcessorEngine->OnPreservedKey(rguid, pIsEaten, _GetThreadMgr(), _GetClientId());
+    pCompositionProcessorEngine->OnPreservedKey(pContext, rguid, pIsEaten, _GetThreadMgr(), _GetClientId());
 
     return S_OK;
 }
