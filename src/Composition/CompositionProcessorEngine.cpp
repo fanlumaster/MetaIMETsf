@@ -719,7 +719,7 @@ void CCompositionProcessorEngine::SetupPreserved(_In_ ITfThreadMgr *pThreadMgr, 
 
     TF_PRESERVEDKEY preservedKeyDoubleSingleByte;
     preservedKeyDoubleSingleByte.uVKey = VK_SPACE;
-    preservedKeyDoubleSingleByte.uModifiers = TF_MOD_SHIFT;
+    preservedKeyDoubleSingleByte.uModifiers = TF_MOD_SHIFT | TF_MOD_CONTROL;
     SetPreservedKey(Global::SampleIMEGuidDoubleSingleBytePreserveKey, preservedKeyDoubleSingleByte,
                     Global::DoubleSingleByteDescription, &_PreservedKey_DoubleSingleByte);
 
@@ -840,8 +840,9 @@ BOOL CCompositionProcessorEngine::CheckShiftKeyOnly(_In_ CSampleImeArray<TF_PRES
 //
 //----------------------------------------------------------------------------
 
-void CCompositionProcessorEngine::OnPreservedKey(ITfContext *pContext, REFGUID rguid, _Out_ BOOL *pIsEaten, _In_ ITfThreadMgr *pThreadMgr,
-                                                 TfClientId tfClientId, BOOL *pNeedToggleIMEMode)
+void CCompositionProcessorEngine::OnPreservedKey(ITfContext *pContext, REFGUID rguid, _Out_ BOOL *pIsEaten,
+                                                 _In_ ITfThreadMgr *pThreadMgr, TfClientId tfClientId,
+                                                 BOOL *pNeedToggleIMEMode)
 {
     if (IsEqualGUID(rguid, _PreservedKey_IMEMode.Guid))
     {
