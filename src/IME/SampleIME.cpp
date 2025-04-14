@@ -18,6 +18,7 @@
 #include "spdlog/spdlog.h"
 #include <spdlog/sinks/basic_file_sink.h>
 #include "FanyLog.h"
+#include "IPc.h"
 
 //+---------------------------------------------------------------------------
 //
@@ -236,6 +237,9 @@ STDAPI CSampleIME::ActivateEx(ITfThreadMgr *pThreadMgr, TfClientId tfClientId, D
     spdlog::flush_on(spdlog::level::info);
     spdlog::info("CSampleIME::ActivateEx fany!");
 
+    // Set up shared memory
+    InitIpc();
+
     if (!_InitThreadMgrEventSink())
     {
         goto ExitError;
@@ -304,6 +308,9 @@ STDAPI CSampleIME::Deactivate()
 {
     // Clean spdlog
     spdlog::drop("file_logger");
+
+    // Clean shared memory
+    CloseIpc();
 
     if (_pCompositionProcessorEngine)
     {
