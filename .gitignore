@@ -7,3 +7,4 @@ build32/
 draft/
 *.log
 CMakeSettings.json
+log.txt

@@ -15,6 +15,9 @@
 #include <winnt.h>
 #include <winuser.h>
 #include <Windows.h>
+#include "spdlog/spdlog.h"
+#include <spdlog/sinks/basic_file_sink.h>
+#include "FanyLog.h"
 
 //+---------------------------------------------------------------------------
 //
@@ -227,6 +230,12 @@ STDAPI CSampleIME::ActivateEx(ITfThreadMgr *pThreadMgr, TfClientId tfClientId, D
     _tfClientId = tfClientId;
     _dwActivateFlags = dwFlags;
 
+    // Set up spdlog
+    auto logger = spdlog::basic_logger_mt("file_logger", ::LogFilePath);
+    spdlog::set_default_logger(logger);
+    spdlog::flush_on(spdlog::level::info);
+    spdlog::info("CSampleIME::ActivateEx fany!");
+
     if (!_InitThreadMgrEventSink())
     {
         goto ExitError;
@@ -293,6 +302,9 @@ ExitError:
 
 STDAPI CSampleIME::Deactivate()
 {
+    // Clean spdlog
+    spdlog::drop("file_logger");
+
     if (_pCompositionProcessorEngine)
     {
         delete _pCompositionProcessorEngine;

@@ -12,6 +12,7 @@
 #include <atlbase.h>
 #include <string>
 #include <boost/lexical_cast.hpp>
+#include "spdlog/spdlog.h"
 
 // 0xF003, 0xF004 are the keys that the touch keyboard sends for next/previous
 #define THIRDPARTY_NEXTPAGE static_cast<WORD>(0xF003)
@@ -324,6 +325,7 @@ STDAPI CSampleIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lParam,
 #ifdef FANY_DEBUG
     std::wstring msg = L"Whether to eat it?" + std::to_wstring(*pIsEaten);
     Global::LogMessageW(msg.c_str());
+    spdlog::info("Whether to eat it? {}", *pIsEaten);
 #endif
 
     if (*pIsEaten)

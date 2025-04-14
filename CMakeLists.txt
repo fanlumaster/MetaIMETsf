@@ -23,8 +23,10 @@ find_package(Boost REQUIRED COMPONENTS locale)
 set(CMAKE_PREFIX_PATH "C:/Users/SonnyCalcr/EDisk/CppCodes/Libraries/AllLibs")
 # sqlite3
 find_package(SQLite3 REQUIRED CONFIG)
-# fmd
+# fmt
 find_package(fmt REQUIRED)
+# spdlog
+find_package(spdlog REQUIRED)
 
 include_directories("./src")
 include_directories("./src/Candidate")
@@ -34,10 +36,12 @@ include_directories("./src/DictEngine")
 include_directories("./src/DisplayAttribute")
 include_directories("./src/Drawing")
 include_directories("./src/Edit")
+include_directories("./src/FanyLog")
 include_directories("./src/File")
 include_directories("./src/Global")
 include_directories("./src/Header")
 include_directories("./src/IME")
+include_directories("./src/IPC")
 include_directories("./src/Key")
 include_directories("./src/LanguageBar")
 include_directories("./src/Register")
@@ -117,6 +121,9 @@ add_library(DeerWritingBrush SHARED
     "./src/IME/SampleIMEBaseStructure.cpp"
     "./src/IME/SampleIMEBaseStructure.h"
     "./src/IME/SampleIMEStructureArray.h"
+    # IPC
+    "./src/IPC/Ipc.cpp"
+    "./src/IPC/Ipc.h"
     # Key
     "./src/Key/KeyEventSink.cpp"
     "./src/Key/KeyHandler.cpp"
@@ -164,4 +171,4 @@ add_library(DeerWritingBrush SHARED
     "./src/DictEngine/PinyinUtils.h"
 )
 
-target_link_libraries(DeerWritingBrush PRIVATE SQLite3::sqlite3 fmt::fmt Boost::locale)
+target_link_libraries(DeerWritingBrush PRIVATE SQLite3::sqlite3 fmt::fmt Boost::locale spdlog::spdlog)
