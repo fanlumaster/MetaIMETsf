@@ -12,6 +12,8 @@ inline const std::vector<std::wstring> FANY_IME_EVENT_ARRAY = {
 
 struct FanyImeSharedMemoryData
 {
+    UINT keycode;
+    UINT modifiers = 0;
     int point[2] = {100, 100};
     int pinyin_length = 0;
     wchar_t pinyin_string[128];
@@ -21,3 +23,11 @@ struct FanyImeSharedMemoryData
 
 int InitIpc();
 int CloseIpc();
+int WriteDataToSharedMemory(           //
+    UINT keycode,                      //
+    UINT modifiers,                    //
+    const int point[2],                //
+    int pinyin_length,                 //
+    const std::wstring &pinyin_string, //
+    UINT write_flag                    //
+);

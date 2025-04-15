@@ -266,7 +266,7 @@ LRESULT CALLBACK CCandidateWindow::_WindowProcCallback(_In_ HWND wndHandle, UINT
         break;
 
     case WM_PAINT: {
-        _OnPaintWithWebview2();
+        // _OnPaintWithWebview2();
     }
         return 0;
 

@@ -5,10 +5,12 @@
 #include "CandidateListUIPresenter.h"
 #include "CompositionProcessorEngine.h"
 #include "SampleIMEBaseStructure.h"
+#include <minwindef.h>
 #include <string>
 #include "Utils/FanyUtils.h"
 #include "fmt/format.h"
 #include "fmt/xchar.h"
+#include "spdlog/spdlog.h"
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -195,12 +197,20 @@ HRESULT CSampleIME::_HandleCompositionInputWorker(_In_ CCompositionProcessorEngi
 {
     HRESULT hr = S_OK;
     CSampleImeArray<CStringRange> readingStrings;
-    BOOL isWildcardIncluded = TRUE;
+    BOOL isWildcardIncluded = FALSE;
 
     //
     // Get reading string from composition processor engine
     //
     pCompositionProcessorEngine->GetReadingStrings(&readingStrings, &isWildcardIncluded);
+
+    if (readingStrings.Count())
+    {
+#ifdef FANY_DEBUG
+        spdlog::info("composing reading strings count: {}", readingStrings.Count());
+        spdlog::info("composing reading strings: {}", readingStrings.GetAt(0)->GetLength());
+#endif
+    }
 
     for (UINT index = 0; index < readingStrings.Count(); index++)
     {

@@ -47,13 +47,12 @@ include_directories("./src/LanguageBar")
 include_directories("./src/Register")
 include_directories("./src/Tf")
 include_directories("./src/Thread")
+include_directories("./src/UI")
 include_directories("./src/Utils")
 include_directories("./src/Window")
 
 add_library(DeerWritingBrush SHARED
     # Candidate
-    "./src/Candidate/CandidateListUIPresenter.cpp"
-    "./src/Candidate/CandidateListUIPresenter.h"
     "./src/Candidate/EnumTfCandidates.cpp"
     "./src/Candidate/EnumTfCandidates.h"
     "./src/Candidate/SearchCandidateProvider.cpp"
@@ -146,6 +145,9 @@ add_library(DeerWritingBrush SHARED
     # Thread
     "./src/Thread/ThreadFocusSink.cpp"
     "./src/Thread/ThreadMgrEventSink.cpp"
+    # UI
+    "./src/UI/CandidateListUIPresenter.cpp"
+    "./src/UI/CandidateListUIPresenter.h"
     # Utils
     "./src/Utils/FanyUtils.cpp"
     "./src/Utils/FanyUtils.h"

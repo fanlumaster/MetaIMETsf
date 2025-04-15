@@ -24,6 +24,7 @@ CompileFlags:
       "-IC:/Users/SonnyCalcr/EDisk/CppCodes/IMECodes/DeerWritingBrush/src/Register",
       "-IC:/Users/SonnyCalcr/EDisk/CppCodes/IMECodes/DeerWritingBrush/src/Tf",
       "-IC:/Users/SonnyCalcr/EDisk/CppCodes/IMECodes/DeerWritingBrush/src/Thread",
+      "-IC:/Users/SonnyCalcr/EDisk/CppCodes/IMECodes/DeerWritingBrush/src/UI",
       "-IC:/Users/SonnyCalcr/EDisk/CppCodes/IMECodes/DeerWritingBrush/src/Utils",
       "-IC:/Users/SonnyCalcr/EDisk/CppCodes/IMECodes/DeerWritingBrush/src/Window",
       "-IC:/Users/SonnyCalcr/EDisk/CppCodes/IMECodes/DeerWritingBrush/sqlite",

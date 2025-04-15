@@ -2,6 +2,7 @@
 
 static HANDLE hMapFile;
 static void *pBuf;
+static FanyImeSharedMemoryData *sharedData;
 
 int InitIpc()
 {
@@ -40,7 +41,7 @@ int InitIpc()
     // Only initialize the shared memory when first created
     if (!alreadyExists)
     {
-        FanyImeSharedMemoryData *sharedData = static_cast<FanyImeSharedMemoryData *>(pBuf);
+        sharedData = static_cast<FanyImeSharedMemoryData *>(pBuf);
 
         // Initialize
         *sharedData = {};
@@ -99,6 +100,44 @@ int CloseIpc()
         {
             CloseHandle(hEvent);
         }
+    }
+
+    return 0;
+}
+
+int WriteDataToSharedMemory(           //
+    UINT keycode,                      //
+    UINT modifiers,                    //
+    const int point[2],                //
+    int pinyin_length,                 //
+    const std::wstring &pinyin_string, //
+    UINT write_flag                    //
+)
+{
+    if (write_flag >> 0 & 1u)
+    {
+        sharedData->keycode = keycode;
+    }
+
+    if (write_flag >> 1 & 1u)
+    {
+        sharedData->modifiers = modifiers;
+    }
+
+    if (write_flag >> 2 & 1u)
+    {
+        sharedData->point[0] = point[0];
+        sharedData->point[1] = point[1];
+    }
+
+    if (write_flag >> 3 & 1u)
+    {
+        sharedData->pinyin_length = pinyin_length;
+    }
+
+    if (write_flag >> 4 & 1u)
+    {
+        wcscpy_s(sharedData->pinyin_string, pinyin_string.c_str());
     }
 
     return 0;

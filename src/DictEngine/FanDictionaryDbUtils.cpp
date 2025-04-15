@@ -47,6 +47,8 @@ std::vector<std::string> FanDictionaryDb::SingleHanziList {
 std::vector<FanDictionaryDb::DbWordItem> FanDictionaryDb::Generate(const std::string code)
 {
     std::vector<DbWordItem> candidateList;
+    candidateList.push_back(std::make_tuple(code, code, 1));
+    return candidateList;
     if (code.size() == 0)
     {
         return candidateList;
