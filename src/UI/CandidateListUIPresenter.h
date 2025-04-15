@@ -74,7 +74,7 @@ class CCandidateListUIPresenter : public CTfTextLayoutSink,
                                         _In_ ITfRange *pRangeComposition, UINT wndWidth);
     void _EndCandidateList();
 
-    void _DrawListWithWebview2(_In_ UINT iIndex);
+    void _NotifyUI();
     void _SetText(_In_ CSampleImeArray<CCandidateListItem> *pCandidateList, BOOL isAddFindKeyCode);
     void _ClearList();
     VOID _SetTextColor(COLORREF crColor, COLORREF crBkColor);

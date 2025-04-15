@@ -9,6 +9,7 @@
 #include <intsafe.h>
 #include <minwindef.h>
 #include <winuser.h>
+#include "Ipc.h"
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -862,36 +863,12 @@ void CCandidateListUIPresenter::_EndCandidateList()
     _EndLayout();
 }
 
-void CCandidateListUIPresenter::_DrawListWithWebview2(_In_ UINT iIndex)
+void CCandidateListUIPresenter::_NotifyUI()
 {
-    std::wstring candWString = L"ni,1. 你好,2. 我们,3. 是的,4. 他们,5. 量子,6. 笔画,7. 什么,8. 可恶";
-    Global::CandidateWString = candWString;
-
-    HWND UIHwnd = FindWindow(L"global_candidate_window", NULL);
-    if (UIHwnd == NULL)
-    {
-        DWORD error = GetLastError();
-        std::wstring errorString = L"FindWindow failed with error: " + std::to_wstring(error);
-        Global::LogMessageW(errorString.c_str());
-    }
-    COPYDATASTRUCT cds;
-    cds.dwData = 1;
-    cds.cbData = (candWString.size() + 1) * sizeof(WCHAR);
-    cds.lpData = (PVOID)candWString.c_str();
-    LRESULT result = SendMessage(UIHwnd, WM_COPYDATA, (WPARAM)UIHwnd, (LPARAM)&cds);
-    if (result == 0)
-    {
-        DWORD error = GetLastError();
-        if (error != 0)
-        {
-            std::wstring errorString = L"SendMessage CandidateWString failed with error: " + std::to_wstring(error);
-            Global::LogMessageW(errorString.c_str());
-        }
-        else
-        {
-            Global::LogMessageW(L"SendMessage CandidateWString success, but result is 0");
-        }
-    }
+    CStringRange keyStringBuffer = _pTextService->GetCompositionProcessorEngine()->GetKeystrokeBuffer();
+    std::wstring pinyinString(keyStringBuffer.Get(), keyStringBuffer.GetLength());
+    WriteDataToSharedMemory(Global::Keycode, 0, Global::Point, Global::PinyinLength, Global::PinyinString, 0b11111);
+    SendKeyEventToUIProcess();
 }
 
 //+---------------------------------------------------------------------------
@@ -909,8 +886,8 @@ void CCandidateListUIPresenter::_SetText(_In_ CSampleImeArray<CCandidateListItem
 
     if (_isShowMode)
     {
-        _pCandidateWnd->_InvalidateRect();
-        _DrawListWithWebview2(0);
+        // _pCandidateWnd->_InvalidateRect();
+        _NotifyUI();
     }
     else
     {
@@ -1000,8 +977,8 @@ BOOL CCandidateListUIPresenter::_MoveSelection(_In_ int offSet)
     {
         if (_isShowMode)
         {
-            _pCandidateWnd->_InvalidateRect();
-            _DrawListWithWebview2(0);
+            // _pCandidateWnd->_InvalidateRect();
+            _NotifyUI();
         }
         else
         {
@@ -1048,8 +1025,8 @@ BOOL CCandidateListUIPresenter::_MovePage(_In_ int offSet)
     {
         if (_isShowMode)
         {
-            _pCandidateWnd->_InvalidateRect();
-            _DrawListWithWebview2(0);
+            // _pCandidateWnd->_InvalidateRect();
+            _NotifyUI();
         }
         else
         {

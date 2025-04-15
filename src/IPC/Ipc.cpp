@@ -1,4 +1,8 @@
 #include "Ipc.h"
+#include <handleapi.h>
+#include <minwindef.h>
+#include <winnt.h>
+#include "spdlog/spdlog.h"
 
 static HANDLE hMapFile;
 static void *pBuf;
@@ -107,7 +111,7 @@ int CloseIpc()
 
 int WriteDataToSharedMemory(           //
     UINT keycode,                      //
-    UINT modifiers,                    //
+    UINT modifiers_down,               //
     const int point[2],                //
     int pinyin_length,                 //
     const std::wstring &pinyin_string, //
@@ -121,7 +125,7 @@ int WriteDataToSharedMemory(           //
 
     if (write_flag >> 1 & 1u)
     {
-        sharedData->modifiers = modifiers;
+        sharedData->modifiers_down = modifiers_down;
     }
 
     if (write_flag >> 2 & 1u)
@@ -140,5 +144,29 @@ int WriteDataToSharedMemory(           //
         wcscpy_s(sharedData->pinyin_string, pinyin_string.c_str());
     }
 
+    return 0;
+}
+
+int SendKeyEventToUIProcess()
+{
+    HANDLE hEvent = OpenEventW(         //
+        EVENT_MODIFY_STATE,             //
+        FALSE,                          //
+        FANY_IME_EVENT_ARRAY[0].c_str() //
+    );                                  //
+
+    if (!hEvent)
+    {
+        // TODO: Error handling
+    }
+
+    if (!SetEvent(hEvent))
+    {
+        // TODO: Error handling
+        DWORD err = GetLastError();
+        spdlog::info("SetEvent error: {}", err);
+    }
+
+    CloseHandle(hEvent);
     return 0;
 }

@@ -1,4 +1,5 @@
 #include "FanyUtils.h"
+#include "IPc.h"
 #include "Private.h"
 #include "Globals.h"
 #include "SampleIME.h"
@@ -13,6 +14,7 @@
 #include <string>
 #include <boost/lexical_cast.hpp>
 #include "spdlog/spdlog.h"
+#include "Ipc.h"
 
 // 0xF003, 0xF004 are the keys that the touch keyboard sends for next/previous
 #define THIRDPARTY_NEXTPAGE static_cast<WORD>(0xF003)
@@ -321,6 +323,7 @@ STDAPI CSampleIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lParam,
     UINT code = 0;
 
     *pIsEaten = _IsKeyEaten(pContext, (UINT)wParam, &code, &wch, &KeystrokeState);
+    Global::Keycode = code;
 
 #ifdef FANY_DEBUG
     std::wstring msg = L"Whether to eat it?" + std::to_wstring(*pIsEaten);

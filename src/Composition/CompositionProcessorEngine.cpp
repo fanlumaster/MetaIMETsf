@@ -1,13 +1,11 @@
 ﻿#ifndef UNICODE
 #define UNICODE
-#include "FanDictionaryDbUtils.h"
 #endif
 
 #include "Private.h"
 #include "SampleIME.h"
 #include "CompositionProcessorEngine.h"
 #include "TableDictionaryEngine.h"
-#include "DictionarySearch.h"
 #include "TfInputProcessorProfile.h"
 #include "Globals.h"
 #include "Compartment.h"
@@ -17,6 +15,7 @@
 #include <string>
 #include "fmt/format.h"
 #include "fmt/xchar.h"
+#include "Ipc.h"
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -288,6 +287,9 @@ BOOL CCompositionProcessorEngine::AddVirtualKey(WCHAR wch)
     }
 
     _keystrokeBuffer.Set(pwch, srgKeystrokeBufLen + 1);
+
+    std::wstring keyString(pwch, srgKeystrokeBufLen + 1);
+    Global::PinyinString = keyString;
 
     return TRUE;
 }
