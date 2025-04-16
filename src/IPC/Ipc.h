@@ -7,7 +7,9 @@ inline const wchar_t *FANY_IME_SHARED_MEMORY = L"Local\\FanyImeSharedMemory";
 inline const int BUFFER_SIZE = 4096;
 
 inline const std::vector<std::wstring> FANY_IME_EVENT_ARRAY = {
-    L"FanyImeKeyEvent" // Event sent to UI process to notify time to update UI by new pinyin_string
+    L"FanyImeKeyEvent",           // Event sent to UI process to notify time to update UI by new pinyin_string
+    L"FanyHideCandidateWndEvent", // Event sent to UI process to notify time to hide candidate window
+    L"FanyShowCandidateWndEvent", // Event sent to UI process to notify time to show candidate window
 };
 
 struct FanyImeSharedMemoryData
@@ -32,6 +34,8 @@ int WriteDataToSharedMemory(           //
     UINT write_flag                    //
 );
 int SendKeyEventToUIProcess();
+int SendHideCandidateWndEventToUIProcess();
+int SendShowCandidateWndEventToUIProcess();
 
 namespace Global
 {

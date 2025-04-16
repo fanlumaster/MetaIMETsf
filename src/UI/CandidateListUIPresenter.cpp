@@ -1,4 +1,5 @@
 #include "Globals.h"
+#include "IPc.h"
 #include "Private.h"
 #include "SampleIME.h"
 #include "CandidateWindow.h"
@@ -837,6 +838,8 @@ HRESULT CCandidateListUIPresenter::_StartCandidateList(TfClientId tfClientId, _I
     RECT rcTextExt;
     if (SUCCEEDED(_GetTextExt(&rcTextExt)))
     {
+        Global::Point[0] = rcTextExt.left;
+        Global::Point[1] = rcTextExt.bottom;
         _LayoutChangeNotification(&rcTextExt);
     }
 
@@ -868,6 +871,7 @@ void CCandidateListUIPresenter::_NotifyUI()
     CStringRange keyStringBuffer = _pTextService->GetCompositionProcessorEngine()->GetKeystrokeBuffer();
     std::wstring pinyinString(keyStringBuffer.Get(), keyStringBuffer.GetLength());
     WriteDataToSharedMemory(Global::Keycode, 0, Global::Point, Global::PinyinLength, Global::PinyinString, 0b11111);
+    SendShowCandidateWndEventToUIProcess();
     SendKeyEventToUIProcess();
 }
 
@@ -1062,12 +1066,16 @@ void CCandidateListUIPresenter::_MoveWindowToTextExt()
 
 VOID CCandidateListUIPresenter::_LayoutChangeNotification(_In_ RECT *lpRect)
 {
+    /*
     RECT rectCandidate = {0, 0, 0, 0};
     POINT ptCandidate = {0, 0};
 
     _pCandidateWnd->_GetClientRect(&rectCandidate);
     _pCandidateWnd->_GetWindowExtent(lpRect, &rectCandidate, &ptCandidate);
     _pCandidateWnd->_Move(ptCandidate.x, ptCandidate.y);
+    */
+
+    /*
     HWND UIHwnd = FindWindow(L"global_candidate_window", NULL);
     if (UIHwnd == NULL)
     {
@@ -1096,6 +1104,7 @@ VOID CCandidateListUIPresenter::_LayoutChangeNotification(_In_ RECT *lpRect)
             Global::LogMessageW(L"SendMessage POINT success, but result is 0");
         }
     }
+    */
 }
 
 //+---------------------------------------------------------------------------
@@ -1392,9 +1401,9 @@ void CCandidateListUIPresenter::DisposeCandidateWindow()
     // Hide the global candidate window
     //
     // ShowWindow(Global::MainWindowHandle, SW_HIDE);
-    HWND UIHwnd = FindWindow(L"global_candidate_window", NULL);
-    UINT WM_HIDE_MAIN_WINDOW = RegisterWindowMessage(L"WM_HIDE_MAIN_WINDOW");
-    PostMessage(UIHwnd, WM_HIDE_MAIN_WINDOW, 0, 0);
+    // HWND UIHwnd = FindWindow(L"global_candidate_window", NULL);
+    // UINT WM_HIDE_MAIN_WINDOW = RegisterWindowMessage(L"WM_HIDE_MAIN_WINDOW");
+    SendHideCandidateWndEventToUIProcess();
 
     _pCandidateWnd->_Destroy();
 

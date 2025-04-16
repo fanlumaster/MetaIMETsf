@@ -3,6 +3,7 @@
 #include <minwindef.h>
 #include <winnt.h>
 #include "spdlog/spdlog.h"
+#include "Globals.h"
 
 static HANDLE hMapFile;
 static void *pBuf;
@@ -40,6 +41,7 @@ int InitIpc()
     if (!pBuf)
     {
         // Error handling
+        spdlog::info("MapViewOfFile error when activated: {}", GetLastError());
     }
 
     // Only initialize the shared memory when first created
@@ -67,6 +69,7 @@ int InitIpc()
         if (!hEvent)
         {
             // Error handling
+            spdlog::info("CreateEvent error: {}", Global::wstring_to_string(eventName));
         }
     }
 
@@ -153,6 +156,54 @@ int SendKeyEventToUIProcess()
         EVENT_MODIFY_STATE,             //
         FALSE,                          //
         FANY_IME_EVENT_ARRAY[0].c_str() //
+    );                                  //
+
+    if (!hEvent)
+    {
+        // TODO: Error handling
+    }
+
+    if (!SetEvent(hEvent))
+    {
+        // TODO: Error handling
+        DWORD err = GetLastError();
+        spdlog::info("SetEvent error: {}", err);
+    }
+
+    CloseHandle(hEvent);
+    return 0;
+}
+
+int SendHideCandidateWndEventToUIProcess()
+{
+    HANDLE hEvent = OpenEventW(         //
+        EVENT_MODIFY_STATE,             //
+        FALSE,                          //
+        FANY_IME_EVENT_ARRAY[1].c_str() // FanyHideCandidateWndEvent
+    );                                  //
+
+    if (!hEvent)
+    {
+        // TODO: Error handling
+    }
+
+    if (!SetEvent(hEvent))
+    {
+        // TODO: Error handling
+        DWORD err = GetLastError();
+        spdlog::info("SetEvent error: {}", err);
+    }
+
+    CloseHandle(hEvent);
+    return 0;
+}
+
+int SendShowCandidateWndEventToUIProcess()
+{
+    HANDLE hEvent = OpenEventW(         //
+        EVENT_MODIFY_STATE,             //
+        FALSE,                          //
+        FANY_IME_EVENT_ARRAY[2].c_str() // FanyShowCandidateWndEvent
     );                                  //
 
     if (!hEvent)
