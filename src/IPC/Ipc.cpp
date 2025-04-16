@@ -44,11 +44,10 @@ int InitIpc()
         spdlog::info("MapViewOfFile error when activated: {}", GetLastError());
     }
 
+    sharedData = static_cast<FanyImeSharedMemoryData *>(pBuf);
     // Only initialize the shared memory when first created
     if (!alreadyExists)
     {
-        sharedData = static_cast<FanyImeSharedMemoryData *>(pBuf);
-
         // Initialize
         *sharedData = {};
         sharedData->point[0] = 100;

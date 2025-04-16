@@ -239,6 +239,7 @@ STDAPI CSampleIME::ActivateEx(ITfThreadMgr *pThreadMgr, TfClientId tfClientId, D
 
     // Set up shared memory
     InitIpc();
+    spdlog::info("Init IPC!");
 
     if (!_InitThreadMgrEventSink())
     {
@@ -306,11 +307,13 @@ ExitError:
 
 STDAPI CSampleIME::Deactivate()
 {
-    // Clean spdlog
-    spdlog::drop("file_logger");
-
+    spdlog::info("Deactivate fany!");
     // Clean shared memory
     CloseIpc();
+    spdlog::info("Close IPC!");
+
+    // Clean spdlog
+    spdlog::drop("file_logger");
 
     if (_pCompositionProcessorEngine)
     {
