@@ -11,6 +11,7 @@
 #include <minwindef.h>
 #include <winuser.h>
 #include "Ipc.h"
+#include "spdlog/spdlog.h"
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -870,6 +871,10 @@ void CCandidateListUIPresenter::_NotifyUI()
 {
     CStringRange keyStringBuffer = _pTextService->GetCompositionProcessorEngine()->GetKeystrokeBuffer();
     std::wstring pinyinString(keyStringBuffer.Get(), keyStringBuffer.GetLength());
+    Global::PinyinLength = pinyinString.length();
+#ifdef FANY_DEBUG
+    spdlog::info("_NotifyUI pinyinString: {}", Global::wstring_to_string(pinyinString));
+#endif
     WriteDataToSharedMemory(Global::Keycode, 0, Global::Point, Global::PinyinLength, Global::PinyinString, 0b11111);
     SendShowCandidateWndEventToUIProcess();
     SendKeyEventToUIProcess();

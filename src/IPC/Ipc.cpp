@@ -144,6 +144,7 @@ int WriteDataToSharedMemory(           //
     if (write_flag >> 4 & 1u)
     {
         wcscpy_s(sharedData->pinyin_string, pinyin_string.c_str());
+        sharedData->pinyin_string[pinyin_length] = L'\0';
     }
 
     return 0;
