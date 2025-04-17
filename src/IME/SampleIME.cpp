@@ -18,7 +18,7 @@
 #include "spdlog/spdlog.h"
 #include <spdlog/sinks/basic_file_sink.h>
 #include "FanyLog.h"
-#include "IPc.h"
+#include "Ipc.h"
 
 //+---------------------------------------------------------------------------
 //

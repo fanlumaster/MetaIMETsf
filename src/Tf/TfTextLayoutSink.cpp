@@ -9,6 +9,7 @@
 #include "TfTextLayoutSink.h"
 #include "SampleIME.h"
 #include "GetTextExtentEditSession.h"
+#include "spdlog/spdlog.h"
 
 CTfTextLayoutSink::CTfTextLayoutSink(_In_ CSampleIME *pTextService)
 {
@@ -211,8 +212,13 @@ HRESULT CTfTextLayoutSink::_GetTextExt(_Out_ RECT *lpRect)
 
     if (FAILED(hr = pContextView->GetTextExt(_tfEditCookie, _pRangeComposition, lpRect, &isClipped)))
     {
+        spdlog::info("GetTextExt failed: {}", hr);
         return hr;
     }
+#ifdef FANY_DEBUG
+    spdlog::info("GetTextExt: left: {}, top: {}, right: {}, bottom: {}", lpRect->left, lpRect->top, lpRect->right,
+                 lpRect->bottom);
+#endif
 
     pContextView->Release();
 

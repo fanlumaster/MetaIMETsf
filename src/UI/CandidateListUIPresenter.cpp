@@ -1,5 +1,4 @@
 #include "Globals.h"
-#include "IPc.h"
 #include "Private.h"
 #include "SampleIME.h"
 #include "CandidateWindow.h"
