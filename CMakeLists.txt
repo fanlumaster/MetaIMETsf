@@ -103,6 +103,7 @@ add_library(DeerWritingBrush SHARED
     "./src/File/FileMapping.cpp"
     "./src/File/FileMapping.h"
     # Global
+    "./src/Global/FanyDefines.h"
     "./src/Global/Globals.cpp"
     "./src/Global/Globals.h"
     # Header
@@ -149,6 +150,8 @@ add_library(DeerWritingBrush SHARED
     "./src/UI/CandidateListUIPresenter.cpp"
     "./src/UI/CandidateListUIPresenter.h"
     # Utils
+    "./src/Utils/CommonUtils.cpp"
+    "./src/Utils/CommonUtils.h"
     "./src/Utils/FanyUtils.cpp"
     "./src/Utils/FanyUtils.h"
     # Window

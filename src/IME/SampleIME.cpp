@@ -19,6 +19,7 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include "FanyLog.h"
 #include "Ipc.h"
+#include "CommonUtils.h"
 
 //+---------------------------------------------------------------------------
 //
@@ -240,6 +241,11 @@ STDAPI CSampleIME::ActivateEx(ITfThreadMgr *pThreadMgr, TfClientId tfClientId, D
     // Set up shared memory
     InitIpc();
     spdlog::info("Init IPC!");
+
+    Global::current_process_name = GetCurrentProcessName();
+#ifdef FANY_DEBUG
+    spdlog::info("Process name: {}", Global::wstring_to_string(Global::current_process_name));
+#endif
 
     if (!_InitThreadMgrEventSink())
     {

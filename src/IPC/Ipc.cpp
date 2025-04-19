@@ -221,3 +221,28 @@ int SendShowCandidateWndEventToUIProcess()
     CloseHandle(hEvent);
     return 0;
 }
+
+int SendMoveCandidateWndEventToUIProcess()
+{
+    HANDLE hEvent = OpenEventW(         //
+        EVENT_MODIFY_STATE,             //
+        FALSE,                          //
+        FANY_IME_EVENT_ARRAY[3].c_str() // FanyMoveCandidateWndEvent
+    );                                  //
+
+    if (!hEvent)
+    {
+        // TODO: Error handling
+        spdlog::info("Open FanyMoveCandidateWnd Event error");
+    }
+
+    if (!SetEvent(hEvent))
+    {
+        // TODO: Error handling
+        DWORD err = GetLastError();
+        spdlog::info("SetEvent error: {}", err);
+    }
+
+    CloseHandle(hEvent);
+    return 0;
+}

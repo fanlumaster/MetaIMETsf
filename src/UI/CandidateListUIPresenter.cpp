@@ -833,7 +833,7 @@ HRESULT CCandidateListUIPresenter::_StartCandidateList(TfClientId tfClientId, _I
         goto Exit;
     }
 
-    Show(_isShowMode);
+    // Show(_isShowMode);
 
     RECT rcTextExt;
     if (SUCCEEDED(_GetTextExt(&rcTextExt)))
@@ -1070,45 +1070,11 @@ void CCandidateListUIPresenter::_MoveWindowToTextExt()
 
 VOID CCandidateListUIPresenter::_LayoutChangeNotification(_In_ RECT *lpRect)
 {
-    /*
-    RECT rectCandidate = {0, 0, 0, 0};
-    POINT ptCandidate = {0, 0};
-
-    _pCandidateWnd->_GetClientRect(&rectCandidate);
-    _pCandidateWnd->_GetWindowExtent(lpRect, &rectCandidate, &ptCandidate);
-    _pCandidateWnd->_Move(ptCandidate.x, ptCandidate.y);
-    */
-
-    /*
-    HWND UIHwnd = FindWindow(L"global_candidate_window", NULL);
-    if (UIHwnd == NULL)
-    {
-        DWORD error = GetLastError();
-        std::wstring errorString = L"FindWindow failed with error: " + std::to_wstring(error);
-        Global::LogMessageW(errorString.c_str());
-    }
-    Global::PointDTO.x = ptCandidate.x;
-    Global::PointDTO.y = ptCandidate.y;
-    COPYDATASTRUCT cds;
-    cds.dwData = 0;
-    cds.cbData = sizeof(POINT);
-    cds.lpData = &Global::PointDTO;
-
-    LRESULT result = SendMessage(UIHwnd, WM_COPYDATA, (WPARAM)UIHwnd, (LPARAM)&cds);
-    if (result == 0)
-    {
-        DWORD error = GetLastError();
-        if (error != 0)
-        {
-            std::wstring errorString = L"SendMessage POINT failed with error: " + std::to_wstring(error);
-            Global::LogMessageW(errorString.c_str());
-        }
-        else
-        {
-            Global::LogMessageW(L"SendMessage POINT success, but result is 0");
-        }
-    }
-    */
+#ifdef FANY_DEBUG
+    spdlog::info("_LayoutChangeNotification firefox cnt {}", Global::firefox_like_cnt);
+#endif
+    WriteDataToSharedMemory(Global::Keycode, 0, Global::Point, Global::PinyinLength, Global::PinyinString, 0b00100);
+    SendMoveCandidateWndEventToUIProcess();
 }
 
 //+---------------------------------------------------------------------------

@@ -1,5 +1,4 @@
 #include "FanyUtils.h"
-#include "IPc.h"
 #include "Private.h"
 #include "Globals.h"
 #include "SampleIME.h"
@@ -8,9 +7,7 @@
 #include "KeyHandlerEditSession.h"
 #include "Compartment.h"
 #include "SampleIMEBaseStructure.h"
-#include "fmt/format.h"
 #include "fmt/xchar.h"
-#include <atlbase.h>
 #include <string>
 #include <boost/lexical_cast.hpp>
 #include "spdlog/spdlog.h"
@@ -324,6 +321,7 @@ STDAPI CSampleIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lParam,
 
     *pIsEaten = _IsKeyEaten(pContext, (UINT)wParam, &code, &wch, &KeystrokeState);
     Global::Keycode = code;
+    Global::firefox_like_cnt = 0;
 
 #ifdef FANY_DEBUG
     std::wstring msg = L"Whether to eat it?" + std::to_wstring(*pIsEaten);

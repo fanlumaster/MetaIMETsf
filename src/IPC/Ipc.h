@@ -10,6 +10,7 @@ inline const std::vector<std::wstring> FANY_IME_EVENT_ARRAY = {
     L"FanyImeKeyEvent",           // Event sent to UI process to notify time to update UI by new pinyin_string
     L"FanyHideCandidateWndEvent", // Event sent to UI process to notify time to hide candidate window
     L"FanyShowCandidateWndEvent", // Event sent to UI process to notify time to show candidate window
+    L"FanyMoveCandidateWndEvent", // Event sent to UI process to notify time to move candidate window
 };
 
 struct FanyImeSharedMemoryData
@@ -36,6 +37,7 @@ int WriteDataToSharedMemory(           //
 int SendKeyEventToUIProcess();
 int SendHideCandidateWndEventToUIProcess();
 int SendShowCandidateWndEventToUIProcess();
+int SendMoveCandidateWndEventToUIProcess();
 
 namespace Global
 {
@@ -44,4 +46,7 @@ inline UINT ModifiersDown = 0;
 inline int Point[2] = {100, 100};
 inline int PinyinLength = 0;
 inline std::wstring PinyinString = L"";
+
+inline int firefox_like_cnt = 0; // Apps like firefox, e.g. firefox, zen...
+inline std::wstring current_process_name = L"";
 } // namespace Global

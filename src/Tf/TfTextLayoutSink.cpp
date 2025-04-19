@@ -96,6 +96,11 @@ STDAPI CTfTextLayoutSink::OnLayoutChange(_In_ ITfContext *pContext, TfLayoutCode
 
     switch (lcode)
     {
+    case TF_LC_CREATE: {
+#ifdef FANY_DEBUG
+        spdlog::info("TF_LC_CREATE");
+#endif
+    }
     case TF_LC_CHANGE: {
         CGetTextExtentEditSession *pEditSession = nullptr;
         pEditSession = new (std::nothrow)
@@ -104,7 +109,9 @@ STDAPI CTfTextLayoutSink::OnLayoutChange(_In_ ITfContext *pContext, TfLayoutCode
         {
             HRESULT hr = S_OK;
             pContext->RequestEditSession(_pTextService->_GetClientId(), pEditSession, TF_ES_SYNC | TF_ES_READ, &hr);
-
+#ifdef FANY_DEBUG
+            spdlog::info("RequestEditSession starts.");
+#endif
             pEditSession->Release();
         }
     }
@@ -212,12 +219,21 @@ HRESULT CTfTextLayoutSink::_GetTextExt(_Out_ RECT *lpRect)
 
     if (FAILED(hr = pContextView->GetTextExt(_tfEditCookie, _pRangeComposition, lpRect, &isClipped)))
     {
+#ifdef FANY_DEBUG
         spdlog::info("GetTextExt failed: {}", hr);
-        return hr;
+#endif
+        // Set default value to make sure the window is hidden by moving it out of the screen
+        lpRect->left = 0;
+        lpRect->bottom = -1000;
     }
 #ifdef FANY_DEBUG
-    spdlog::info("GetTextExt: left: {}, top: {}, right: {}, bottom: {}", lpRect->left, lpRect->top, lpRect->right,
-                 lpRect->bottom);
+    spdlog::info(                                               //
+        "GetTextExt: left: {}, top: {}, right: {}, bottom: {}", //
+        lpRect->left,                                           //
+        lpRect->top,                                            //
+        lpRect->right,                                          //
+        lpRect->bottom                                          //
+    );                                                          //
 #endif
 
     pContextView->Release();
