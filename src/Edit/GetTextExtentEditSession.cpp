@@ -47,12 +47,11 @@ STDAPI CGetTextExtentEditSession::DoEditSession(TfEditCookie ec)
         spdlog::info("CGetTextExtentEditSession GetTextExt: left: {}, top: {}, right: {}, bottom: {}", rc.left, rc.top,
                      rc.right, rc.bottom);
 #endif
-
+        Global::Point[0] = rc.left;
+        Global::Point[1] = rc.bottom;
         if (Global::current_process_name == Global::ZEN_BROWSER)
         {
             Global::firefox_like_cnt++;
-            Global::Point[0] = rc.left;
-            Global::Point[1] = rc.bottom;
             if (Global::firefox_like_cnt == 3)
             {
                 _pTfTextLayoutSink->_LayoutChangeNotification(&rc);
