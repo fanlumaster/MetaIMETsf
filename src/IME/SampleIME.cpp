@@ -236,11 +236,15 @@ STDAPI CSampleIME::ActivateEx(ITfThreadMgr *pThreadMgr, TfClientId tfClientId, D
     auto logger = spdlog::basic_logger_mt("file_logger", ::LogFilePath);
     spdlog::set_default_logger(logger);
     spdlog::flush_on(spdlog::level::info);
+#ifdef FANY_DEBUG
     spdlog::info("CSampleIME::ActivateEx fany!");
+#endif
 
     // Set up shared memory
     InitIpc();
+#ifdef FANY_DEBUG
     spdlog::info("Init IPC!");
+#endif
 
     Global::current_process_name = GetCurrentProcessName();
 #ifdef FANY_DEBUG
@@ -313,10 +317,14 @@ ExitError:
 
 STDAPI CSampleIME::Deactivate()
 {
+#ifdef FANY_DEBUG
     spdlog::info("Deactivate fany!");
+#endif
     // Clean shared memory
     CloseIpc();
+#ifdef FANY_DEBUG
     spdlog::info("Close IPC!");
+#endif
 
     // Clean spdlog
     spdlog::drop("file_logger");
