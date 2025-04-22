@@ -47,7 +47,13 @@ HRESULT CSampleIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfContext *p
 
     if (candidateLen)
     {
+        candidateString.Set(L"", 0);
         hr = _AddComposingAndChar(ec, pContext, &candidateString);
+        if (Global::Keycode == VK_SPACE)
+        {
+            WriteDataToSharedMemory(Global::Keycode, 0, nullptr, 0, L"", 0b00001);
+            SendKeyEventToUIProcess();
+        }
 
         if (FAILED(hr))
         {
@@ -161,7 +167,7 @@ HRESULT CSampleIME::_HandleCandidateWorker(TfEditCookie ec, _In_ ITfContext *pCo
     // If we are showing reverse conversion, use CCandidateListUIPresenter
     CANDIDATE_MODE tempCandMode = CANDIDATE_NONE;
     CCandidateListUIPresenter *pTempCandListUIPresenter = nullptr;
-    if (candidatePhraseList.Count())
+    if (candidatePhraseList.Count()) // NOTICE: always 0
     {
         tempCandMode = CANDIDATE_WITH_NEXT_COMPOSITION;
 
@@ -228,6 +234,7 @@ HRESULT CSampleIME::_HandleCandidateWorker(TfEditCookie ec, _In_ ITfContext *pCo
     }
     else
     {
+        // When VK_SPACE comes here
         hrReturn = _HandleCandidateFinalize(ec, pContext);
     }
 

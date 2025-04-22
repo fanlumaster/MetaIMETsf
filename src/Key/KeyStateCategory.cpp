@@ -349,7 +349,7 @@ HRESULT CKeyStateCandidate::HandleKeyFinalizeCandidatelistAndInput(KeyHandlerEdi
 //_HandleCandidateConvert
 HRESULT CKeyStateCandidate::HandleKeyConvert(KeyHandlerEditSessionDTO dto)
 {
-    // Send candidate string to client when pressing space
+    // Send candidate string to client when pressing VK_SPACE
     return _pTextService->_HandleCandidateConvert(dto.ec, dto.pContext);
 }
 
