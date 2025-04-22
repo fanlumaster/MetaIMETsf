@@ -49,7 +49,7 @@ HRESULT CSampleIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfContext *p
     {
         candidateString.Set(L"", 0);
         hr = _AddComposingAndChar(ec, pContext, &candidateString);
-        if (Global::Keycode == VK_SPACE)
+        if (Global::Keycode == VK_SPACE || (Global::Keycode > '0' && Global::Keycode < '9'))
         {
             WriteDataToSharedMemory(Global::Keycode, 0, nullptr, 0, L"", 0b00001);
             SendKeyEventToUIProcess();
@@ -234,7 +234,7 @@ HRESULT CSampleIME::_HandleCandidateWorker(TfEditCookie ec, _In_ ITfContext *pCo
     }
     else
     {
-        // When VK_SPACE comes here
+        // When VK_SPACE, number(for selecting candidate) comes here
         hrReturn = _HandleCandidateFinalize(ec, pContext);
     }
 
@@ -345,6 +345,7 @@ HRESULT CSampleIME::_HandlePhraseArrowKey(TfEditCookie ec, _In_ ITfContext *pCon
 
 HRESULT CSampleIME::_HandlePhraseSelectByNumber(TfEditCookie ec, _In_ ITfContext *pContext, _In_ UINT uCode)
 {
+    // isSelectAsNumber starts from 0
     int iSelectAsNumber = _pCompositionProcessorEngine->GetCandidateListIndexRange()->GetIndex(uCode);
     if (iSelectAsNumber == -1)
     {

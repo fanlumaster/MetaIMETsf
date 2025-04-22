@@ -1,6 +1,7 @@
 #include "KeyStateCategory.h"
 #include "Globals.h"
 #include "SampleIMEBaseStructure.h"
+#include "spdlog/spdlog.h"
 
 CKeyStateCategoryFactory *CKeyStateCategoryFactory::_instance;
 

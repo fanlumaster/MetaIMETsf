@@ -13,7 +13,6 @@
 #include "RegKey.h"
 #include "define.h"
 #include <string>
-#include "fmt/format.h"
 #include "fmt/xchar.h"
 #include "Ipc.h"
 
@@ -2209,6 +2208,9 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCH
         }
     }
 
+    //
+    // Check whether the keystroke is number(for selecting candidate) and is in the range
+    //
     if (IsKeystrokeRange(uCode, pKeyState, candidateMode))
     {
         return TRUE;

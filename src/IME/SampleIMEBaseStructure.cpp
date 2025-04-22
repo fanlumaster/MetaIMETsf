@@ -251,6 +251,10 @@ CCandidateRange::~CCandidateRange(void)
 BOOL CCandidateRange::IsRange(UINT vKey)
 {
     DWORD value = vKey - L'0';
+    if (value > 0 && value < 10) // Start from 1
+    {
+        return TRUE;
+    }
 
     for (UINT i = 0; i < _CandidateListIndexRange.Count(); i++)
     {
@@ -271,6 +275,8 @@ BOOL CCandidateRange::IsRange(UINT vKey)
 
 int CCandidateRange::GetIndex(UINT vKey)
 {
+    return 0; // Always return 0(First candidate item), start from 0
+
     DWORD value = vKey - L'0';
 
     for (UINT i = 0; i < _CandidateListIndexRange.Count(); i++)
