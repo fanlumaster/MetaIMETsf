@@ -1261,10 +1261,18 @@ void CCandidateListUIPresenter::AdviseUIChangedByArrowKey(_In_ KEYSTROKE_FUNCTIO
         break;
     }
     case FUNCTION_MOVE_PAGE_UP: {
+        // Page prev
+        WriteDataToSharedMemory(Global::Keycode, 0, nullptr, 0, L"", 0b00001);
+        SendKeyEventToUIProcess();
+        spdlog::info("Page up");
         _MovePage(MOVEUP_ONE);
         break;
     }
     case FUNCTION_MOVE_PAGE_DOWN: {
+        // Page next
+        WriteDataToSharedMemory(Global::Keycode, 0, nullptr, 0, L"", 0b00001);
+        SendKeyEventToUIProcess();
+        spdlog::info("Page down");
         _MovePage(MOVEDOWN_ONE);
         break;
     }
