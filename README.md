@@ -70,6 +70,8 @@ Run the following command as administrator,
 ./linstall.ps1
 ```
 
+**Note**: we only use this script to install dll for tests, if we want this IME to support UWP/Metro(Windows Store Apps), we need to cd to `C:\Program Files\` and make a new directory named `DeerWritingBrush`, and move dll to that directory, and then register the dll to system.
+
 ### How to Uninstall
 
 ```shell
