@@ -233,9 +233,9 @@ STDAPI CSampleIME::ActivateEx(ITfThreadMgr *pThreadMgr, TfClientId tfClientId, D
     _dwActivateFlags = dwFlags;
 
     // Set up spdlog
-    auto logger = spdlog::basic_logger_mt("file_logger", ::LogFilePath);
-    spdlog::set_default_logger(logger);
-    spdlog::flush_on(spdlog::level::info);
+    // auto logger = spdlog::basic_logger_mt("file_logger", ::LogFilePath);
+    // spdlog::set_default_logger(logger);
+    // spdlog::flush_on(spdlog::level::info);
 #ifdef FANY_DEBUG
     spdlog::info("CSampleIME::ActivateEx fany!");
 #endif
