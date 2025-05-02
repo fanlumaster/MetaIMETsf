@@ -50,8 +50,8 @@ VOID CTableDictionaryEngine::CollectWord(_In_ CStringRange *pKeyCode,
 VOID CTableDictionaryEngine::CollectWord(_In_ CStringRange *pKeyCode,
                                          _Inout_ CSampleImeArray<CCandidateListItem> *pItemList)
 {
-    CDictionarySearch dshSearch(_locale, _pDictionaryFile, pKeyCode);
-    FanDictionaryDb fanDictionaryDb(_pDictionaryDb);
+    // CDictionarySearch dshSearch(_locale, _pDictionaryFile, pKeyCode);
+    // FanDictionaryDb fanDictionaryDb(_pDictionaryDb);
 
     std::wstring keyCodeWString = L"";
     keyCodeWString.append(pKeyCode->Get(), pKeyCode->GetLength()); // Append the key code to the string
@@ -60,23 +60,8 @@ VOID CTableDictionaryEngine::CollectWord(_In_ CStringRange *pKeyCode,
     std::transform(keyCodeString.begin(), keyCodeString.end(), keyCodeString.begin(),
                    [](unsigned char c) { return std::tolower(c); });
 
-#ifdef FANY_DEBUG
-    Global::LogMessageW(L"Fany pKeyCode starts...");
-    Global::LogWideString(pKeyCode->Get(), pKeyCode->GetLength());
-    Global::LogMessageW(keyCodeWString.c_str());
-    Global::LogMessageW(L"Fany pKeyCode ends...");
-#endif
-
-#ifdef FANY_DEBUG
-    auto start = std::chrono::high_resolution_clock::now();
-#endif
-    Global::CandidateList = fanDictionaryDb.Generate(keyCodeString);
-#ifdef FANY_DEBUG
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    std::wstring message = L"Generate time: " + std::to_wstring(duration.count()) + L" μs";
-    Global::LogMessageW(message.c_str());
-#endif
+    Global::CandidateList.clear();
+    Global::CandidateList.push_back(std::make_tuple(keyCodeString, keyCodeString, 1));
     Global::WStringCandidateList.clear();
     Global::FindKeyCode = keyCodeWString;
     for (UINT i = 0; i < Global::CandidateList.size(); i++)

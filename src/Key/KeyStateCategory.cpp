@@ -1,5 +1,6 @@
 #include "KeyStateCategory.h"
 #include "Globals.h"
+#include "Ipc.h"
 #include "SampleIMEBaseStructure.h"
 #include "spdlog/spdlog.h"
 
@@ -95,8 +96,9 @@ HRESULT CKeyStateCategory::KeyStateHandler(KEYSTROKE_FUNCTION function, KeyHandl
 #endif
         return HandleKeyFinalizeCandidatelistForVKReturn(dto);
 
-    case FUNCTION_CONVERT:
+    case FUNCTION_CONVERT: {
         return HandleKeyConvert(dto);
+    }
 
     case FUNCTION_CONVERT_WILDCARD:
         return HandleKeyConvertWildCard(dto);
@@ -280,6 +282,14 @@ HRESULT CKeyStateComposing::HandleKeyFinalizeCandidatelist(KeyHandlerEditSession
 
 HRESULT CKeyStateComposing::HandleKeyConvert(KeyHandlerEditSessionDTO dto)
 {
+    if (Global::Keycode == VK_SPACE)
+    {
+#ifdef FANY_DEBUG
+        OutputDebugStringW(L"HandleKeyConvert in CKeyStateComposing\n");
+#endif
+        return _pTextService->_HandleCandidateFinalize(dto.ec, dto.pContext);
+    }
+    // VK_SPACE
     return _pTextService->_HandleCompositionConvert(dto.ec, dto.pContext, FALSE);
 }
 
@@ -350,6 +360,13 @@ HRESULT CKeyStateCandidate::HandleKeyFinalizeCandidatelistAndInput(KeyHandlerEdi
 //_HandleCandidateConvert
 HRESULT CKeyStateCandidate::HandleKeyConvert(KeyHandlerEditSessionDTO dto)
 {
+    if (Global::Keycode == VK_SPACE)
+    {
+#ifdef FANY_DEBUG
+        OutputDebugStringW(L"HandleKeyConvert in CKeyStateCandidate\n");
+#endif
+        return _pTextService->_HandleCandidateFinalize(dto.ec, dto.pContext);
+    }
     // Send candidate string to client when pressing VK_SPACE
     return _pTextService->_HandleCandidateConvert(dto.ec, dto.pContext);
 }
@@ -369,7 +386,11 @@ HRESULT CKeyStateCandidate::HandleKeyArrow(KeyHandlerEditSessionDTO dto)
 //_HandleCandidateSelectByNumber
 HRESULT CKeyStateCandidate::HandleKeySelectByNumber(KeyHandlerEditSessionDTO dto)
 {
-    return _pTextService->_HandleCandidateSelectByNumber(dto.ec, dto.pContext, dto.code);
+#ifdef FANY_DEBUG
+    OutputDebugStringW(L"HandleKeySelectByNumber in CKeyStateCandidate\n");
+#endif
+    // return _pTextService->_HandleCandidateSelectByNumber(dto.ec, dto.pContext, dto.code);
+    return _pTextService->_HandleCandidateFinalize(dto.ec, dto.pContext);
 }
 
 /*
@@ -401,5 +422,9 @@ HRESULT CKeyStatePhrase::HandleKeyArrow(KeyHandlerEditSessionDTO dto)
 // HandleKeySelectByNumber
 HRESULT CKeyStatePhrase::HandleKeySelectByNumber(KeyHandlerEditSessionDTO dto)
 {
-    return _pTextService->_HandlePhraseSelectByNumber(dto.ec, dto.pContext, dto.code);
+#ifdef FANY_DEBUG
+    OutputDebugStringW(L"HandleKeySelectByNumber in CKeyStatePhrase\n");
+#endif
+    // return _pTextService->_HandlePhraseSelectByNumber(dto.ec, dto.pContext, dto.code);
+    return _pTextService->_HandleCandidateFinalize(dto.ec, dto.pContext);
 }

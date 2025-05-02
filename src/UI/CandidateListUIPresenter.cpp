@@ -32,18 +32,17 @@ const int MOVETO_BOTTOM = -1;
 HRESULT CSampleIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfContext *pContext)
 {
     HRESULT hr = S_OK;
-    DWORD_PTR candidateLen = 0;
-    const WCHAR *pCandidateString = nullptr;
-    CStringRange candidateString;
 
+    CStringRange keyStrokebuffer = _pCompositionProcessorEngine->GetKeystrokeBuffer();
+    DWORD_PTR keystrokeBufLen = keyStrokebuffer.GetLength();
+    DWORD_PTR candidateLen = keystrokeBufLen;
+    CStringRange candidateString(keyStrokebuffer);
+
+    // _pCandidateListUIPresenter would be null in uwp/metro apps
     if (nullptr == _pCandidateListUIPresenter)
     {
-        goto NoPresenter;
+        // goto NoPresenter;
     }
-
-    candidateLen = _pCandidateListUIPresenter->_GetSelectedCandidateString(&pCandidateString);
-
-    candidateString.Set(pCandidateString, candidateLen);
 
     if (candidateLen)
     {
@@ -80,16 +79,12 @@ HRESULT CSampleIME::_HandleCandidateFinalizeForVKReturn(TfEditCookie ec, _In_ IT
 
     CStringRange keyStrokebuffer = _pCompositionProcessorEngine->GetKeystrokeBuffer();
     DWORD_PTR keystrokeBufLen = keyStrokebuffer.GetLength();
-#ifdef FANY_DEBUG
-    Global::LogWideString(keyStrokebuffer.Get(), keystrokeBufLen);
-#endif
-
     DWORD_PTR candidateLen = keystrokeBufLen;
     CStringRange candidateString(keyStrokebuffer);
 
     if (nullptr == _pCandidateListUIPresenter)
     {
-        goto NoPresenter;
+        // goto NoPresenter;
     }
 
 #ifdef FANY_DEBUG

@@ -2383,6 +2383,15 @@ BOOL CCompositionProcessorEngine::IsKeystrokeRange(UINT uCode, _Out_ _KEYSTROKE_
             pKeyState->Function = FUNCTION_SELECT_BY_NUMBER;
             return TRUE;
         }
+        else if (GetVirtualKeyLength() > 0)
+        {
+#ifdef FANY_DEBUG
+            OutputDebugStringW(L"GetVirtualKeyLength() > 0");
+#endif
+            pKeyState->Category = CATEGORY_CANDIDATE;
+            pKeyState->Function = FUNCTION_SELECT_BY_NUMBER;
+            return TRUE;
+        }
     }
     return FALSE;
 }
