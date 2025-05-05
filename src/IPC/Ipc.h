@@ -30,6 +30,12 @@ struct FanyImeSharedMemoryData
 // For uwp/metro apps, here we do not need candidate_string and selected_candiate_string,
 // just let server process to handle them
 //
+// event_type
+//   0: FanyImeKeyEvent
+//   1: FanyHideCandidateWndEvent
+//   2: FanyShowCandidateWndEvent
+//   3: FanyMoveCandidateWndEvent
+//
 struct FanyImeNamedpipeData
 {
     UINT event_type;
@@ -41,7 +47,10 @@ struct FanyImeNamedpipeData
 };
 
 int InitIpc();
+int InitNamedpipe();
 int CloseIpc();
+int CloseNamedpipe();
+
 //
 // For shared memory
 //
@@ -84,4 +93,6 @@ inline std::wstring PinyinString = L"";
 
 inline int firefox_like_cnt = 0; // Apps like firefox, e.g. firefox, zen...
 inline std::wstring current_process_name = L"";
+
+inline wchar_t app_name[512] = {0};
 } // namespace Global

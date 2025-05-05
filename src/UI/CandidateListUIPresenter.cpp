@@ -6,6 +6,7 @@
 #include "CompositionProcessorEngine.h"
 #include "SampleIMEBaseStructure.h"
 #include "define.h"
+#include <debugapi.h>
 #include <intsafe.h>
 #include <minwindef.h>
 #include <winuser.h>
@@ -833,7 +834,8 @@ HRESULT CCandidateListUIPresenter::_StartCandidateList(TfClientId tfClientId, _I
     hr = MakeCandidateWindow(pContextDocument, wndWidth);
     if (FAILED(hr))
     {
-        goto Exit;
+        OutputDebugString(L"MakeCandidateWindow failed\n");
+        // goto Exit;
     }
 
     // Show(_isShowMode);
@@ -871,6 +873,7 @@ void CCandidateListUIPresenter::_EndCandidateList()
 
 void CCandidateListUIPresenter::_NotifyUI()
 {
+    // OutputDebugString(L"_NotifyUI\n");
     CStringRange keyStringBuffer = _pTextService->GetCompositionProcessorEngine()->GetKeystrokeBuffer();
     std::wstring pinyinString(keyStringBuffer.Get(), keyStringBuffer.GetLength());
     Global::PinyinLength = pinyinString.length();
@@ -1073,6 +1076,7 @@ void CCandidateListUIPresenter::_MoveWindowToTextExt()
 
 VOID CCandidateListUIPresenter::_LayoutChangeNotification(_In_ RECT *lpRect)
 {
+    // OutputDebugStringW(L"LayoutChangeNotification\n");
 #ifdef FANY_DEBUG
     spdlog::info("_LayoutChangeNotification firefox cnt {}", Global::firefox_like_cnt);
 #endif

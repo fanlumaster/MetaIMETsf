@@ -396,6 +396,30 @@ void CCompositionProcessorEngine::GetReadingStrings(_Inout_ CSampleImeArray<CStr
 void CCompositionProcessorEngine::GetCandidateList(_Inout_ CSampleImeArray<CCandidateListItem> *pCandidateList,
                                                    BOOL isIncrementalWordSearch, BOOL isWildcardSearch)
 {
+    //
+    // We don't use dictionary to get candidate list
+    //
+    const std::wstring keystrokeStr(_keystrokeBuffer.Get(), _keystrokeBuffer.GetLength());
+    CCandidateListItem *pLI = nullptr;
+    pLI = pCandidateList->Append();
+    if (pLI)
+    {
+        pLI->_ItemString.Set(keystrokeStr.c_str(), keystrokeStr.size());
+        pLI->_FindKeyCode.Set(keystrokeStr.c_str(), keystrokeStr.size());
+    }
+    for (UINT index = 0; index < pCandidateList->Count();)
+    {
+        CCandidateListItem *pLI = pCandidateList->GetAt(index);
+        CStringRange startItemString;
+        CStringRange endItemString;
+
+        startItemString.Set(pLI->_ItemString.Get(), 1);
+        endItemString.Set(pLI->_ItemString.Get() + pLI->_ItemString.GetLength() - 1, 1);
+
+        index++;
+    }
+    return;
+
     if (!IsDictionaryAvailable())
     {
         return;

@@ -1,17 +1,19 @@
 #include "Ipc.h"
+#include <debugapi.h>
 #include <handleapi.h>
 #include <minwindef.h>
 #include <winnt.h>
 #include <winuser.h>
+#include "fmt/xchar.h"
 #include "spdlog/spdlog.h"
 #include "Globals.h"
 
-static HANDLE hMapFile;
+static HANDLE hMapFile = nullptr;
 static void *pBuf;
 static FanyImeSharedMemoryData *sharedData;
 static bool canUseSharedMemory = true;
 
-// static HANDLE hPipe;
+static HANDLE hPipe = nullptr;
 static bool canUseNamedPipe = true;
 
 static FanyImeNamedpipeData namedpipeData;
@@ -19,50 +21,28 @@ static FanyImeNamedpipeData namedpipeData;
 int InitIpc()
 {
     //
-    // Shared memory
+    // Shared memory, open here
     //
-    hMapFile = CreateFileMappingW(       //
-        INVALID_HANDLE_VALUE,            //
-        nullptr,                         //
-        PAGE_READWRITE,                  //
-        0,                               //
-        static_cast<DWORD>(BUFFER_SIZE), //
-        FANY_IME_SHARED_MEMORY           //
-    );                                   //
+    hMapFile = OpenFileMappingW( //
+        FILE_MAP_ALL_ACCESS,     //
+        FALSE,                   //
+        FANY_IME_SHARED_MEMORY   //
+    );
 
-    /*
-        if (!hMapFile)
-        {
-            // Error handling
-            canUseSharedMemory = false;
-            spdlog::info("CreateFileMapping error: {}", GetLastError());
+    //
+    // Shared memory is not available, try to use namedpipe
+    //
+    InitNamedpipe();
 
-            //
-            // Shared memory is not available, try to use namedpipe
-            //
-            hPipe = CreateFile(               //
-                FANY_IME_NAMED_PIPE,          //
-                GENERIC_READ | GENERIC_WRITE, //
-                0,                            //
-                NULL,                         //
-                OPEN_EXISTING,                //
-                0,                            //
-                NULL                          //
-            );
+    if (!hMapFile)
+    {
+        OutputDebugString(L"CreateFileMapping failed\n");
+        // Error handling
+        canUseSharedMemory = false;
+        spdlog::info("CreateFileMapping error: {}", GetLastError());
 
-            if (hPipe == INVALID_HANDLE_VALUE)
-            {
-                canUseNamedPipe = false;
-                spdlog::error("Failed to open pipe!");
-                return -1;
-            }
-            else
-            {
-            }
-
-            return 0;
-        }
-    */
+        return 0;
+    }
 
     bool alreadyExists = (GetLastError() == ERROR_ALREADY_EXISTS);
 
@@ -90,22 +70,29 @@ int InitIpc()
         sharedData->point[1] = 100;
     }
 
-    //
-    // Events
-    //
-    for (const auto &eventName : FANY_IME_EVENT_ARRAY)
+    return 0;
+}
+
+int InitNamedpipe()
+{
+    hPipe = CreateFile(               //
+        FANY_IME_NAMED_PIPE,          //
+        GENERIC_READ | GENERIC_WRITE, //
+        0,                            //
+        nullptr,                      //
+        OPEN_EXISTING,                //
+        0,                            //
+        nullptr                       //
+    );
+
+    if (!hPipe)
     {
-        HANDLE hEvent = CreateEventW( //
-            nullptr,                  //
-            FALSE,                    //
-            FALSE,                    // Auto reset
-            eventName.c_str()         //
-        );                            //
-        if (!hEvent)
-        {
-            // Error handling
-            spdlog::info("CreateEvent error: {}", Global::wstring_to_string(eventName));
-        }
+        canUseNamedPipe = false;
+        OutputDebugString(L"Connect to namedpipe failed\n");
+        return -1;
+    }
+    else
+    {
     }
 
     return 0;
@@ -114,15 +101,9 @@ int InitIpc()
 int CloseIpc()
 {
     //
-    // Named pipe
+    // Namedpipe
     //
-    /*
-    if (hPipe)
-    {
-        CloseHandle(hPipe);
-        hPipe = nullptr;
-    }
-    */
+    CloseNamedpipe();
 
     if (!canUseSharedMemory)
     {
@@ -160,6 +141,16 @@ int CloseIpc()
         }
     }
 
+    return 0;
+}
+
+int CloseNamedpipe()
+{
+    if (hPipe)
+    {
+        CloseHandle(hPipe);
+        hPipe = nullptr;
+    }
     return 0;
 }
 
@@ -269,10 +260,15 @@ int WriteDataToNamedPipe(              //
 
 int SendKeyEventToUIProcess()
 {
+    // OutputDebugString(fmt::format(L"SendKeyEventToUIProcess, canUseSharedMemory = {}, canUseNamedPipe = {}\n",
+    //                               canUseSharedMemory, canUseNamedPipe)
+    //                       .c_str());
     if (!canUseSharedMemory)
     {
+        // OutputDebugString(L"SendKeyEventToUIProcessViaNamedPipe\n");
         if (canUseNamedPipe)
         {
+            // OutputDebugString(L"Really SendKeyEventToUIProcessViaNamedPipe \n");
             return SendKeyEventToUIProcessViaNamedPipe();
         }
     }
@@ -402,8 +398,14 @@ int SendMoveCandidateWndEventToUIProcess()
 
 void SendToNamedpipe()
 {
-    HANDLE hPipe = CreateFileW(L"\\\\.\\pipe\\FanyImeNamedPipe", GENERIC_READ | GENERIC_WRITE, 0, nullptr,
-                               OPEN_EXISTING, 0, nullptr);
+    if (!canUseNamedPipe)
+    {
+        return;
+    }
+    if (!hPipe)
+    {
+        return;
+    }
     DWORD bytesWritten = 0;
     BOOL ret = WriteFile(      //
         hPipe,                 //
@@ -418,7 +420,6 @@ void SendToNamedpipe()
         DWORD err = GetLastError();
         spdlog::info("WriteFile error: {}", err);
     }
-    CloseHandle(hPipe);
 }
 
 /**
@@ -430,6 +431,7 @@ void SendToNamedpipe()
  */
 int SendKeyEventToUIProcessViaNamedPipe()
 {
+    // OutputDebugString(L"first SendKeyEventToUIProcessViaNamedPipe\n");
     if (!canUseNamedPipe)
     {
         return -1;

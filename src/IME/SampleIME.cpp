@@ -232,6 +232,10 @@ STDAPI CSampleIME::ActivateEx(ITfThreadMgr *pThreadMgr, TfClientId tfClientId, D
     _tfClientId = tfClientId;
     _dwActivateFlags = dwFlags;
 
+    OutputDebugString(L"CSampleIME::ActivateEx\n");
+    HWND hwnd = GetForegroundWindow();
+    GetWindowText(hwnd, Global::app_name, 512);
+
     // Set up spdlog
     // auto logger = spdlog::basic_logger_mt("file_logger", ::LogFilePath);
     // spdlog::set_default_logger(logger);
@@ -325,6 +329,8 @@ STDAPI CSampleIME::Deactivate()
 #ifdef FANY_DEBUG
     spdlog::info("Close IPC!");
 #endif
+
+    OutputDebugString(L"CSampleIME::Deactivate\n");
 
     // Clean spdlog
     spdlog::drop("file_logger");

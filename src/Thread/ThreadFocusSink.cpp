@@ -5,9 +5,11 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved
 
+#include "Ipc.h"
 #include "Private.h"
 #include "SampleIME.h"
 #include "CandidateListUIPresenter.h"
+#include <debugapi.h>
 
 //+---------------------------------------------------------------------------
 //
@@ -32,7 +34,7 @@ STDAPI CSampleIME::OnSetThreadFocus()
             pCandidateListDocumentMgr->Release();
         }
     }
-
+    InitNamedpipe();
     return S_OK;
 }
 
@@ -64,6 +66,7 @@ STDAPI CSampleIME::OnKillThreadFocus()
         }
         _pCandidateListUIPresenter->OnKillThreadFocus();
     }
+    CloseNamedpipe();
     return S_OK;
 }
 
