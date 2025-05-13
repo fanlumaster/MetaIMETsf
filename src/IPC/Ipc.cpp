@@ -4,7 +4,6 @@
 #include <minwindef.h>
 #include <winnt.h>
 #include <winuser.h>
-#include "fmt/xchar.h"
 #include "spdlog/spdlog.h"
 #include "Globals.h"
 
@@ -14,9 +13,10 @@ static FanyImeSharedMemoryData *sharedData;
 static bool canUseSharedMemory = true;
 
 static HANDLE hPipe = nullptr;
-static bool canUseNamedPipe = true;
 
 static FanyImeNamedpipeData namedpipeData;
+
+void SendToAuxNamedpipe(std::wstring pipeData);
 
 int InitIpc()
 {
@@ -36,7 +36,6 @@ int InitIpc()
 
     if (!hMapFile)
     {
-        OutputDebugString(L"CreateFileMapping failed\n");
         // Error handling
         canUseSharedMemory = false;
         spdlog::info("CreateFileMapping error: {}", GetLastError());
@@ -75,26 +74,28 @@ int InitIpc()
 
 int InitNamedpipe()
 {
-    hPipe = CreateFile(               //
-        FANY_IME_NAMED_PIPE,          //
-        GENERIC_READ | GENERIC_WRITE, //
-        0,                            //
-        nullptr,                      //
-        OPEN_EXISTING,                //
-        0,                            //
-        nullptr                       //
-    );
-
-    if (!hPipe)
+    if (hPipe == nullptr)
     {
-        canUseNamedPipe = false;
-        OutputDebugString(L"Connect to namedpipe failed\n");
-        return -1;
-    }
-    else
-    {
-    }
+        hPipe = CreateFile(               //
+            FANY_IME_NAMED_PIPE,          //
+            GENERIC_READ | GENERIC_WRITE, //
+            0,                            //
+            nullptr,                      //
+            OPEN_EXISTING,                //
+            0,                            //
+            nullptr                       //
+        );
 
+        if (hPipe == INVALID_HANDLE_VALUE)
+        {
+            hPipe = nullptr;
+            SendToAuxNamedpipe(L"kill");
+        }
+        else
+        {
+            // TODO: Log
+        }
+    }
     return 0;
 }
 
@@ -146,11 +147,8 @@ int CloseIpc()
 
 int CloseNamedpipe()
 {
-    if (hPipe)
-    {
-        CloseHandle(hPipe);
-        hPipe = nullptr;
-    }
+    CloseHandle(hPipe);
+    hPipe = nullptr;
     return 0;
 }
 
@@ -166,11 +164,7 @@ int WriteDataToSharedMemory(           //
     WriteDataToNamedPipe(keycode, modifiers_down, point, pinyin_length, pinyin_string, write_flag);
     if (!canUseSharedMemory)
     {
-        if (canUseNamedPipe)
-        {
-            return WriteDataToNamedPipe(keycode, modifiers_down, point, pinyin_length, pinyin_string, write_flag);
-        }
-        return -1;
+        return WriteDataToNamedPipe(keycode, modifiers_down, point, pinyin_length, pinyin_string, write_flag);
     }
 
     if (write_flag >> 0 & 1u)
@@ -223,11 +217,6 @@ int WriteDataToNamedPipe(              //
     UINT write_flag                    //
 )
 {
-    if (!canUseNamedPipe)
-    {
-        return -1;
-    }
-
     if (write_flag >> 0 & 1u)
     {
         namedpipeData.keycode = keycode;
@@ -260,17 +249,9 @@ int WriteDataToNamedPipe(              //
 
 int SendKeyEventToUIProcess()
 {
-    // OutputDebugString(fmt::format(L"SendKeyEventToUIProcess, canUseSharedMemory = {}, canUseNamedPipe = {}\n",
-    //                               canUseSharedMemory, canUseNamedPipe)
-    //                       .c_str());
     if (!canUseSharedMemory)
     {
-        // OutputDebugString(L"SendKeyEventToUIProcessViaNamedPipe\n");
-        if (canUseNamedPipe)
-        {
-            // OutputDebugString(L"Really SendKeyEventToUIProcessViaNamedPipe \n");
-            return SendKeyEventToUIProcessViaNamedPipe();
-        }
+        return SendKeyEventToUIProcessViaNamedPipe();
     }
 
     HANDLE hEvent = OpenEventW(         //
@@ -299,10 +280,7 @@ int SendHideCandidateWndEventToUIProcess()
 {
     if (!canUseSharedMemory)
     {
-        if (canUseNamedPipe)
-        {
-            return SendHideCandidateWndEventToUIProcessViaNamedPipe();
-        }
+        return SendHideCandidateWndEventToUIProcessViaNamedPipe();
     }
 
     HANDLE hEvent = OpenEventW(         //
@@ -331,10 +309,7 @@ int SendShowCandidateWndEventToUIProcess()
 {
     if (!canUseSharedMemory)
     {
-        if (canUseNamedPipe)
-        {
-            return SendShowCandidateWndEventToUIProcessViaNamedPipe();
-        }
+        return SendShowCandidateWndEventToUIProcessViaNamedPipe();
     }
 
     HANDLE hEvent = OpenEventW(         //
@@ -363,10 +338,7 @@ int SendMoveCandidateWndEventToUIProcess()
 {
     if (!canUseSharedMemory)
     {
-        if (canUseNamedPipe)
-        {
-            return SendMoveCandidateWndEventToUIProcessViaNamedPipe();
-        }
+        return SendMoveCandidateWndEventToUIProcessViaNamedPipe();
     }
 
     HANDLE hEvent = OpenEventW(         //
@@ -398,13 +370,27 @@ int SendMoveCandidateWndEventToUIProcess()
 
 void SendToNamedpipe()
 {
-    if (!canUseNamedPipe)
+    if (!hPipe || hPipe == INVALID_HANDLE_VALUE) // Try to reconnect
     {
-        return;
-    }
-    if (!hPipe)
-    {
-        return;
+        hPipe = CreateFile(               //
+            FANY_IME_NAMED_PIPE,          //
+            GENERIC_READ | GENERIC_WRITE, //
+            0,                            //
+            nullptr,                      //
+            OPEN_EXISTING,                //
+            0,                            //
+            nullptr                       //
+        );
+
+        if (hPipe == INVALID_HANDLE_VALUE)
+        {
+            // TODO: Log
+            return;
+        }
+        else
+        {
+            // TODO: Log
+        }
     }
     DWORD bytesWritten = 0;
     BOOL ret = WriteFile(      //
@@ -422,6 +408,37 @@ void SendToNamedpipe()
     }
 }
 
+void SendToAuxNamedpipe(std::wstring pipeData)
+{
+    HANDLE hAuxPipe = CreateFileW(    //
+        FANY_IME_AUX_NAMED_PIPE,      //
+        GENERIC_READ | GENERIC_WRITE, //
+        0,                            //
+        nullptr,                      //
+        OPEN_EXISTING,                //
+        0,                            //
+        nullptr                       //
+    );
+    if (!hAuxPipe)
+    {
+        // TODO: Error handling
+        return;
+    }
+    DWORD bytesWritten = 0;
+    BOOL ret = WriteFile(                    //
+        hAuxPipe,                            //
+        pipeData.c_str(),                    //
+        pipeData.length() * sizeof(wchar_t), //
+        &bytesWritten,                       //
+        NULL                                 //
+    );
+    if (!ret || bytesWritten != pipeData.length() * sizeof(wchar_t))
+    {
+        // TODO: Error handling
+    }
+    CloseHandle(hAuxPipe);
+}
+
 /**
  * event_type
  *   0: FanyImeKeyEvent
@@ -431,12 +448,6 @@ void SendToNamedpipe()
  */
 int SendKeyEventToUIProcessViaNamedPipe()
 {
-    // OutputDebugString(L"first SendKeyEventToUIProcessViaNamedPipe\n");
-    if (!canUseNamedPipe)
-    {
-        return -1;
-    }
-
     namedpipeData.event_type = 0;
     SendToNamedpipe();
 
@@ -445,11 +456,6 @@ int SendKeyEventToUIProcessViaNamedPipe()
 
 int SendHideCandidateWndEventToUIProcessViaNamedPipe()
 {
-    if (!canUseNamedPipe)
-    {
-        return -1;
-    }
-
     namedpipeData.event_type = 1;
     SendToNamedpipe();
 
@@ -458,11 +464,6 @@ int SendHideCandidateWndEventToUIProcessViaNamedPipe()
 
 int SendShowCandidateWndEventToUIProcessViaNamedPipe()
 {
-    if (!canUseNamedPipe)
-    {
-        return -1;
-    }
-
     namedpipeData.event_type = 2;
     SendToNamedpipe();
 
@@ -471,11 +472,6 @@ int SendShowCandidateWndEventToUIProcessViaNamedPipe()
 
 int SendMoveCandidateWndEventToUIProcessViaNamedPipe()
 {
-    if (!canUseNamedPipe)
-    {
-        return -1;
-    }
-
     namedpipeData.event_type = 3;
     SendToNamedpipe();
 

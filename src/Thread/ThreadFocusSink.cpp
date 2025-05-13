@@ -19,6 +19,8 @@
 
 STDAPI CSampleIME::OnSetThreadFocus()
 {
+    // Connect to namedpipe
+    InitNamedpipe();
     if (_pCandidateListUIPresenter)
     {
         ITfDocumentMgr *pCandidateListDocumentMgr = nullptr;
@@ -34,7 +36,6 @@ STDAPI CSampleIME::OnSetThreadFocus()
             pCandidateListDocumentMgr->Release();
         }
     }
-    InitNamedpipe();
     return S_OK;
 }
 
@@ -46,6 +47,8 @@ STDAPI CSampleIME::OnSetThreadFocus()
 
 STDAPI CSampleIME::OnKillThreadFocus()
 {
+    // Disconnect from namedpipe
+    CloseNamedpipe();
     if (_pCandidateListUIPresenter)
     {
         ITfDocumentMgr *pCandidateListDocumentMgr = nullptr;
@@ -66,7 +69,6 @@ STDAPI CSampleIME::OnKillThreadFocus()
         }
         _pCandidateListUIPresenter->OnKillThreadFocus();
     }
-    CloseNamedpipe();
     return S_OK;
 }
 

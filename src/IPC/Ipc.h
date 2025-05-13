@@ -7,6 +7,7 @@ inline const wchar_t *FANY_IME_SHARED_MEMORY = L"Local\\FanyImeSharedMemory";
 inline const int BUFFER_SIZE = 4096;
 
 inline const wchar_t *FANY_IME_NAMED_PIPE = L"\\\\.\\pipe\\FanyImeNamedPipe";
+inline const wchar_t *FANY_IME_AUX_NAMED_PIPE = L"\\\\.\\pipe\\FanyImeAuxNamedPipe";
 
 inline const std::vector<std::wstring> FANY_IME_EVENT_ARRAY = {
     L"FanyImeKeyEvent",           // Event sent to UI process to notify time to update UI by new pinyin_string
