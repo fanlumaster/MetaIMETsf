@@ -10,9 +10,10 @@
 static HANDLE hMapFile = nullptr;
 static void *pBuf;
 static FanyImeSharedMemoryData *sharedData;
-static bool canUseSharedMemory = true;
+static bool canUseSharedMemory = false;
 
 static HANDLE hPipe = nullptr;
+static HANDLE hFromServerPipe = nullptr;
 
 static FanyImeNamedpipeData namedpipeData;
 
@@ -96,6 +97,30 @@ int InitNamedpipe()
             // TODO: Log
         }
     }
+
+    if (hFromServerPipe == nullptr)
+    {
+        hFromServerPipe = CreateFile(     //
+            FANY_IME_TO_TSF_NAMED_PIPE,   //
+            GENERIC_READ | GENERIC_WRITE, //
+            0,                            //
+            nullptr,                      //
+            OPEN_EXISTING,                //
+            0,                            //
+            nullptr                       //
+        );
+
+        if (hFromServerPipe == INVALID_HANDLE_VALUE)
+        {
+            hFromServerPipe = nullptr;
+            // SendToAuxNamedpipe(L"kill");
+        }
+        else
+        {
+            // TODO: Log
+        }
+    }
+
     return 0;
 }
 
@@ -149,6 +174,8 @@ int CloseNamedpipe()
 {
     CloseHandle(hPipe);
     hPipe = nullptr;
+    CloseHandle(hFromServerPipe);
+    hFromServerPipe = nullptr;
     return 0;
 }
 
@@ -392,6 +419,29 @@ void SendToNamedpipe()
             // TODO: Log
         }
     }
+
+    if (!hFromServerPipe || hFromServerPipe == INVALID_HANDLE_VALUE) // Try to reconnect
+    {
+        hFromServerPipe = CreateFile(     //
+            FANY_IME_TO_TSF_NAMED_PIPE,   //
+            GENERIC_READ | GENERIC_WRITE, //
+            0,                            //
+            nullptr,                      //
+            OPEN_EXISTING,                //
+            0,                            //
+            nullptr                       //
+        );
+        if (hFromServerPipe == INVALID_HANDLE_VALUE)
+        {
+            // TODO: Log
+            OutputDebugString(L"Create hFromServerPipe failed\n");
+        }
+        else
+        {
+            // TODO: Log
+        }
+    }
+
     DWORD bytesWritten = 0;
     BOOL ret = WriteFile(      //
         hPipe,                 //
@@ -408,6 +458,52 @@ void SendToNamedpipe()
     }
 }
 
+std::wstring ReadDataFromServerViaNamedPipe()
+{
+    if (!hFromServerPipe || hFromServerPipe == INVALID_HANDLE_VALUE) // Try to reconnect
+    {
+        hFromServerPipe = CreateFile(     //
+            FANY_IME_TO_TSF_NAMED_PIPE,   //
+            GENERIC_READ | GENERIC_WRITE, //
+            0,                            //
+            nullptr,                      //
+            OPEN_EXISTING,                //
+            0,                            //
+            nullptr                       //
+        );
+        if (hFromServerPipe == INVALID_HANDLE_VALUE)
+        {
+            // TODO: Log
+            return L"";
+        }
+        else
+        {
+            // TODO: Log
+        }
+    }
+
+    wchar_t buffer[512] = {0};
+    DWORD bytesRead = 0;
+    BOOL readResult = ReadFile( //
+        hFromServerPipe,        //
+        buffer,                 //
+        sizeof(buffer),         //
+        &bytesRead,             //
+        NULL                    //
+    );
+    if (!readResult || bytesRead == 0) // Disconnected or error
+    {
+        // TODO: Log
+    }
+    else
+    {
+        std::wstring message(buffer, bytesRead / sizeof(wchar_t));
+        OutputDebugString(message.c_str());
+        return message;
+    }
+    return L"";
+}
+
 void SendToAuxNamedpipe(std::wstring pipeData)
 {
     HANDLE hAuxPipe = CreateFileW(    //
@@ -419,7 +515,7 @@ void SendToAuxNamedpipe(std::wstring pipeData)
         0,                            //
         nullptr                       //
     );
-    if (!hAuxPipe)
+    if (!hAuxPipe || hAuxPipe == INVALID_HANDLE_VALUE)
     {
         // TODO: Error handling
         return;

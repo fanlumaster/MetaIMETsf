@@ -7,6 +7,7 @@ inline const wchar_t *FANY_IME_SHARED_MEMORY = L"Local\\FanyImeSharedMemory";
 inline const int BUFFER_SIZE = 4096;
 
 inline const wchar_t *FANY_IME_NAMED_PIPE = L"\\\\.\\pipe\\FanyImeNamedPipe";
+inline const wchar_t *FANY_IME_TO_TSF_NAMED_PIPE = L"\\\\.\\pipe\\FanyImeToTsfNamedPipe";
 inline const wchar_t *FANY_IME_AUX_NAMED_PIPE = L"\\\\.\\pipe\\FanyImeAuxNamedPipe";
 
 inline const std::vector<std::wstring> FANY_IME_EVENT_ARRAY = {
@@ -16,6 +17,15 @@ inline const std::vector<std::wstring> FANY_IME_EVENT_ARRAY = {
     L"FanyMoveCandidateWndEvent", // Event sent to UI process to notify time to move candidate window
 };
 
+//
+// modifiers:
+//   0: non
+//   1: shift
+//   2: control
+//   3: alt
+//   4: win
+//   5: to be supplemented
+//
 struct FanyImeSharedMemoryData
 {
     UINT keycode;
@@ -83,6 +93,7 @@ int SendKeyEventToUIProcessViaNamedPipe();
 int SendHideCandidateWndEventToUIProcessViaNamedPipe();
 int SendShowCandidateWndEventToUIProcessViaNamedPipe();
 int SendMoveCandidateWndEventToUIProcessViaNamedPipe();
+std::wstring ReadDataFromServerViaNamedPipe();
 
 namespace Global
 {

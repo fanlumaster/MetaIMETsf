@@ -47,14 +47,14 @@ HRESULT CSampleIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfContext *p
 
     if (candidateLen)
     {
-        candidateString.Set(L"", 0);
-        hr = _AddComposingAndChar(ec, pContext, &candidateString);
         if (Global::Keycode == VK_SPACE || (Global::Keycode > '0' && Global::Keycode < '9'))
         {
             WriteDataToSharedMemory(Global::Keycode, 0, nullptr, 0, L"", 0b00001);
             SendKeyEventToUIProcess();
         }
-
+        std::wstring receivedData = ReadDataFromServerViaNamedPipe();
+        candidateString.Set(receivedData.c_str(), receivedData.length());
+        hr = _AddComposingAndChar(ec, pContext, &candidateString);
         if (FAILED(hr))
         {
             return hr;
