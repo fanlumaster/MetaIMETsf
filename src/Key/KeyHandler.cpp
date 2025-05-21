@@ -8,7 +8,6 @@
 #include <minwindef.h>
 #include <string>
 #include "Utils/FanyUtils.h"
-#include "fmt/format.h"
 #include "fmt/xchar.h"
 #include "spdlog/spdlog.h"
 

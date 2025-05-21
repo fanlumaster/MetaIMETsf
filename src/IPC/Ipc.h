@@ -95,6 +95,12 @@ int SendShowCandidateWndEventToUIProcessViaNamedPipe();
 int SendMoveCandidateWndEventToUIProcessViaNamedPipe();
 std::wstring ReadDataFromServerViaNamedPipe();
 
+//
+// Modifiers:
+//     0b00000001: Shift
+//     0b00000010: Control
+//     0b00000100: Alt
+//
 namespace Global
 {
 inline UINT Keycode = 0;

@@ -1871,6 +1871,21 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCH
                     pKeyState->Function = FUNCTION_MOVE_PAGE_DOWN;
                 }
                 return TRUE;
+            case VK_TAB:
+                if (pKeyState)
+                {
+                    if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+                    {
+                        pKeyState->Category = CATEGORY_COMPOSING;
+                        pKeyState->Function = FUNCTION_MOVE_PAGE_UP;
+                    }
+                    else
+                    {
+                        pKeyState->Category = CATEGORY_COMPOSING;
+                        pKeyState->Function = FUNCTION_MOVE_PAGE_DOWN;
+                    }
+                }
+                return TRUE;
 
             case VK_HOME:
                 if (pKeyState)
@@ -1983,7 +1998,21 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCH
                     pKeyState->Function = FUNCTION_MOVE_PAGE_DOWN;
                 }
                 return TRUE;
-
+            case VK_TAB:
+                if (pKeyState)
+                {
+                    if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+                    {
+                        pKeyState->Category = CATEGORY_COMPOSING;
+                        pKeyState->Function = FUNCTION_MOVE_PAGE_UP;
+                    }
+                    else
+                    {
+                        pKeyState->Category = CATEGORY_COMPOSING;
+                        pKeyState->Function = FUNCTION_MOVE_PAGE_DOWN;
+                    }
+                }
+                return TRUE;
             case VK_HOME:
                 if (pKeyState)
                 {
@@ -2067,6 +2096,21 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCH
             {
                 pKeyState->Category = CATEGORY_CANDIDATE;
                 pKeyState->Function = FUNCTION_MOVE_PAGE_DOWN;
+            }
+            return TRUE;
+        case VK_TAB:
+            if (pKeyState)
+            {
+                if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+                {
+                    pKeyState->Category = CATEGORY_COMPOSING;
+                    pKeyState->Function = FUNCTION_MOVE_PAGE_UP;
+                }
+                else
+                {
+                    pKeyState->Category = CATEGORY_COMPOSING;
+                    pKeyState->Function = FUNCTION_MOVE_PAGE_DOWN;
+                }
             }
             return TRUE;
         case VK_HOME:
@@ -2185,6 +2229,21 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCH
             {
                 pKeyState->Category = CATEGORY_PHRASE;
                 pKeyState->Function = FUNCTION_MOVE_PAGE_DOWN;
+            }
+            return TRUE;
+        case VK_TAB:
+            if (pKeyState)
+            {
+                if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+                {
+                    pKeyState->Category = CATEGORY_COMPOSING;
+                    pKeyState->Function = FUNCTION_MOVE_PAGE_UP;
+                }
+                else
+                {
+                    pKeyState->Category = CATEGORY_COMPOSING;
+                    pKeyState->Function = FUNCTION_MOVE_PAGE_DOWN;
+                }
             }
             return TRUE;
         case VK_HOME:

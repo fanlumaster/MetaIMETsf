@@ -12,6 +12,7 @@
 #include <winuser.h>
 #include "Ipc.h"
 #include "spdlog/spdlog.h"
+#include "fmt/xchar.h"
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -873,14 +874,17 @@ void CCandidateListUIPresenter::_EndCandidateList()
 
 void CCandidateListUIPresenter::_NotifyUI()
 {
-    // OutputDebugString(L"_NotifyUI\n");
     CStringRange keyStringBuffer = _pTextService->GetCompositionProcessorEngine()->GetKeystrokeBuffer();
     std::wstring pinyinString(keyStringBuffer.Get(), keyStringBuffer.GetLength());
     Global::PinyinLength = pinyinString.length();
-#ifdef FANY_DEBUG
-    spdlog::info("_NotifyUI pinyinString: {}", Global::wstring_to_string(pinyinString));
-#endif
-    WriteDataToSharedMemory(Global::Keycode, 0, Global::Point, Global::PinyinLength, Global::PinyinString, 0b11111);
+    WriteDataToSharedMemory(   //
+        Global::Keycode,       //
+        Global::ModifiersDown, //
+        Global::Point,         //
+        Global::PinyinLength,  //
+        Global::PinyinString,  //
+        0b11111                //
+    );
     SendShowCandidateWndEventToUIProcess();
     SendKeyEventToUIProcess();
 }
@@ -1261,9 +1265,11 @@ void CCandidateListUIPresenter::AdviseUIChangedByArrowKey(_In_ KEYSTROKE_FUNCTIO
     }
     case FUNCTION_MOVE_PAGE_UP: {
         // Page prev
-        WriteDataToSharedMemory(Global::Keycode, 0, nullptr, 0, L"", 0b00001);
+        WriteDataToSharedMemory(Global::Keycode, Global::ModifiersDown, nullptr, 0, L"", 0b00011);
         SendKeyEventToUIProcess();
-        spdlog::info("Page up");
+#ifdef FANY_DEBUG
+        OutputDebugString(fmt::format(L"Page up, prev, modifiers: {}", Global::ModifiersDown).c_str());
+#endif
         _MovePage(MOVEUP_ONE);
         break;
     }
@@ -1271,7 +1277,9 @@ void CCandidateListUIPresenter::AdviseUIChangedByArrowKey(_In_ KEYSTROKE_FUNCTIO
         // Page next
         WriteDataToSharedMemory(Global::Keycode, 0, nullptr, 0, L"", 0b00001);
         SendKeyEventToUIProcess();
-        spdlog::info("Page down");
+#ifdef FANY_DEBUG
+        OutputDebugString(L"Page down, next\n");
+#endif
         _MovePage(MOVEDOWN_ONE);
         break;
     }

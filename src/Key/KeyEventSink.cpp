@@ -8,6 +8,7 @@
 #include "Compartment.h"
 #include "SampleIMEBaseStructure.h"
 #include "fmt/xchar.h"
+#include <debugapi.h>
 #include <string>
 #include <boost/lexical_cast.hpp>
 #include "spdlog/spdlog.h"
@@ -321,7 +322,22 @@ STDAPI CSampleIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lParam,
 
     *pIsEaten = _IsKeyEaten(pContext, (UINT)wParam, &code, &wch, &KeystrokeState);
     Global::Keycode = code;
+    if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+    {
+        Global::ModifiersDown |= 0b00000001;
+    }
+    else
+    {
+        Global::ModifiersDown &= ~0b00000001;
+    }
     Global::firefox_like_cnt = 0;
+#ifdef FANY_DEBUG
+    if (Global::Keycode == VK_TAB)
+    {
+        OutputDebugString(L"Tab key pressed.");
+        OutputDebugString(fmt::format(L"eat: {}", *pIsEaten).c_str());
+    }
+#endif
 
 #ifdef FANY_DEBUG
     std::wstring msg = L"Whether to eat it?" + std::to_wstring(*pIsEaten);

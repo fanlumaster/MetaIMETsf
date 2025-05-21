@@ -188,7 +188,6 @@ int WriteDataToSharedMemory(           //
     UINT write_flag                    //
 )
 {
-    WriteDataToNamedPipe(keycode, modifiers_down, point, pinyin_length, pinyin_string, write_flag);
     if (!canUseSharedMemory)
     {
         return WriteDataToNamedPipe(keycode, modifiers_down, point, pinyin_length, pinyin_string, write_flag);
