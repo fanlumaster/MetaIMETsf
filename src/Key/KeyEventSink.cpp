@@ -319,14 +319,15 @@ STDAPI CSampleIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lParam,
     UINT code = 0;
 
     *pIsEaten = _IsKeyEaten(pContext, (UINT)wParam, &code, &wch, &KeystrokeState);
-    Global::Keycode = code;
-    if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+    if (*pIsEaten)
     {
-        Global::ModifiersDown |= 0b00000001;
-    }
-    else
-    {
-        Global::ModifiersDown &= ~0b00000001;
+        Global::Keycode = code;
+        if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+            Global::ModifiersDown |= 0b00000001;
+        else
+            Global::ModifiersDown &= ~0b00000001;
+        WriteDataToSharedMemory(Global::Keycode, Global::ModifiersDown, nullptr, 0, L"", 0b00011);
+        SendKeyEventToUIProcess();
     }
     Global::firefox_like_cnt = 0;
 #ifdef FANY_DEBUG

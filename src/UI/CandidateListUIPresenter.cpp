@@ -50,7 +50,7 @@ HRESULT CSampleIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfContext *p
         if (Global::Keycode == VK_SPACE || (Global::Keycode > '0' && Global::Keycode < '9'))
         {
             WriteDataToSharedMemory(Global::Keycode, 0, nullptr, 0, L"", 0b00001);
-            SendKeyEventToUIProcess();
+            // SendKeyEventToUIProcess();
         }
         std::wstring receivedData = ReadDataFromServerViaNamedPipe();
         candidateString.Set(receivedData.c_str(), receivedData.length());
@@ -886,7 +886,7 @@ void CCandidateListUIPresenter::_NotifyUI()
         0b11111                //
     );
     SendShowCandidateWndEventToUIProcess();
-    SendKeyEventToUIProcess();
+    // SendKeyEventToUIProcess();
 }
 
 //+---------------------------------------------------------------------------
@@ -1266,7 +1266,7 @@ void CCandidateListUIPresenter::AdviseUIChangedByArrowKey(_In_ KEYSTROKE_FUNCTIO
     case FUNCTION_MOVE_PAGE_UP: {
         // Page prev
         WriteDataToSharedMemory(Global::Keycode, Global::ModifiersDown, nullptr, 0, L"", 0b00011);
-        SendKeyEventToUIProcess();
+        // SendKeyEventToUIProcess();
 #ifdef FANY_DEBUG
         OutputDebugString(fmt::format(L"Page up, prev, modifiers: {}", Global::ModifiersDown).c_str());
 #endif
@@ -1276,7 +1276,7 @@ void CCandidateListUIPresenter::AdviseUIChangedByArrowKey(_In_ KEYSTROKE_FUNCTIO
     case FUNCTION_MOVE_PAGE_DOWN: {
         // Page next
         WriteDataToSharedMemory(Global::Keycode, 0, nullptr, 0, L"", 0b00001);
-        SendKeyEventToUIProcess();
+        // SendKeyEventToUIProcess();
 #ifdef FANY_DEBUG
         OutputDebugString(L"Page down, next\n");
 #endif
