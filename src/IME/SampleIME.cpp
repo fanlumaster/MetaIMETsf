@@ -12,11 +12,10 @@
 #include "CompositionProcessorEngine.h"
 #include "Compartment.h"
 #include "define.h"
+#include <debugapi.h>
 #include <winnt.h>
 #include <winuser.h>
 #include <Windows.h>
-#include "spdlog/spdlog.h"
-#include <spdlog/sinks/basic_file_sink.h>
 #include "FanyLog.h"
 #include "Ipc.h"
 #include "CommonUtils.h"
@@ -236,24 +235,10 @@ STDAPI CSampleIME::ActivateEx(ITfThreadMgr *pThreadMgr, TfClientId tfClientId, D
     HWND hwnd = GetForegroundWindow();
     GetWindowText(hwnd, Global::app_name, 512);
 
-    // Set up spdlog
-    // auto logger = spdlog::basic_logger_mt("file_logger", ::LogFilePath);
-    // spdlog::set_default_logger(logger);
-    // spdlog::flush_on(spdlog::level::info);
-#ifdef FANY_DEBUG
-    spdlog::info("CSampleIME::ActivateEx fany!");
-#endif
-
-    // Set up shared memory
+    // Set up IPC(named pipe)
     InitIpc();
-#ifdef FANY_DEBUG
-    spdlog::info("Init IPC!");
-#endif
 
     Global::current_process_name = GetCurrentProcessName();
-#ifdef FANY_DEBUG
-    spdlog::info("Process name: {}", Global::wstring_to_string(Global::current_process_name));
-#endif
 
     if (!_InitThreadMgrEventSink())
     {
@@ -303,7 +288,7 @@ STDAPI CSampleIME::ActivateEx(ITfThreadMgr *pThreadMgr, TfClientId tfClientId, D
     SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
 #ifdef FANY_DEBUG
-    Global::LogMessageW(L"CSampleIME::ActivateEx");
+    OutputDebugString(L"CSampleIME::ActivateEx\n");
 #endif
 
     return S_OK;
@@ -321,19 +306,10 @@ ExitError:
 
 STDAPI CSampleIME::Deactivate()
 {
-#ifdef FANY_DEBUG
-    spdlog::info("Deactivate fany!");
-#endif
-    // Clean shared memory
+    // Clean IPC
     CloseIpc();
-#ifdef FANY_DEBUG
-    spdlog::info("Close IPC!");
-#endif
 
     OutputDebugString(L"CSampleIME::Deactivate\n");
-
-    // Clean spdlog
-    spdlog::drop("file_logger");
 
     if (_pCompositionProcessorEngine)
     {

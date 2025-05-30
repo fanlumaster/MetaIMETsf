@@ -5,11 +5,11 @@
 #include "CandidateListUIPresenter.h"
 #include "CompositionProcessorEngine.h"
 #include "SampleIMEBaseStructure.h"
+#include <debugapi.h>
 #include <minwindef.h>
 #include <string>
-#include "Utils/FanyUtils.h"
 #include "fmt/xchar.h"
-#include "spdlog/spdlog.h"
+#include "FanyUtils.h"
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -106,7 +106,7 @@ HRESULT CSampleIME::_HandleToogleIMEMode(TfEditCookie ec, _In_ ITfContext *pCont
     if (keyStrokebuffer.GetLength())
     {
         std::wstring keyStrokeString(keyStrokebuffer.Get(), keyStrokebuffer.GetLength());
-        FanyUtuils::SendKeys(keyStrokeString);
+        FanyUtils::SendKeys(keyStrokeString);
     }
     _RemoveDummyCompositionForComposing(ec, _pComposition);
 
@@ -171,7 +171,7 @@ HRESULT CSampleIME::_HandleCompositionInput(TfEditCookie ec, _In_ ITfContext *pC
     }
 
 #ifdef FANY_DEBUG
-    Global::LogMessageW(L"Fany AddVirtualKey Here.");
+    OutputDebugString(L"Fany AddVirtualKey Here.");
 #endif
     // Add virtual key to composition processor engine
     pCompositionProcessorEngine->AddVirtualKey(wch);
@@ -206,8 +206,7 @@ HRESULT CSampleIME::_HandleCompositionInputWorker(_In_ CCompositionProcessorEngi
     if (readingStrings.Count())
     {
 #ifdef FANY_DEBUG
-        spdlog::info("composing reading strings count: {}", readingStrings.Count());
-        spdlog::info("composing reading strings: {}", readingStrings.GetAt(0)->GetLength());
+        // TODO: Log reading strings
 #endif
     }
 
@@ -570,7 +569,7 @@ HRESULT CSampleIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITfConte
 #ifdef FANY_DEBUG
     std::wstring msg = L"You pressed punctuation key: ";
     msg += wch;
-    Global::LogMessageW(msg.c_str());
+    OutputDebugString(msg.c_str());
 #endif
     if (_candidateMode != CANDIDATE_NONE && _pCandidateListUIPresenter)
     {

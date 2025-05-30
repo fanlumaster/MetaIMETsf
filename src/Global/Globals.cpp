@@ -9,7 +9,6 @@
 #include <string>
 #include <ctime>
 #include "FanyUtils.h"
-#include <boost/locale.hpp>
 
 namespace Global
 {
@@ -506,62 +505,4 @@ BOOL CompareElements(LCID locale, const CStringRange *pElement1, const CStringRa
     return (CStringRange::Compare(locale, (CStringRange *)pElement1, (CStringRange *)pElement2) == CSTR_EQUAL) ? TRUE
                                                                                                                : FALSE;
 }
-
-void LogMessage(const char *message)
-{
-    // Get local time
-    std::time_t now = std::time(nullptr);
-    std::tm *localTime = std::localtime(&now);
-
-    // format time
-    char timeBuffer[80];
-    std::strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S", localTime);
-
-    std::ofstream logFile(FanyUtuils::GetLogFilePath(), std::ios_base::app); // Append mode
-
-    if (logFile.is_open())
-    {
-        logFile << "[" << timeBuffer << "] " << message << std::endl; // Write to log
-        logFile.close();
-    }
-}
-void LogMessageW(const wchar_t *message)
-{
-    std::time_t now = std::time(nullptr);
-    std::tm *localTime = std::localtime(&now);
-
-    wchar_t timeBuffer[80];
-    wcsftime(timeBuffer, sizeof(timeBuffer) / sizeof(wchar_t), L"%Y-%m-%d %H:%M:%S", localTime);
-
-    std::wofstream logFile(FanyUtuils::GetLogFilePathW(), std::ios_base::app);
-    if (logFile.is_open())
-    {
-        logFile.imbue(std::locale("Chinese_China.65001"));
-        logFile << L"[" << timeBuffer << L"] " << message;
-        logFile << std::endl;
-        logFile.close();
-    }
-}
-
-// Write wide string and its length to log
-void LogWideString(const WCHAR *pwch, DWORD_PTR dwLength)
-{
-    std::wstring logMessage = L"pwch: ";
-    logMessage.append(pwch, dwLength);
-    logMessage += L", dwLength: ";
-    logMessage += std::to_wstring(dwLength);
-
-    LogMessageW(logMessage.c_str());
-}
-
-std::wstring string_to_wstring(const std::string &str)
-{
-    return boost::locale::conv::utf_to_utf<wchar_t>(str);
-}
-
-std::string wstring_to_string(const std::wstring &wstr)
-{
-    return boost::locale::conv::utf_to_utf<std::string::value_type>(wstr);
-}
-
 } // namespace Global

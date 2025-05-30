@@ -14,15 +14,13 @@ The roadmap is as follows.
 
 ### How to build
 
-Before we start, make sure you have already installed boost,
+Prerequisites:
 
-```powershell
-scoop install boost
-```
+- Visual Studio 2022
+- vcpkg
+- CMake
 
-Then, replace boost version in `./CMakeLists.txt`,
-
-And thne, run the following command,
+Then, run the following command,
 
 ```powershell
 ./lcompile.ps1
@@ -42,26 +40,26 @@ You need to build this this repo to generate IME Dictionary first, what you need
 
 ```powershell
 cd $env:LOCALAPPDATA
-mkdir DeerWritingBrush
-cd DeerWritingBrush
+mkdir FanImeTsf
+cd FanImeTsf
 git clone https://github.com/fanlumaster/FanyDictForIME.git
 cd ./FanyDictForIME/makecikudb/xnheulpb/makedb/separated_jp_version
 python ./create_db_and_table.py
 python ./insert_data.py
 python ./create_index_for_db.py
-Copy-Item -Path ./out/cutted_flyciku_with_jp.db -Destination $env:LOCALAPPDATA/DeerWritingBrush
+Copy-Item -Path ./out/cutted_flyciku_with_jp.db -Destination $env:LOCALAPPDATA/FanImeTsf
 ```
 
-Moreover, we also need to copy another Dictionary file contained in our main project repo(FanIME) to `$env:LOCALAPPDATA/DeerWritingBrush`，run the command below,
+Moreover, we also need to copy another Dictionary file contained in our main project repo(FanIME) to `$env:LOCALAPPDATA/FanImeTsf`，run the command below,
 
 ```powersehll
-Copy-Item -Path ./Dictionary/SampleIMESimplifiedQuanPin.txt -Destination $env:LOCALAPPDATA/DeerWritingBrush
+Copy-Item -Path ./Dictionary/SampleIMESimplifiedQuanPin.txt -Destination $env:LOCALAPPDATA/FanImeTsf
 ```
 
-Last, copy following files to `$env:LOCALAPPDATA/DeerWritingBrush`,
+Last, copy following files to `$env:LOCALAPPDATA/FanImeTsf`,
 
 ```powersehll
-Copy-Item -Path ./assets/* -Destination $env:LOCALAPPDATA/DeerWritingBrush
+Copy-Item -Path ./assets/* -Destination $env:LOCALAPPDATA/FanImeTsf
 ```
 
 ### How to Install
@@ -72,7 +70,7 @@ Run the following command as administrator,
 ./linstall.ps1
 ```
 
-**Note**: we only use this script to install dll for tests, if we want this IME to support UWP/Metro(Windows Store Apps), we need to cd to `C:\Program Files\` and make a new directory named `DeerWritingBrush`, and move dll to that directory, and then register the dll to system.
+**Note**: we only use this script to install dll for tests, if we want this IME to support UWP/Metro(Windows Store Apps), we need to cd to `C:\Program Files\` and make a new directory named `FanImeTsf`, and move dll to that directory, and then register the dll to system.
 
 ### How to Uninstall
 

@@ -9,7 +9,6 @@
 #include "EditSession.h"
 #include "GetTextExtentEditSession.h"
 #include "TfTextLayoutSink.h"
-#include "spdlog/spdlog.h"
 #include "Ipc.h"
 #include "FanyDefines.h"
 
@@ -44,8 +43,7 @@ STDAPI CGetTextExtentEditSession::DoEditSession(TfEditCookie ec)
     if (SUCCEEDED(_pContextView->GetTextExt(ec, _pRangeComposition, &rc, &isClipped)))
     {
 #ifdef FANY_DEBUG
-        spdlog::info("CGetTextExtentEditSession GetTextExt: left: {}, top: {}, right: {}, bottom: {}", rc.left, rc.top,
-                     rc.right, rc.bottom);
+        // TODO: Log rc position
 #endif
         Global::Point[0] = rc.left;
         Global::Point[1] = rc.bottom;

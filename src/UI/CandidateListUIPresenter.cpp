@@ -11,7 +11,6 @@
 #include <minwindef.h>
 #include <winuser.h>
 #include "Ipc.h"
-#include "spdlog/spdlog.h"
 #include "fmt/xchar.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -90,7 +89,8 @@ HRESULT CSampleIME::_HandleCandidateFinalizeForVKReturn(TfEditCookie ec, _In_ IT
     }
 
 #ifdef FANY_DEBUG
-    Global::LogWideString(candidateString.Get(), candidateLen);
+    std::wstring msg(candidateString.Get(), candidateLen);
+    OutputDebugString(msg.c_str());
 #endif
 
     if (candidateLen)
@@ -1080,9 +1080,9 @@ void CCandidateListUIPresenter::_MoveWindowToTextExt()
 
 VOID CCandidateListUIPresenter::_LayoutChangeNotification(_In_ RECT *lpRect)
 {
-    // OutputDebugStringW(L"LayoutChangeNotification\n");
+    // OutputDebugString(L"LayoutChangeNotification\n");
 #ifdef FANY_DEBUG
-    spdlog::info("_LayoutChangeNotification firefox cnt {}", Global::firefox_like_cnt);
+    // TODO: Log _LayoutChangeNotification firefox cnt: Global::firefox_like_cnt
 #endif
     WriteDataToSharedMemory(Global::Keycode, 0, Global::Point, Global::PinyinLength, Global::PinyinString, 0b00100);
     SendMoveCandidateWndEventToUIProcess();

@@ -1,15 +1,16 @@
-#include "PinyinUtils.h"
 #include "Private.h"
 #include "Globals.h"
 #include "BaseWindow.h"
 #include "Globals.h"
 #include <corecrt_wstring.h>
+#include <debugapi.h>
 #include <string>
 #include <winnt.h>
 #include <winuser.h>
 #include <dwmapi.h>
 #include "CandidateWindow.h"
 #include "CompositionProcessorEngine.h"
+#include "FanyUtils.h"
 
 #pragma comment(lib, "dwmapi.lib")
 
@@ -547,10 +548,6 @@ void CCandidateWindow::_DrawListWithWebview2(_In_ UINT iIndex)
 
     std::wstring preeditString(preeditStringRange.Get(), preeditStringRange.GetLength());
 
-    std::string preeditStringUtf8 = Global::wstring_to_string(preeditString);
-    preeditStringUtf8 = PinyinUtils::PinyinSegmentation(preeditStringUtf8);
-    preeditString = Global::string_to_wstring(preeditStringUtf8);
-
     std::wstring candWString = preeditString;
 
     //
@@ -573,7 +570,7 @@ void CCandidateWindow::_DrawListWithWebview2(_In_ UINT iIndex)
         {
             DWORD error = GetLastError();
             std::wstring errorString = L"FindWindow failed with error: " + std::to_wstring(error);
-            Global::LogMessageW(errorString.c_str());
+            OutputDebugString(errorString.c_str());
         }
         COPYDATASTRUCT cds;
         cds.dwData = 1;
@@ -586,11 +583,11 @@ void CCandidateWindow::_DrawListWithWebview2(_In_ UINT iIndex)
             if (error != 0)
             {
                 std::wstring errorString = L"SendMessage CandidateWString failed with error: " + std::to_wstring(error);
-                Global::LogMessageW(errorString.c_str());
+                OutputDebugString(errorString.c_str());
             }
             else
             {
-                Global::LogMessageW(L"SendMessage CandidateWString success, but result is 0");
+                OutputDebugString(L"SendMessage CandidateWString success, but result is 0");
             }
         }
     }

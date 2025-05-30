@@ -1,10 +1,11 @@
 #pragma once
 #include <string>
 
-namespace FanyUtuils
+namespace FanyUtils
 {
 std::string GetIMEDataDirPath();
-std::string GetLogFilePath();
-std::wstring GetLogFilePathW();
 void SendKeys(std::wstring pinyin);
-} // namespace FanyUtuils
+std::wstring string_to_wstring(const std::string &str);
+std::string wstring_to_string(const std::wstring &wstr);
+std::string to_lower_copy(const std::string &str);
+} // namespace FanyUtils

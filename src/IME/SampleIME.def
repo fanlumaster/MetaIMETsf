@@ -1,4 +1,4 @@
-LIBRARY DeerWritingBrush.dll
+LIBRARY FanImeTsf.dll
 
 EXPORTS
         DllGetClassObject    PRIVATE

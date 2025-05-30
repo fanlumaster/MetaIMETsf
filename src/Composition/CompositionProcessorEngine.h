@@ -8,8 +8,6 @@
 #include "FileMapping.h"
 #include "Compartment.h"
 #include "define.h"
-#include "sqlite3/sqlite3.h"
-#include "FanDictionaryDbUtils.h"
 
 class CCompositionProcessorEngine
 {
@@ -240,8 +238,6 @@ class CCompositionProcessorEngine
     UINT _candidateWndWidth;
 
     CFileMapping *_pDictionaryFile;
-
-    sqlite3 *_pDictionaryDb;
 
     static const int OUT_OF_FILE_INDEX = -1;
 };

@@ -9,7 +9,6 @@
 #include "TfTextLayoutSink.h"
 #include "SampleIME.h"
 #include "GetTextExtentEditSession.h"
-#include "spdlog/spdlog.h"
 
 CTfTextLayoutSink::CTfTextLayoutSink(_In_ CSampleIME *pTextService)
 {
@@ -98,7 +97,7 @@ STDAPI CTfTextLayoutSink::OnLayoutChange(_In_ ITfContext *pContext, TfLayoutCode
     {
     case TF_LC_CREATE: {
 #ifdef FANY_DEBUG
-        spdlog::info("TF_LC_CREATE");
+        // TODO: Log TF_LC_CREATE is triggered
 #endif
     }
     case TF_LC_CHANGE: {
@@ -110,7 +109,7 @@ STDAPI CTfTextLayoutSink::OnLayoutChange(_In_ ITfContext *pContext, TfLayoutCode
             HRESULT hr = S_OK;
             pContext->RequestEditSession(_pTextService->_GetClientId(), pEditSession, TF_ES_SYNC | TF_ES_READ, &hr);
 #ifdef FANY_DEBUG
-            spdlog::info("RequestEditSession starts.");
+            // TODO: Log TF_LC_CHANGE is triggered and edit session is started
 #endif
             pEditSession->Release();
         }
@@ -220,20 +219,14 @@ HRESULT CTfTextLayoutSink::_GetTextExt(_Out_ RECT *lpRect)
     if (FAILED(hr = pContextView->GetTextExt(_tfEditCookie, _pRangeComposition, lpRect, &isClipped)))
     {
 #ifdef FANY_DEBUG
-        spdlog::info("GetTextExt failed: {}", hr);
+        // TODO: Log GetTextExt failed
 #endif
         // Set default value to make sure the window is hidden by moving it out of the screen
         lpRect->left = 0;
         lpRect->bottom = -1000;
     }
 #ifdef FANY_DEBUG
-    spdlog::info(                                               //
-        "GetTextExt: left: {}, top: {}, right: {}, bottom: {}", //
-        lpRect->left,                                           //
-        lpRect->top,                                            //
-        lpRect->right,                                          //
-        lpRect->bottom                                          //
-    );                                                          //
+    // TODO: Log lpRect position
 #endif
 
     pContextView->Release();

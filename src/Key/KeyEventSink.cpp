@@ -1,4 +1,3 @@
-#include "FanyUtils.h"
 #include "Private.h"
 #include "Globals.h"
 #include "SampleIME.h"
@@ -10,9 +9,8 @@
 #include "fmt/xchar.h"
 #include <debugapi.h>
 #include <string>
-#include <boost/lexical_cast.hpp>
-#include "spdlog/spdlog.h"
 #include "Ipc.h"
+#include "FanyUtils.h"
 
 // 0xF003, 0xF004 are the keys that the touch keyboard sends for next/previous
 #define THIRDPARTY_NEXTPAGE static_cast<WORD>(0xF003)
@@ -102,8 +100,8 @@ BOOL CSampleIME::_IsKeyEaten(_In_ ITfContext *pContext, UINT codeIn, _Out_ UINT 
     WCHAR wch = ConvertVKey(codeIn);
     *pCodeOut = VKeyFromVKPacketAndWchar(codeIn, wch);
 #ifdef FANY_DEBUG
-    std::wstring logMessage = fmt::format(L"fany iseat: codeIn: {}, wch: {}, *pCodeOut: {}", codeIn, wch, *pCodeOut);
-    Global::LogMessageW(logMessage.c_str());
+    std::wstring msg = fmt::format(L"fany iseat: codeIn: {}, wch: {}, *pCodeOut: {}", codeIn, wch, *pCodeOut);
+    OutputDebugString(msg.c_str());
 #endif
     if ((wch == THIRDPARTY_NEXTPAGE) || (wch == THIRDPARTY_PREVPAGE))
     {
@@ -341,14 +339,13 @@ STDAPI CSampleIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lParam,
 
 #ifdef FANY_DEBUG
     std::wstring msg = L"Whether to eat it?" + std::to_wstring(*pIsEaten);
-    Global::LogMessageW(msg.c_str());
-    spdlog::info("Whether to eat it? {}", *pIsEaten);
+    // TODO: Log msg
 #endif
 
     if (*pIsEaten)
     {
 #ifdef FANY_DEBUG
-        Global::LogMessageW(L"Yes, eat it.");
+        OutputDebugString(L"Yes, eat it.");
 #endif
         bool needInvokeKeyHandler = true;
         //
@@ -373,15 +370,16 @@ STDAPI CSampleIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lParam,
             {
                 if (tfStatus.dwDynamicFlags & TF_SD_READONLY)
                 {
-                    FanyUtuils::SendKeys(boost::lexical_cast<std::wstring>(wch));
+                    std::wstring str = std::wstring(1, wch);
+                    FanyUtils::SendKeys(str);
 #ifdef FANY_DEBUG
-                    Global::LogMessageW(L"pContext is read-only");
+                    OutputDebugString(L"pContext is read-only");
 #endif
                 }
                 else
                 {
 #ifdef FANY_DEBUG
-                    Global::LogMessageW(L"pContext is editable");
+                    OutputDebugString(L"pContext is editable");
 #endif
                 }
             }
@@ -441,8 +439,8 @@ STDAPI CSampleIME::OnKeyUp(ITfContext *pContext, WPARAM wParam, LPARAM lParam, B
     *pIsEaten = _IsKeyEaten(pContext, (UINT)wParam, &code, &wch, &KeystrokeState);
 
 #ifdef FANY_DEBUG
-    Global::LogMessageW(L"fanyfull ITfKeyEventSink::OnKeyUp");
-    Global::LogMessageW(fmt::format(L"Global::PureShiftKeyUp: {}", Global::PureShiftKeyUp).c_str());
+    OutputDebugString(L"fanyfull ITfKeyEventSink::OnKeyUp");
+    OutputDebugString(fmt::format(L"Global::PureShiftKeyUp: {}", Global::PureShiftKeyUp).c_str());
 #endif
 
     // if (code == VK_SHIFT)

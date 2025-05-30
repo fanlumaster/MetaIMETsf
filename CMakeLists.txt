@@ -1,32 +1,32 @@
 cmake_minimum_required(VERSION 3.25.0)
-
-project(DeerWritingBrush LANGUAGES CXX C)
+set(PROJECT_NAME FanImeTsf)
+project(${PROJECT_NAME} LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_definitions(
     /D_UNICODE=1
     /DUNICODE=1
 )
 
+# For utf8cpp, make it use C++11 and later
+add_compile_options(/Zc:__cplusplus)
 
 # add_definitions(
 #     /DFANY_DEBUG=1
 # )
 
 # Boost
-set(Boost_ROOT "C:/Users/SonnyCalcr/scoop/apps/boost/1.87.0")
-set (Boost_USE_STATIC_LIBS ON)
-find_package(Boost REQUIRED COMPONENTS locale)
+# set(Boost_ROOT "C:/Users/19833/scoop/apps/boost/current")
+# set (Boost_USE_STATIC_LIBS ON)
+# find_package(Boost REQUIRED COMPONENTS locale)
+# include_directories(${Boost_INCLUDE_DIRS})
 
-set(CMAKE_PREFIX_PATH "C:/Users/SonnyCalcr/EDisk/CppCodes/Libraries/AllLibs")
-# sqlite3
-find_package(SQLite3 REQUIRED CONFIG)
 # fmt
-find_package(fmt REQUIRED)
-# spdlog
-find_package(spdlog REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+# utfcpp
+include_directories("./utfcpp/source/")
 
 include_directories("./src")
 include_directories("./src/Candidate")
@@ -51,7 +51,7 @@ include_directories("./src/UI")
 include_directories("./src/Utils")
 include_directories("./src/Window")
 
-add_library(DeerWritingBrush SHARED
+add_library(${PROJECT_NAME} SHARED
     # Candidate
     "./src/Candidate/EnumTfCandidates.cpp"
     "./src/Candidate/EnumTfCandidates.h"
@@ -168,12 +168,6 @@ add_library(DeerWritingBrush SHARED
     # Main
     "./src/DllMain.cpp"
     "./src/Server.cpp"
-    # Database
-    "./src/DictEngine/FanDictionaryDbUtils.cpp"
-    "./src/DictEngine/FanDictionaryDbUtils.h"
-    # Pinyin Utils
-    "./src/DictEngine/PinyinUtils.cpp"
-    "./src/DictEngine/PinyinUtils.h"
 )
 
-target_link_libraries(DeerWritingBrush PRIVATE SQLite3::sqlite3 fmt::fmt Boost::locale spdlog::spdlog)
+target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)

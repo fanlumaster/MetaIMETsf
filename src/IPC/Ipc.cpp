@@ -4,7 +4,6 @@
 #include <minwindef.h>
 #include <winnt.h>
 #include <winuser.h>
-#include "spdlog/spdlog.h"
 #include "Globals.h"
 
 static HANDLE hMapFile = nullptr;
@@ -39,7 +38,8 @@ int InitIpc()
     {
         // Error handling
         canUseSharedMemory = false;
-        spdlog::info("CreateFileMapping error: {}", GetLastError());
+
+        // TODO: Log error
 
         return 0;
     }
@@ -56,8 +56,7 @@ int InitIpc()
 
     if (!pBuf)
     {
-        // Error handling
-        spdlog::info("MapViewOfFile error when activated: {}", GetLastError());
+        // TODO:  Error handling
     }
 
     sharedData = static_cast<FanyImeSharedMemoryData *>(pBuf);
@@ -294,8 +293,6 @@ int SendKeyEventToUIProcess()
     if (!SetEvent(hEvent))
     {
         // TODO: Error handling
-        DWORD err = GetLastError();
-        spdlog::info("SetEvent error: {}", err);
     }
 
     CloseHandle(hEvent);
@@ -323,8 +320,6 @@ int SendHideCandidateWndEventToUIProcess()
     if (!SetEvent(hEvent))
     {
         // TODO: Error handling
-        DWORD err = GetLastError();
-        spdlog::info("SetEvent error: {}", err);
     }
 
     CloseHandle(hEvent);
@@ -352,8 +347,6 @@ int SendShowCandidateWndEventToUIProcess()
     if (!SetEvent(hEvent))
     {
         // TODO: Error handling
-        DWORD err = GetLastError();
-        spdlog::info("SetEvent error: {}", err);
     }
 
     CloseHandle(hEvent);
@@ -376,14 +369,11 @@ int SendMoveCandidateWndEventToUIProcess()
     if (!hEvent)
     {
         // TODO: Error handling
-        spdlog::info("Open FanyMoveCandidateWnd Event error");
     }
 
     if (!SetEvent(hEvent))
     {
         // TODO: Error handling
-        DWORD err = GetLastError();
-        spdlog::info("SetEvent error: {}", err);
     }
 
     CloseHandle(hEvent);
@@ -452,8 +442,6 @@ void SendToNamedpipe()
     if (!ret || bytesWritten != sizeof(namedpipeData))
     {
         // TODO: Error handling
-        DWORD err = GetLastError();
-        spdlog::info("WriteFile error: {}", err);
     }
 }
 

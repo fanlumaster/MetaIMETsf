@@ -9,7 +9,6 @@
 #include "SampleIMEBaseStructure.h"
 #include <iostream>
 #include <string>
-#include "FanDictionaryDbUtils.h"
 #include <wrl.h>
 
 void DllAddRef();
@@ -122,9 +121,6 @@ extern const CLSID SampleIMEGuidPunctuationPreserveKey;
 LRESULT CALLBACK ThreadKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
 BOOL CheckModifiers(UINT uModCurrent, UINT uMod);
 BOOL UpdateModifiers(WPARAM wParam, LPARAM lParam);
-void LogMessage(const char *message);
-void LogMessageW(const wchar_t *message);
-void LogWideString(const WCHAR *pwch, DWORD_PTR dwLength);
 
 extern USHORT ModifiersValue;
 extern BOOL IsShiftKeyDownOnly;
@@ -168,10 +164,6 @@ extern const WCHAR LangbarImeModeDescription[];
 extern const WCHAR LangbarDoubleSingleByteDescription[];
 extern const WCHAR LangbarPunctuationDescription[];
 
-std::wstring string_to_wstring(const std::string &str);
-std::string wstring_to_string(const std::wstring &wstr);
-
-inline std::vector<FanDictionaryDb::DbWordItem> CandidateList;
 inline std::vector<std::wstring> WStringCandidateList;
 inline std::wstring FindKeyCode;
 

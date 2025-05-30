@@ -13,8 +13,9 @@
 #include "RegKey.h"
 #include "define.h"
 #include <string>
-#include "fmt/xchar.h"
+#include <fmt/xchar.h>
 #include "Ipc.h"
+#include "FanyUtils.h"
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -102,7 +103,6 @@ CCompositionProcessorEngine::CCompositionProcessorEngine()
 {
     _pTableDictionaryEngine = nullptr;
     _pDictionaryFile = nullptr;
-    _pDictionaryDb = nullptr;
 
     _langid = 0xffff;
     _guidProfile = GUID_NULL;
@@ -199,11 +199,6 @@ CCompositionProcessorEngine::~CCompositionProcessorEngine()
     {
         delete _pDictionaryFile;
         _pDictionaryFile = nullptr;
-    }
-
-    if (_pDictionaryDb)
-    {
-        sqlite3_close(_pDictionaryDb);
     }
 }
 
@@ -509,7 +504,7 @@ void CCompositionProcessorEngine::GetCandidateList(_Inout_ CSampleImeArray<CCand
     {
         _pTableDictionaryEngine->CollectWordForWildcard(&_keystrokeBuffer, pCandidateList);
     }
-    else // Here we only need to care about this, cause we have already use sqlite to substitute txt dictionary engine
+    else // Here we only need to care about this
     {
         _pTableDictionaryEngine->CollectWord(&_keystrokeBuffer, pCandidateList);
     }
@@ -1074,14 +1069,13 @@ BOOL CCompositionProcessorEngine::SetupDictionaryFile()
     // Not yet registered
     // Register CFileMapping
     WCHAR localAppDataPath[MAX_PATH] = {'\0'};
-    DWORD cchA = GetEnvironmentVariableW(L"LOCALAPPDATA", localAppDataPath, MAX_PATH);
-    WCHAR profileFolder[] = L"\\DeerWritingBrush\\";
+    DWORD cchA = GetEnvironmentVariable(L"LOCALAPPDATA", localAppDataPath, MAX_PATH);
+    WCHAR profileFolder[] = L"\\" IME_NAME L"\\";
     size_t iDicFileNameLen = cchA + wcslen(profileFolder) + wcslen(TEXTSERVICE_DIC);
     size_t iDicDBFileNameLen = cchA + wcslen(profileFolder) + wcslen(TEXTSERVICE_DIC_DB);
     WCHAR *pwszFileName = new (std::nothrow) WCHAR[iDicFileNameLen + 1];
     WCHAR *pwszDBFileName = new (std::nothrow) WCHAR[iDicFileNameLen + 1];
     std::wstring dictionaryDbPathW;
-    std::string dictionaryDbPath;
     if (!pwszFileName)
     {
         goto ErrorExit;
@@ -1100,21 +1094,10 @@ BOOL CCompositionProcessorEngine::SetupDictionaryFile()
     StringCchCatN(pwszDBFileName, iDicDBFileNameLen + 1, TEXTSERVICE_DIC_DB, wcslen(TEXTSERVICE_DIC_DB));
 
     dictionaryDbPathW = pwszDBFileName;
-    dictionaryDbPath = Global::wstring_to_string(dictionaryDbPathW);
 
 #ifdef FANY_DEBUG
-    Global::LogMessageW(pwszDBFileName);
+    OutputDebugString(pwszDBFileName);
 #endif
-
-    // Open dictonary db
-    if (_pDictionaryDb == nullptr)
-    {
-        int exit = sqlite3_open(dictionaryDbPath.c_str(), &_pDictionaryDb);
-        if (!_pDictionaryDb)
-        {
-            goto ErrorExit;
-        }
-    }
 
     // create CFileMapping object
     if (_pDictionaryFile == nullptr)
@@ -1130,7 +1113,7 @@ BOOL CCompositionProcessorEngine::SetupDictionaryFile()
         goto ErrorExit;
     }
 
-    _pTableDictionaryEngine = new (std::nothrow) CTableDictionaryEngine(GetLocale(), _pDictionaryFile, _pDictionaryDb);
+    _pTableDictionaryEngine = new (std::nothrow) CTableDictionaryEngine(GetLocale(), _pDictionaryFile);
     if (!_pTableDictionaryEngine)
     {
         goto ErrorExit;
@@ -1701,7 +1684,7 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCH
         if (IsVirtualKeyKeystrokeComposition(uCode, pKeyState, FUNCTION_NONE)) // 26 basic English chars
         {
 #ifdef FANY_DEBUG
-            Global::LogMessageW(L"Basic 26 chars key pressed.");
+            OutputDebugString(L"Basic 26 chars key pressed.\n");
 #endif
             return TRUE;
         }
@@ -1929,9 +1912,9 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCH
                 return FALSE;
 
             case VK_RETURN:
-// Do something when user press return key
+                // Do something when user press return key
 #ifdef FANY_DEBUG
-                Global::LogMessageW(L"VK_RETURN pressed.");
+                OutputDebugString(L"VK_RETURN pressed.\n");
 #endif
                 if (pKeyState)
                 {
@@ -2314,7 +2297,7 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCH
     }
 
 #ifdef FANY_DEBUG
-    Global::LogMessageW(L"Unknown keystroke.");
+    OutputDebugString(L"Unknown keystroke.");
 #endif
     return FALSE;
 }
@@ -2329,9 +2312,9 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyKeystrokeComposition(UINT uCode, _
                                                                    KEYSTROKE_FUNCTION function)
 {
 #ifdef FANY_DEBUG
-    Global::LogMessageW(L"Fany Here: IsVirtualKeyKeystrokeComposition 26.");
+    OutputDebugString(L"Fany Here: IsVirtualKeyKeystrokeComposition 26.");
     std::wstring modifiers = fmt::format(L"Global Modifiers: {}", Global::ModifiersValue);
-    Global::LogMessageW(modifiers.c_str());
+    OutputDebugString(modifiers.c_str());
 #endif
     if (pKeyState == nullptr)
     {
@@ -2469,7 +2452,7 @@ BOOL CCompositionProcessorEngine::IsKeystrokeRange(UINT uCode, _Out_ _KEYSTROKE_
         else if (GetVirtualKeyLength() > 0)
         {
 #ifdef FANY_DEBUG
-            OutputDebugStringW(L"GetVirtualKeyLength() > 0");
+            OutputDebugString(L"GetVirtualKeyLength() > 0");
 #endif
             pKeyState->Category = CATEGORY_CANDIDATE;
             pKeyState->Function = FUNCTION_SELECT_BY_NUMBER;

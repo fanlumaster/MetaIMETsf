@@ -1,10 +1,3 @@
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
-// Copyright (c) Microsoft Corporation. All rights reserved
-
 #include "Private.h"
 #include "TableDictionaryEngine.h"
 #include "DictionarySearch.h"
@@ -12,7 +5,7 @@
 #include <algorithm>
 #include <string>
 #include <vector>
-#include "FanDictionaryDbUtils.h"
+#include "FanyUtils.h"
 
 #ifdef FANY_DEBUG
 #include <chrono>
@@ -50,27 +43,16 @@ VOID CTableDictionaryEngine::CollectWord(_In_ CStringRange *pKeyCode,
 VOID CTableDictionaryEngine::CollectWord(_In_ CStringRange *pKeyCode,
                                          _Inout_ CSampleImeArray<CCandidateListItem> *pItemList)
 {
-    // CDictionarySearch dshSearch(_locale, _pDictionaryFile, pKeyCode);
-    // FanDictionaryDb fanDictionaryDb(_pDictionaryDb);
-
     std::wstring keyCodeWString = L"";
     keyCodeWString.append(pKeyCode->Get(), pKeyCode->GetLength()); // Append the key code to the string
-    std::string keyCodeString = Global::wstring_to_string(keyCodeWString);
+    std::string keyCodeString = FanyUtils::wstring_to_string(keyCodeWString);
     // Convert the key code string to lower case
     std::transform(keyCodeString.begin(), keyCodeString.end(), keyCodeString.begin(),
                    [](unsigned char c) { return std::tolower(c); });
 
-    Global::CandidateList.clear();
-    Global::CandidateList.push_back(std::make_tuple(keyCodeString, keyCodeString, 1));
     Global::WStringCandidateList.clear();
     Global::FindKeyCode = keyCodeWString;
-    for (UINT i = 0; i < Global::CandidateList.size(); i++)
-    {
-        FanDictionaryDb::DbWordItem curItem = Global::CandidateList[i];
-        std::string itemString = std::get<1>(curItem);
-        std::wstring itemWString = Global::string_to_wstring(itemString);
-        Global::WStringCandidateList.push_back(itemWString);
-    }
+    Global::WStringCandidateList.push_back(Global::FindKeyCode);
 
     for (UINT i = 0; i < Global::WStringCandidateList.size(); i++)
     {
