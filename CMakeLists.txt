@@ -17,12 +17,6 @@ add_compile_options(/Zc:__cplusplus)
 #     /DFANY_DEBUG=1
 # )
 
-# Boost
-# set(Boost_ROOT "C:/Users/19833/scoop/apps/boost/current")
-# set (Boost_USE_STATIC_LIBS ON)
-# find_package(Boost REQUIRED COMPONENTS locale)
-# include_directories(${Boost_INCLUDE_DIRS})
-
 # fmt
 find_package(fmt CONFIG REQUIRED)
 # utfcpp

@@ -28,8 +28,6 @@ CompileFlags:
       "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/UI",
       "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/Utils",
       "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/Window",
-      # Boost
-      "-IC:/Users/19833/scoop/apps/boost/1.88.0",
       # Third-party include paths via git submodules
       "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/utfcpp/source",
       # Third-party include paths via vcpkg

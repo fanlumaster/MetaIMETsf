@@ -1,0 +1,46 @@
+CompileFlags:
+  Add: [
+      "-std=c++17", # needed when using MSVC
+      # Macros
+      -DUNICODE,
+      -D_UNICODE,
+      -DFANY_DEBUG,
+      # Project src include paths
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/Candidate",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/Compartment",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/Composition",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/DictEngine",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/DisplayAttribute",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/Drawing",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/Edit",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/FanyLog",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/File",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/Global",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/Header",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/IME",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/IPC",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/Key",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/LanguageBar",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/Register",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/Tf",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/Thread",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/UI",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/Utils",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/src/Window",
+      # Third-party include paths via git submodules
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/utfcpp/source",
+      # Third-party include paths via vcpkg
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/build64/vcpkg_installed/x64-windows/include",
+      "-IC:/Users/19833/EDisk/CppCodes/ImeCodes/FanImeTsf/build32/vcpkg_installed/x86-windows/include",
+      -Wno-unused-includes,
+      -Wno-microsoft-goto,
+      # -Wno-unused-value,
+      -Wno-nonportable-include-path,
+      -Wno-microsoft-extra-qualification,
+      -Wno-invalid-token-paste,
+    ] # ignore some specific warnings
+Diagnostics:
+  UnusedIncludes: None # This would not work in Windows, why?
+  Includes:
+    IgnoreHeader: ["Private.h", "Globals.h"] # Suppress unused includes waraning

@@ -1,6 +1,17 @@
-## What is FanIME
+## FanImeTsf
 
-Notice: This is (core)back end of [FanImeServer](https://github.com/fanlumaster/FanImeServer).
+This is TSF end of [FanImeServer](https://github.com/fanlumaster/FanImeServer).
+
+## How to build
+
+### Prerequisites
+
+- Visual Studio 2022
+- CMake
+- vcpkg
+- Python3
+
+Make sure vcpkg is installed by **Scoop**.
 
 ## Screenshots
 
