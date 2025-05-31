@@ -2,9 +2,14 @@
 
 Notice: This is (core)back end of [FanImeServer](https://github.com/fanlumaster/FanImeServer).
 
-![](https://s2.loli.net/2025/03/22/eDUYa3gR9V4Qziy.png)
+## Screenshots
 
-Based on Microsoft [TSF IME Demo](https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/IME/cpp/SampleIME)。
+![](https://i.postimg.cc/v8Bpx6Gf/image.png)
+
+![](https://i.postimg.cc/ssBgtM5M/image.png)
+
+![](https://i.postimg.cc/ryDqXH0B/image.png)
+
 
 Mainly to develop a Chinese Input Method Editor without ads and likely some other disturbing things we users hate really.
 
@@ -82,8 +87,8 @@ Run the following command as administrator,
 
 ### Chinese
 
-- Quanpin
 - Xiaohe Shuangpin
+- Quanpin
 - Help codes in use of Hanzi Components
 - Direct2D to draw candidate windows
 - DirectWrite to render candidate windows fonts
@@ -100,4 +105,8 @@ Run the following command as administrator,
 
 Maybe another project.
 
-### Other languages
+And maybe some other languages support.
+
+### References
+
+[MS-TSF-IME-Demo](https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/IME/cpp/SampleIME)。
