@@ -12,9 +12,9 @@ Notice: now only support 64-bit Apps.
 - CMake
 - vcpkg
 - Python3
-- Gsudo
+- gsudo
 
-Make sure vcpkg and Gsudo is installed by **Scoop**.
+Make sure vcpkg and gsudo is installed by **Scoop**.
 
 ## Build steps
 
@@ -100,4 +100,4 @@ And maybe some other languages support.
 
 ### References
 
-[MS-TSF-IME-Demo](https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/IME/cpp/SampleIME)。
+- [MS-TSF-IME-Demo](https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/IME/cpp/SampleIME)
