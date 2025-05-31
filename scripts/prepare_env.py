@@ -49,9 +49,6 @@ wim_path = normpath(
 )
 boost_path = normpath(os.path.join(user_home, "scoop", "apps", "boost", "current"))
 
-print(FanImeTsf_root_path)
-print(FanImeTsf_src_path)
-
 #
 # project_root/.clangd
 #

@@ -2,6 +2,8 @@
 
 This is TSF end of [FanImeServer](https://github.com/fanlumaster/FanImeServer).
 
+Notice: now only support 64-bit Apps.
+
 ## How to build
 
 ### Prerequisites
@@ -10,8 +12,59 @@ This is TSF end of [FanImeServer](https://github.com/fanlumaster/FanImeServer).
 - CMake
 - vcpkg
 - Python3
+- Gsudo
 
-Make sure vcpkg is installed by **Scoop**.
+Make sure vcpkg and Gsudo is installed by **Scoop**.
+
+## Build steps
+
+### Build
+
+First, clone the repository,
+
+```powershell
+git clone --recursive https://github.com/fanlumaster/FanImeTsf.git
+```
+
+Then, prepare the environment,
+
+```powershell
+cd FanImeTsf
+python .\scripts\prepare_env.py
+```
+
+Then, build,
+
+```powershell
+.\scripts\lcompile.ps1
+```
+
+### Install
+
+Launch powershell as administrator, make sure you turn on the system `Enable sudo` option.
+
+![](https://i.postimg.cc/zJCn9Cnn/image.png)
+
+Then, create a folder in `C:\Program Files\` named `FanImeTsf`, and copy the `FanImeTsf.dll` to it,
+
+```powershell
+gsudo
+Copy-Item -Path ".\FanImeTsf\build64\Debug\FanImeTsf.dll" -Destination "C:\Program Files\FanImeTsf"
+```
+
+Then, install it,
+
+```powershell
+cd "C:\Program Files\FanImeTsf"
+sudo regsvr32 .\FanImeTsf.dll
+```
+
+### Uninstall
+
+```powershell
+cd "C:\Program Files\FanImeTsf"
+sudo regsvr32 /u .\FanImeTsf.dll
+```
 
 ## Screenshots
 
@@ -21,94 +74,21 @@ Make sure vcpkg is installed by **Scoop**.
 
 ![](https://i.postimg.cc/ryDqXH0B/image.png)
 
-
-Mainly to develop a Chinese Input Method Editor without ads and likely some other disturbing things we users hate really.
-
-The roadmap is as follows.
-
-## Build and Install and Uninstall
-
-### How to build
-
-Prerequisites:
-
-- Visual Studio 2022
-- vcpkg
-- CMake
-
-Then, run the following command,
-
-```powershell
-./lcompile.ps1
-```
-
-We also need to build one 32-bit version,
-
-```powershell
-./lcompile.ps1 32
-```
-
-Besides, we also need to build dictionary for our IME using this repositoy below,
-
-<https://github.com/fanlumaster/FanyDictForIME.git>
-
-You need to build this this repo to generate IME Dictionary first, what you need to do is running the commands besides using pwsh7,
-
-```powershell
-cd $env:LOCALAPPDATA
-mkdir FanImeTsf
-cd FanImeTsf
-git clone https://github.com/fanlumaster/FanyDictForIME.git
-cd ./FanyDictForIME/makecikudb/xnheulpb/makedb/separated_jp_version
-python ./create_db_and_table.py
-python ./insert_data.py
-python ./create_index_for_db.py
-Copy-Item -Path ./out/cutted_flyciku_with_jp.db -Destination $env:LOCALAPPDATA/FanImeTsf
-```
-
-Moreover, we also need to copy another Dictionary file contained in our main project repo(FanIME) to `$env:LOCALAPPDATA/FanImeTsf`，run the command below,
-
-```powersehll
-Copy-Item -Path ./Dictionary/SampleIMESimplifiedQuanPin.txt -Destination $env:LOCALAPPDATA/FanImeTsf
-```
-
-Last, copy following files to `$env:LOCALAPPDATA/FanImeTsf`,
-
-```powersehll
-Copy-Item -Path ./assets/* -Destination $env:LOCALAPPDATA/FanImeTsf
-```
-
-### How to Install
-
-Run the following command as administrator,
-
-```powershell
-./linstall.ps1
-```
-
-**Note**: we only use this script to install dll for tests, if we want this IME to support UWP/Metro(Windows Store Apps), we need to cd to `C:\Program Files\` and make a new directory named `FanImeTsf`, and move dll to that directory, and then register the dll to system.
-
-### How to Uninstall
-
-```shell
-./luninstall.ps1
-```
-
 ## Roadmap
+
+Currently only support Xiaohe Shuangpin.
 
 ### Chinese
 
 - Xiaohe Shuangpin
 - Quanpin
 - Help codes in use of Hanzi Components
-- Direct2D to draw candidate windows
-- DirectWrite to render candidate windows fonts
-- Ciku that can be customized
+- Dictionary that can be customized
 - Customized IME engine
 - Customized skins
 - Toggle between Simplified Chinese and Traditional Chinese
 - English autocomplete
-- Open-Soured Cloud IME api
+- Open-Sourced Cloud IME api
 - Toggle candidate window UI between vertical mode and horizontal mode
 - Feature switches: most features should be freely toggled or customized by users
 
