@@ -74,6 +74,12 @@ sudo regsvr32 /u .\FanImeTsf.dll
 
 ![](https://i.postimg.cc/ryDqXH0B/image.png)
 
+![](https://i.postimg.cc/2m9WJTgR/image.png)
+
+![](https://i.postimg.cc/L96qQZT8/image.png)
+
+![](https://i.postimg.cc/FNcz9QTv/image.png)
+
 ## Roadmap
 
 Currently only support Xiaohe Shuangpin.
