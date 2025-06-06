@@ -164,4 +164,4 @@ add_library(${PROJECT_NAME} SHARED
     "./src/Server.cpp"
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
+target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt-header-only)

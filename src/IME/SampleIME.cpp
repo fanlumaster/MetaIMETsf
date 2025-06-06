@@ -19,6 +19,8 @@
 #include "FanyLog.h"
 #include "Ipc.h"
 #include "CommonUtils.h"
+#include "Global/FanyDefines.h"
+#include "Utils/FanyUtils.h"
 
 //+---------------------------------------------------------------------------
 //
@@ -232,9 +234,11 @@ STDAPI CSampleIME::ActivateEx(ITfThreadMgr *pThreadMgr, TfClientId tfClientId, D
     _dwActivateFlags = dwFlags;
 
     OutputDebugString(L"CSampleIME::ActivateEx\n");
-    HWND hwnd = GetForegroundWindow();
-    GetWindowText(hwnd, Global::app_name, 512);
-
+    std::wstring processName = FanyUtils::GetCurrentProcessName();
+    if (Global::VSCodeSeries.find(processName) != Global::VSCodeSeries.end())
+    {
+        Global::IsVSCodeLike = true;
+    }
     // Set up IPC(named pipe)
     InitIpc();
 

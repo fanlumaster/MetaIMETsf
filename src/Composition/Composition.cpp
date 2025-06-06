@@ -9,6 +9,10 @@
 #include "Globals.h"
 #include "SampleIME.h"
 #include "CompositionProcessorEngine.h"
+#include <debugapi.h>
+#include <fmt/xchar.h>
+#include <string>
+#include "FanyDefines.h"
 
 //+---------------------------------------------------------------------------
 //
@@ -73,6 +77,9 @@ void CSampleIME::_SetComposition(_In_ ITfComposition *pComposition)
 
 HRESULT CSampleIME::_AddComposingAndChar(TfEditCookie ec, _In_ ITfContext *pContext, _In_ CStringRange *pstrAddString)
 {
+#ifdef FANY_DEBUG
+    OutputDebugString(fmt::format(L"You entered _AddComposingAndChar{}\n", pstrAddString->Get()).c_str());
+#endif
     HRESULT hr = S_OK;
 
     ULONG fetched = 0;
@@ -94,7 +101,25 @@ HRESULT CSampleIME::_AddComposingAndChar(TfEditCookie ec, _In_ ITfContext *pCont
             ITfRange *pRange = nullptr;
             BOOL exist_composing = _FindComposingRange(ec, pContext, pAheadSelection, &pRange);
 
-            _SetInputString(ec, pContext, pRange, pstrAddString, exist_composing);
+            std::wstring strAddString(pstrAddString->Get(), pstrAddString->GetLength());
+
+            if (!Global::IsVSCodeLike)
+            {
+
+                _SetInputString(ec, pContext, pRange, pstrAddString, exist_composing);
+            }
+            else
+            {
+                bool isPreeditChars = strAddString.size() > 0 &&                               //
+                                      ((strAddString[0] >= L'a' && strAddString[0] <= L'z') || //
+                                       (strAddString[0] >= L'A' && strAddString[0] <= L'Z'));
+                if (!isPreeditChars)
+                {
+                    _SetInputString(ec, pContext, pRange, pstrAddString, exist_composing);
+                }
+            }
+
+            OutputDebugString(fmt::format(L"{}: _AddComposingAndChar\n", pstrAddString->Get()).c_str());
 
             if (pRange)
             {

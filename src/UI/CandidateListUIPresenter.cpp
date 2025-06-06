@@ -206,6 +206,9 @@ HRESULT CSampleIME::_HandleCandidateWorker(TfEditCookie ec, _In_ ITfContext *pCo
         pTempCandListUIPresenter->_SetFillColor((HBRUSH)(COLOR_WINDOW + 1)); // Background color is window
         pTempCandListUIPresenter->_SetText(&candidatePhraseList, FALSE);
 
+#ifdef FANY_DEBUG
+        OutputDebugString(fmt::format(L"Fany here candidateString = {}", candidateString.Get()).c_str());
+#endif
         // Add composing character
         hrReturn = _AddComposingAndChar(ec, pContext, &candidateString);
 

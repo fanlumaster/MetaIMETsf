@@ -64,4 +64,16 @@ std::string to_lower_copy(const std::string &str)
     std::transform(result.begin(), result.end(), result.begin(), [](unsigned char c) { return std::tolower(c); });
     return result;
 }
+
+std::wstring GetCurrentProcessName()
+{
+    TCHAR fullPath[MAX_PATH] = {0};
+    if (GetModuleFileName(NULL, fullPath, MAX_PATH) == 0)
+        return L"";
+
+    std::wstring wfullPath(fullPath);
+    size_t pos = wfullPath.find_last_of(L"\\/");
+    std::wstring wname = (pos != std::wstring::npos) ? wfullPath.substr(pos + 1) : wfullPath;
+    return wname;
+}
 } // namespace FanyUtils
