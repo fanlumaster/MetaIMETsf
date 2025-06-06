@@ -2,7 +2,7 @@
 #include "Define.h"
 #include "Globals.h"
 #include "FanyUtils.h"
-#include <utf8.h>
+#include <utf8cpp/utf8.h>
 
 namespace FanyUtils
 {

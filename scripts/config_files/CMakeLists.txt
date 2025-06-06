@@ -19,8 +19,9 @@ add_compile_options(/Zc:__cplusplus)
 
 # fmt
 find_package(fmt CONFIG REQUIRED)
-# utfcpp
-include_directories("./utfcpp/source/")
+
+# For pure-header libs installed by vcpkg like utf8cpp
+include_directories("./build/vcpkg_installed/x64-windows/include")
 
 include_directories("./src")
 include_directories("./src/Candidate")
