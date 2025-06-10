@@ -8,7 +8,7 @@
 #include "Private.h"
 #include "SearchCandidateProvider.h"
 #include <new>
-#include "SampleIME.h"
+#include "MetasequoiaIME.h"
 #include "CompositionProcessorEngine.h"
 #include "TipCandidateList.h"
 #include "TipCandidateString.h"
@@ -166,13 +166,13 @@ STDMETHODIMP CSearchCandidateProvider::GetSearchCandidates(BSTR bstrQuery, BSTR 
         return hr;
     }
 
-    CCompositionProcessorEngine *pCompositionProcessorEngine = ((CSampleIME *)_pTip)->GetCompositionProcessorEngine();
+    CCompositionProcessorEngine *pCompositionProcessorEngine = ((CMetasequoiaIME *)_pTip)->GetCompositionProcessorEngine();
     if (nullptr == pCompositionProcessorEngine)
     {
         return hr;
     }
 
-    CSampleImeArray<CCandidateListItem> candidateList;
+    CMetasequoiaImeArray<CCandidateListItem> candidateList;
     pCompositionProcessorEngine->GetCandidateList(&candidateList, TRUE, FALSE);
 
     int cCand = min(candidateList.Count(), FAKECANDIDATENUMBER);

@@ -1,16 +1,16 @@
 #pragma once
 
 #include "KeyHandlerEditSession.h"
-#include "SampleIMEBaseStructure.h"
+#include "MetasequoiaIMEBaseStructure.h"
 
 class CLangBarItemButton;
 class CCandidateListUIPresenter;
 class CCompositionProcessorEngine;
 
 const DWORD WM_CheckGlobalCompartment = WM_USER;
-LRESULT CALLBACK CSampleIME_WindowProc(HWND wndHandle, UINT uMsg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK CMetasequoiaIME_WindowProc(HWND wndHandle, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-class CSampleIME : public ITfTextInputProcessorEx,
+class CMetasequoiaIME : public ITfTextInputProcessorEx,
                    public ITfThreadMgrEventSink,
                    public ITfTextEditSink,
                    public ITfKeyEventSink,
@@ -22,8 +22,8 @@ class CSampleIME : public ITfTextInputProcessorEx,
                    public ITfFnGetPreferredTouchKeyboardLayout
 {
   public:
-    CSampleIME();
-    ~CSampleIME();
+    CMetasequoiaIME();
+    ~CMetasequoiaIME();
 
     // IUnknown
     STDMETHODIMP QueryInterface(REFIID riid, _Outptr_ void **ppvObj);
@@ -147,11 +147,11 @@ class CSampleIME : public ITfTextInputProcessorEx,
     };
 
     // comless helpers
-    static HRESULT CSampleIME::CreateInstance(REFCLSID rclsid, REFIID riid, _Outptr_result_maybenull_ LPVOID *ppv,
+    static HRESULT CMetasequoiaIME::CreateInstance(REFCLSID rclsid, REFIID riid, _Outptr_result_maybenull_ LPVOID *ppv,
                                               _Out_opt_ HINSTANCE *phInst, BOOL isComLessMode);
-    static HRESULT CSampleIME::ComLessCreateInstance(REFGUID rclsid, REFIID riid, _Outptr_result_maybenull_ void **ppv,
+    static HRESULT CMetasequoiaIME::ComLessCreateInstance(REFGUID rclsid, REFIID riid, _Outptr_result_maybenull_ void **ppv,
                                                      _Out_opt_ HINSTANCE *phInst);
-    static HRESULT CSampleIME::GetComModuleName(REFGUID rclsid, _Out_writes_(cchPath) WCHAR *wchPath, DWORD cchPath);
+    static HRESULT CMetasequoiaIME::GetComModuleName(REFGUID rclsid, _Out_writes_(cchPath) WCHAR *wchPath, DWORD cchPath);
 
   private:
     // functions for the composition object.
@@ -218,9 +218,9 @@ class CSampleIME : public ITfTextInputProcessorEx,
 
     BOOL _AddTextProcessorEngine();
 
-    BOOL VerifySampleIMECLSID(_In_ REFCLSID clsid);
+    BOOL VerifyMetasequoiaIMECLSID(_In_ REFCLSID clsid);
 
-    friend LRESULT CALLBACK CSampleIME_WindowProc(HWND wndHandle, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    friend LRESULT CALLBACK CMetasequoiaIME_WindowProc(HWND wndHandle, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
   private:
     ITfThreadMgr *_pThreadMgr;

@@ -8,7 +8,7 @@
 #pragma once
 
 #include "Private.h"
-#include "SampleIME.h"
+#include "MetasequoiaIME.h"
 #include "CompositionProcessorEngine.h"
 #include "Globals.h"
 #include "Compartment.h"

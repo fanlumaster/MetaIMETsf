@@ -96,21 +96,21 @@ HRESULT FindChar(WCHAR wch, _In_ LPCWSTR pwszBuffer, DWORD_PTR dwBufLen, _Out_ D
 
 BOOL IsSpace(LCID locale, WCHAR wch);
 
-template <class T> class CSampleImeArray
+template <class T> class CMetasequoiaImeArray
 {
-    typedef typename std::vector<T> CSampleImeInnerArray;
-    typedef typename std::vector<T>::iterator CSampleImeInnerIter;
+    typedef typename std::vector<T> CMetasequoiaImeInnerArray;
+    typedef typename std::vector<T>::iterator CMetasequoiaImeInnerIter;
 
   public:
-    CSampleImeArray() : _innerVect()
+    CMetasequoiaImeArray() : _innerVect()
     {
     }
 
-    explicit CSampleImeArray(size_t count) : _innerVect(count)
+    explicit CMetasequoiaImeArray(size_t count) : _innerVect(count)
     {
     }
 
-    virtual ~CSampleImeArray()
+    virtual ~CMetasequoiaImeArray()
     {
     }
 
@@ -139,7 +139,7 @@ template <class T> class CSampleImeArray
         assert(index >= 0);
         assert(index < _innerVect.size());
 
-        CSampleImeInnerIter iter = _innerVect.begin();
+        CMetasequoiaImeInnerIter iter = _innerVect.begin();
         _innerVect.erase(iter + index);
     }
 
@@ -168,7 +168,7 @@ template <class T> class CSampleImeArray
     }
 
   private:
-    CSampleImeInnerArray _innerVect;
+    CMetasequoiaImeInnerArray _innerVect;
 };
 
 class CCandidateRange
@@ -194,7 +194,7 @@ class CCandidateRange
     }
 
   private:
-    CSampleImeArray<DWORD> _CandidateListIndexRange;
+    CMetasequoiaImeArray<DWORD> _CandidateListIndexRange;
 };
 
 class CStringRange

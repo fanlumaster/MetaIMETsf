@@ -33,7 +33,7 @@ class CDictionaryParser
     virtual ~CDictionaryParser();
 
     BOOL ParseLine(_In_reads_(dwBufLen) LPCWSTR pwszBuffer, DWORD_PTR dwBufLen, _Out_ CParserStringRange *psrgKeyword,
-                   _Inout_opt_ CSampleImeArray<CParserStringRange> *pValue = nullptr);
+                   _Inout_opt_ CMetasequoiaImeArray<CParserStringRange> *pValue = nullptr);
 
     // dwBufLen - in character count
     _Ret_maybenull_ LPCWSTR GetToken(_In_reads_(dwBufLen) LPCWSTR pwszBuffer, DWORD_PTR dwBufLen,

@@ -7,7 +7,7 @@
 
 #include "Private.h"
 #include "Globals.h"
-#include "SampleIME.h"
+#include "MetasequoiaIME.h"
 
 //+---------------------------------------------------------------------------
 //
@@ -15,7 +15,7 @@
 //
 //----------------------------------------------------------------------------
 
-void CSampleIME::_ClearCompositionDisplayAttributes(TfEditCookie ec, _In_ ITfContext *pContext)
+void CMetasequoiaIME::_ClearCompositionDisplayAttributes(TfEditCookie ec, _In_ ITfContext *pContext)
 {
     ITfRange *pRangeComposition = nullptr;
     ITfProperty *pDisplayAttributeProperty = nullptr;
@@ -44,7 +44,7 @@ void CSampleIME::_ClearCompositionDisplayAttributes(TfEditCookie ec, _In_ ITfCon
 //
 //----------------------------------------------------------------------------
 
-BOOL CSampleIME::_SetCompositionDisplayAttributes(TfEditCookie ec, _In_ ITfContext *pContext,
+BOOL CMetasequoiaIME::_SetCompositionDisplayAttributes(TfEditCookie ec, _In_ ITfContext *pContext,
                                                   TfGuidAtom gaDisplayAttribute)
 {
     ITfRange *pRangeComposition = nullptr;
@@ -86,7 +86,7 @@ BOOL CSampleIME::_SetCompositionDisplayAttributes(TfEditCookie ec, _In_ ITfConte
 // TfGuidAtom, we do it once when Activate is called.
 //----------------------------------------------------------------------------
 
-BOOL CSampleIME::_InitDisplayAttributeGuidAtom()
+BOOL CMetasequoiaIME::_InitDisplayAttributeGuidAtom()
 {
     ITfCategoryMgr *pCategoryMgr = nullptr;
     HRESULT hr = CoCreateInstance(CLSID_TF_CategoryMgr, nullptr, CLSCTX_INPROC_SERVER, IID_ITfCategoryMgr,
@@ -98,13 +98,13 @@ BOOL CSampleIME::_InitDisplayAttributeGuidAtom()
     }
 
     // register the display attribute for input text.
-    hr = pCategoryMgr->RegisterGUID(Global::SampleIMEGuidDisplayAttributeInput, &_gaDisplayAttributeInput);
+    hr = pCategoryMgr->RegisterGUID(Global::MetasequoiaIMEGuidDisplayAttributeInput, &_gaDisplayAttributeInput);
     if (FAILED(hr))
     {
         goto Exit;
     }
     // register the display attribute for the converted text.
-    hr = pCategoryMgr->RegisterGUID(Global::SampleIMEGuidDisplayAttributeConverted, &_gaDisplayAttributeConverted);
+    hr = pCategoryMgr->RegisterGUID(Global::MetasequoiaIMEGuidDisplayAttributeConverted, &_gaDisplayAttributeConverted);
     if (FAILED(hr))
     {
         goto Exit;

@@ -21,8 +21,8 @@ const WCHAR CDisplayAttributeInfoInput::_s_szValueName[] = L"DisplayAttributeInp
 const WCHAR CDisplayAttributeInfoConverted::_s_szValueName[] = L"DisplayAttributeConverted";
 
 // The descriptions
-const WCHAR CDisplayAttributeInfoInput::_s_szDescription[] = L"Sample IME Text Service Display Attribute Input";
-const WCHAR CDisplayAttributeInfoConverted::_s_szDescription[] = L"Sample IME Text Service Display Attribute Converted";
+const WCHAR CDisplayAttributeInfoInput::_s_szDescription[] = L"Metasequoia IME Text Service Display Attribute Input";
+const WCHAR CDisplayAttributeInfoConverted::_s_szDescription[] = L"Metasequoia IME Text Service Display Attribute Converted";
 
 //+---------------------------------------------------------------------------
 //

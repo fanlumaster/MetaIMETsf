@@ -8,7 +8,7 @@
 #pragma once
 
 #include "File.h"
-#include "SampleIMEBaseStructure.h"
+#include "MetasequoiaIMEBaseStructure.h"
 
 class CBaseDictionaryEngine
 {
@@ -16,25 +16,25 @@ class CBaseDictionaryEngine
     CBaseDictionaryEngine(LCID locale, _In_ CFile *pDictionaryFile);
     virtual ~CBaseDictionaryEngine();
 
-    virtual VOID CollectWord(_In_ CStringRange *psrgKeyCode, _Out_ CSampleImeArray<CStringRange> *pasrgWordString)
+    virtual VOID CollectWord(_In_ CStringRange *psrgKeyCode, _Out_ CMetasequoiaImeArray<CStringRange> *pasrgWordString)
     {
         psrgKeyCode;
         pasrgWordString = nullptr;
     }
 
-    virtual VOID CollectWord(_In_ CStringRange *psrgKeyCode, _Out_ CSampleImeArray<CCandidateListItem> *pItemList)
+    virtual VOID CollectWord(_In_ CStringRange *psrgKeyCode, _Out_ CMetasequoiaImeArray<CCandidateListItem> *pItemList)
     {
         psrgKeyCode;
         pItemList = nullptr;
     }
 
-    virtual VOID SortListItemByFindKeyCode(_Inout_ CSampleImeArray<CCandidateListItem> *pItemList);
+    virtual VOID SortListItemByFindKeyCode(_Inout_ CMetasequoiaImeArray<CCandidateListItem> *pItemList);
 
   protected:
     CFile *_pDictionaryFile;
     LCID _locale;
 
   private:
-    VOID MergeSortByFindKeyCode(_Inout_ CSampleImeArray<CCandidateListItem> *pItemList, int leftRange, int rightRange);
+    VOID MergeSortByFindKeyCode(_Inout_ CMetasequoiaImeArray<CCandidateListItem> *pItemList, int leftRange, int rightRange);
     int CalculateCandidateCount(int leftRange, int rightRange);
 };

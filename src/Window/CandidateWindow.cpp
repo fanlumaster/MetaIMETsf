@@ -23,7 +23,7 @@ COLORREF _AdjustTextColor(_In_ COLORREF crColor, _In_ COLORREF crBkColor);
 //----------------------------------------------------------------------------
 
 CCandidateWindow::CCandidateWindow(_In_ CANDWNDCALLBACK pfnCallback, _In_ void *pv, _In_ CCandidateRange *pIndexRange,
-                                   _In_ BOOL isStoreAppMode, _In_ CSampleIME *pTextService)
+                                   _In_ BOOL isStoreAppMode, _In_ CMetasequoiaIME *pTextService)
 {
     _currentSelection = 0;
 
@@ -468,7 +468,7 @@ void CCandidateWindow::_DrawList(_In_ HDC dcHandle, _In_ UINT iIndex, _In_ RECT 
 {
     // 创建并选择字体
     HFONT hFont = CreateFont(-22, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-                             CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, SAMPLEIME_FONT_DEFAULT);
+                             CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, METASEQUOIAIME_FONT_DEFAULT);
     HFONT hOldFont = (HFONT)SelectObject(dcHandle, hFont);
 
     int pageCount = 0;

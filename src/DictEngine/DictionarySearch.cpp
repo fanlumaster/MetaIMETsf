@@ -7,7 +7,7 @@
 
 #include "Private.h"
 #include "DictionarySearch.h"
-#include "SampleIMEBaseStructure.h"
+#include "MetasequoiaIMEBaseStructure.h"
 
 //+---------------------------------------------------------------------------
 //
@@ -133,7 +133,7 @@ TryAgain:
         else
         {
             // Compare Dictionary converted string and input string
-            CSampleImeArray<CParserStringRange> convertedStrings;
+            CMetasequoiaImeArray<CParserStringRange> convertedStrings;
             if (!ParseLine(&pwch[indexTrace], bufLenOneLine, &keyword, &convertedStrings))
             {
                 if (bufLen)
@@ -192,7 +192,7 @@ TryAgain:
             return FALSE;
         }
 
-        CSampleImeArray<CParserStringRange> valueStrings;
+        CMetasequoiaImeArray<CParserStringRange> valueStrings;
         if (!ParseLine(&pwch[indexTrace], bufLenOneLine, &keyword, &valueStrings))
         {
             if (*ppdret)

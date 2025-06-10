@@ -8,7 +8,7 @@
 #include "Private.h"
 #include "KeyHandlerEditSession.h"
 #include "EditSession.h"
-#include "SampleIME.h"
+#include "MetasequoiaIME.h"
 #include "CompositionProcessorEngine.h"
 #include "KeyStateCategory.h"
 

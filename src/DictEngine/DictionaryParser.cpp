@@ -7,7 +7,7 @@
 
 #include "Private.h"
 #include "DictionaryParser.h"
-#include "SampleIMEBaseStructure.h"
+#include "MetasequoiaIMEBaseStructure.h"
 
 //---------------------------------------------------------------------
 //
@@ -40,7 +40,7 @@ CDictionaryParser::~CDictionaryParser()
 
 BOOL CDictionaryParser::ParseLine(_In_reads_(dwBufLen) LPCWSTR pwszBuffer, DWORD_PTR dwBufLen,
                                   _Out_ CParserStringRange *psrgKeyword,
-                                  _Inout_opt_ CSampleImeArray<CParserStringRange> *pValue)
+                                  _Inout_opt_ CMetasequoiaImeArray<CParserStringRange> *pValue)
 {
     LPCWSTR pwszKeyWordDelimiter = nullptr;
     pwszKeyWordDelimiter = GetToken(pwszBuffer, dwBufLen, Global::KeywordDelimiter, psrgKeyword);

@@ -6,7 +6,7 @@
 
 #include "Private.h"
 #include "define.h"
-#include "SampleIMEBaseStructure.h"
+#include "MetasequoiaIMEBaseStructure.h"
 #include <iostream>
 #include <string>
 #include <wrl.h>
@@ -112,11 +112,11 @@ extern LONG dllRefCount;
 extern CRITICAL_SECTION CS;
 extern HFONT defaultlFontHandle; // Global font object we use everywhere
 
-extern const CLSID SampleIMECLSID;
-extern const CLSID SampleIMEGuidProfile;
-extern const CLSID SampleIMEGuidImeModePreserveKey;
-extern const CLSID SampleIMEGuidDoubleSingleBytePreserveKey;
-extern const CLSID SampleIMEGuidPunctuationPreserveKey;
+extern const CLSID MetasequoiaIMECLSID;
+extern const CLSID MetasequoiaIMEGuidProfile;
+extern const CLSID MetasequoiaIMEGuidImeModePreserveKey;
+extern const CLSID MetasequoiaIMEGuidDoubleSingleBytePreserveKey;
+extern const CLSID MetasequoiaIMEGuidPunctuationPreserveKey;
 
 LRESULT CALLBACK ThreadKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
 BOOL CheckModifiers(UINT uModCurrent, UINT uMod);
@@ -129,20 +129,20 @@ extern BOOL IsAltKeyDownOnly;
 extern BOOL PureShiftKeyDown;
 extern BOOL PureShiftKeyUp;
 
-extern const GUID SampleIMEGuidCompartmentDoubleSingleByte;
-extern const GUID SampleIMEGuidCompartmentPunctuation;
+extern const GUID MetasequoiaIMEGuidCompartmentDoubleSingleByte;
+extern const GUID MetasequoiaIMEGuidCompartmentPunctuation;
 
 extern const WCHAR FullWidthCharTable[];
 extern const struct _PUNCTUATION PunctuationTable[19];
 
-extern const GUID SampleIMEGuidLangBarIMEMode;
-extern const GUID SampleIMEGuidLangBarDoubleSingleByte;
-extern const GUID SampleIMEGuidLangBarPunctuation;
+extern const GUID MetasequoiaIMEGuidLangBarIMEMode;
+extern const GUID MetasequoiaIMEGuidLangBarDoubleSingleByte;
+extern const GUID MetasequoiaIMEGuidLangBarPunctuation;
 
-extern const GUID SampleIMEGuidDisplayAttributeInput;
-extern const GUID SampleIMEGuidDisplayAttributeConverted;
+extern const GUID MetasequoiaIMEGuidDisplayAttributeInput;
+extern const GUID MetasequoiaIMEGuidDisplayAttributeConverted;
 
-extern const GUID SampleIMEGuidCandUIElement;
+extern const GUID MetasequoiaIMEGuidCandUIElement;
 
 extern const WCHAR UnicodeByteOrderMark;
 extern const WCHAR KeywordDelimiter;

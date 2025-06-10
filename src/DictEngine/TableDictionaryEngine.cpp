@@ -18,7 +18,7 @@
 //----------------------------------------------------------------------------
 
 VOID CTableDictionaryEngine::CollectWord(_In_ CStringRange *pKeyCode,
-                                         _Inout_ CSampleImeArray<CStringRange> *pWordStrings)
+                                         _Inout_ CMetasequoiaImeArray<CStringRange> *pWordStrings)
 {
     CDictionaryResult *pdret = nullptr;
     CDictionarySearch dshSearch(_locale, _pDictionaryFile, pKeyCode);
@@ -41,7 +41,7 @@ VOID CTableDictionaryEngine::CollectWord(_In_ CStringRange *pKeyCode,
 }
 
 VOID CTableDictionaryEngine::CollectWord(_In_ CStringRange *pKeyCode,
-                                         _Inout_ CSampleImeArray<CCandidateListItem> *pItemList)
+                                         _Inout_ CMetasequoiaImeArray<CCandidateListItem> *pItemList)
 {
     std::wstring keyCodeWString = L"";
     keyCodeWString.append(pKeyCode->Get(), pKeyCode->GetLength()); // Append the key code to the string
@@ -83,7 +83,7 @@ VOID CTableDictionaryEngine::CollectWord(_In_ CStringRange *pKeyCode,
 //----------------------------------------------------------------------------
 
 VOID CTableDictionaryEngine::CollectWordForWildcard(_In_ CStringRange *pKeyCode,
-                                                    _Inout_ CSampleImeArray<CCandidateListItem> *pItemList)
+                                                    _Inout_ CMetasequoiaImeArray<CCandidateListItem> *pItemList)
 {
     CDictionaryResult *pdret = nullptr;
     CDictionarySearch dshSearch(_locale, _pDictionaryFile, pKeyCode);
@@ -124,7 +124,7 @@ VOID CTableDictionaryEngine::CollectWordForWildcard(_In_ CStringRange *pKeyCode,
 //----------------------------------------------------------------------------
 
 VOID CTableDictionaryEngine::CollectWordFromConvertedStringForWildcard(
-    _In_ CStringRange *pString, _Inout_ CSampleImeArray<CCandidateListItem> *pItemList)
+    _In_ CStringRange *pString, _Inout_ CMetasequoiaImeArray<CCandidateListItem> *pItemList)
 {
     CDictionaryResult *pdret = nullptr;
     CDictionarySearch dshSearch(_locale, _pDictionaryFile, pString);

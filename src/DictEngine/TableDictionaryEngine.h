@@ -26,11 +26,11 @@ class CTableDictionaryEngine : public CBaseDictionaryEngine
     //     [out] pasrgWordString - Specified returns pointer of word as CStringRange.
     // returns
     //     none.
-    VOID CollectWord(_In_ CStringRange *pKeyCode, _Inout_ CSampleImeArray<CStringRange> *pWordStrings);
-    VOID CollectWord(_In_ CStringRange *pKeyCode, _Inout_ CSampleImeArray<CCandidateListItem> *pItemList);
+    VOID CollectWord(_In_ CStringRange *pKeyCode, _Inout_ CMetasequoiaImeArray<CStringRange> *pWordStrings);
+    VOID CollectWord(_In_ CStringRange *pKeyCode, _Inout_ CMetasequoiaImeArray<CCandidateListItem> *pItemList);
 
-    VOID CollectWordForWildcard(_In_ CStringRange *psrgKeyCode, _Inout_ CSampleImeArray<CCandidateListItem> *pItemList);
+    VOID CollectWordForWildcard(_In_ CStringRange *psrgKeyCode, _Inout_ CMetasequoiaImeArray<CCandidateListItem> *pItemList);
 
     VOID CollectWordFromConvertedStringForWildcard(_In_ CStringRange *pString,
-                                                   _Inout_ CSampleImeArray<CCandidateListItem> *pItemList);
+                                                   _Inout_ CMetasequoiaImeArray<CCandidateListItem> *pItemList);
 };

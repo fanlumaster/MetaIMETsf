@@ -1,7 +1,7 @@
 #pragma once
 #include "Globals.h"
 #include "Private.h"
-#include "SampleIME.h"
+#include "MetasequoiaIME.h"
 
 class CKeyStateCategory;
 
@@ -9,7 +9,7 @@ class CKeyStateCategoryFactory
 {
   public:
     static CKeyStateCategoryFactory *Instance();
-    CKeyStateCategory *MakeKeyStateCategory(KEYSTROKE_CATEGORY keyCategory, _In_ CSampleIME *pTextService);
+    CKeyStateCategory *MakeKeyStateCategory(KEYSTROKE_CATEGORY keyCategory, _In_ CMetasequoiaIME *pTextService);
     void Release();
 
   protected:
@@ -41,7 +41,7 @@ typedef struct KeyHandlerEditSessionDTO
 class CKeyStateCategory
 {
   public:
-    CKeyStateCategory(_In_ CSampleIME *pTextService);
+    CKeyStateCategory(_In_ CMetasequoiaIME *pTextService);
 
   protected:
     ~CKeyStateCategory(void);
@@ -97,13 +97,13 @@ class CKeyStateCategory
     virtual HRESULT HandleKeySelectByNumber(KeyHandlerEditSessionDTO dto);
 
   protected:
-    CSampleIME *_pTextService;
+    CMetasequoiaIME *_pTextService;
 };
 
 class CKeyStateComposing : public CKeyStateCategory
 {
   public:
-    CKeyStateComposing(_In_ CSampleIME *pTextService);
+    CKeyStateComposing(_In_ CMetasequoiaIME *pTextService);
 
   protected:
     // _HandleCompositionInput
@@ -149,7 +149,7 @@ class CKeyStateComposing : public CKeyStateCategory
 class CKeyStateCandidate : public CKeyStateCategory
 {
   public:
-    CKeyStateCandidate(_In_ CSampleIME *pTextService);
+    CKeyStateCandidate(_In_ CMetasequoiaIME *pTextService);
 
   protected:
     // HandleKeyFinalizeCandidatelist
@@ -176,7 +176,7 @@ class CKeyStateCandidate : public CKeyStateCategory
 class CKeyStatePhrase : public CKeyStateCategory
 {
   public:
-    CKeyStatePhrase(_In_ CSampleIME *pTextService);
+    CKeyStatePhrase(_In_ CMetasequoiaIME *pTextService);
 
   protected:
     //_HandleCancel
@@ -196,7 +196,7 @@ class CKeyStatePhrase : public CKeyStateCategory
 class CKeyStateNull : public CKeyStateCategory
 {
   public:
-    CKeyStateNull(_In_ CSampleIME *pTextService) : CKeyStateCategory(pTextService) {};
+    CKeyStateNull(_In_ CMetasequoiaIME *pTextService) : CKeyStateCategory(pTextService) {};
 
   protected:
     // _HandleNullInput

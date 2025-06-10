@@ -7,7 +7,7 @@
 
 #include "Private.h"
 #include "Globals.h"
-#include "SampleIME.h"
+#include "MetasequoiaIME.h"
 #include "DisplayAttributeInfo.h"
 #include "EnumDisplayAttributeInfo.h"
 
@@ -17,7 +17,7 @@
 //
 //----------------------------------------------------------------------------
 
-STDAPI CSampleIME::EnumDisplayAttributeInfo(__RPC__deref_out_opt IEnumTfDisplayAttributeInfo **ppEnum)
+STDAPI CMetasequoiaIME::EnumDisplayAttributeInfo(__RPC__deref_out_opt IEnumTfDisplayAttributeInfo **ppEnum)
 {
     CEnumDisplayAttributeInfo *pAttributeEnum = nullptr;
 
@@ -45,7 +45,7 @@ STDAPI CSampleIME::EnumDisplayAttributeInfo(__RPC__deref_out_opt IEnumTfDisplayA
 //
 //----------------------------------------------------------------------------
 
-STDAPI CSampleIME::GetDisplayAttributeInfo(__RPC__in REFGUID guidInfo,
+STDAPI CMetasequoiaIME::GetDisplayAttributeInfo(__RPC__in REFGUID guidInfo,
                                            __RPC__deref_out_opt ITfDisplayAttributeInfo **ppInfo)
 {
     if (ppInfo == nullptr)
@@ -56,7 +56,7 @@ STDAPI CSampleIME::GetDisplayAttributeInfo(__RPC__in REFGUID guidInfo,
     *ppInfo = nullptr;
 
     // Which display attribute GUID?
-    if (IsEqualGUID(guidInfo, Global::SampleIMEGuidDisplayAttributeInput))
+    if (IsEqualGUID(guidInfo, Global::MetasequoiaIMEGuidDisplayAttributeInput))
     {
         *ppInfo = new (std::nothrow) CDisplayAttributeInfoInput();
         if ((*ppInfo) == nullptr)
@@ -64,7 +64,7 @@ STDAPI CSampleIME::GetDisplayAttributeInfo(__RPC__in REFGUID guidInfo,
             return E_OUTOFMEMORY;
         }
     }
-    else if (IsEqualGUID(guidInfo, Global::SampleIMEGuidDisplayAttributeConverted))
+    else if (IsEqualGUID(guidInfo, Global::MetasequoiaIMEGuidDisplayAttributeConverted))
     {
         *ppInfo = new (std::nothrow) CDisplayAttributeInfoConverted();
         if ((*ppInfo) == nullptr)

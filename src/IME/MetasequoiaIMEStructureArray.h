@@ -2,9 +2,9 @@
 //
 //  Copyright (C) Microsoft Corporation.  All rights reserved.
 //
-//  CSampleIMESampleIMEStructureArray.h
+//  CMetasequoiaIMEMetasequoiaIMEStructureArray.h
 //
-//          CSampleIMEStructureArray declaration.
+//          CMetasequoiaIMEStructureArray declaration.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -12,27 +12,27 @@
 
 #include <vector>
 
-template <class T> class CSampleIMEStructureArray
+template <class T> class CMetasequoiaIMEStructureArray
 {
     typedef typename std::vector<T> value_type;
     typedef const T &CONST_REF;
-    typedef typename value_type CSampleIMEArray;
-    typedef typename value_type::iterator CSampleIMEIter;
+    typedef typename value_type CMetasequoiaIMEArray;
+    typedef typename value_type::iterator CMetasequoiaIMEIter;
 
   public:
-    CSampleIMEStructureArray() : _imeVector()
+    CMetasequoiaIMEStructureArray() : _imeVector()
     {
     }
 
-    explicit CSampleIMEStructureArray(size_t iCount) : _imeVector(iCount)
+    explicit CMetasequoiaIMEStructureArray(size_t iCount) : _imeVector(iCount)
     {
     }
 
-    CSampleIMEStructureArray(size_t iCount, CONST_REF tVal) : _imeVector(iCount, tVal)
+    CMetasequoiaIMEStructureArray(size_t iCount, CONST_REF tVal) : _imeVector(iCount, tVal)
     {
     }
 
-    virtual ~CSampleIMEStructureArray()
+    virtual ~CMetasequoiaIMEStructureArray()
     {
     }
 
@@ -57,8 +57,8 @@ template <class T> class CSampleIMEStructureArray
         assert(iIndex <= _imeVector.size());
         assert(_imeVector.size() > 0);
 
-        CSampleIMEIter beginIter = _imeVector.begin() + iIndex;
-        CSampleIMEIter lastIter = beginIter + iElements - 1;
+        CMetasequoiaIMEIter beginIter = _imeVector.begin() + iIndex;
+        CMetasequoiaIMEIter lastIter = beginIter + iElements - 1;
 
         _imeVector.erase(beginIter, lastIter);
     }
@@ -79,6 +79,6 @@ template <class T> class CSampleIMEStructureArray
     }
 
   private:
-    CSampleIMEArray _imeVector; // the actual array of data
-    CSampleIMEIter _imeIter;
+    CMetasequoiaIMEArray _imeVector; // the actual array of data
+    CMetasequoiaIMEIter _imeIter;
 };

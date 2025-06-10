@@ -12,7 +12,7 @@
 
 #include "Private.h"
 #include "Globals.h"
-#include "SampleIME.h"
+#include "MetasequoiaIME.h"
 #include "EnumDisplayAttributeInfo.h"
 
 // #include "StringRange.h"

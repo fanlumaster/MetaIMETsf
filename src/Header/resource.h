@@ -1,10 +1,10 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by SampleIME.rc
+// Used by MetasequoiaIME.rc
 //
 #define SUBLANG_ENGLISH_US 0x01
 #define LANG_ENGLISH 0x09
-#define IDIS_SAMPLEIME 12
+#define IDIS_METASEQUOIAIME 12
 #define IDS_DEFAULT_FONT 13
 #define IDS_IME_MODE 20
 #define IDI_IME_MODE_ON 21

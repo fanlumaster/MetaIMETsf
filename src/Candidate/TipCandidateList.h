@@ -8,7 +8,7 @@
 #pragma once
 
 #include "Private.h"
-#include "SampleIMEBaseStructure.h"
+#include "MetasequoiaIMEBaseStructure.h"
 
 //
 // CTipCandidateList
@@ -39,5 +39,5 @@ class CTipCandidateList : public ITfCandidateList
 
   protected:
     long _refCount;
-    CSampleImeArray<ITfCandidateString *> _tfCandStrList;
+    CMetasequoiaImeArray<ITfCandidateString *> _tfCandStrList;
 };

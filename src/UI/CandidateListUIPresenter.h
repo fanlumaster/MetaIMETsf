@@ -8,10 +8,10 @@
 #pragma once
 
 #include "Private.h"
-#include "SampleIME.h"
+#include "MetasequoiaIME.h"
 #include "CandidateWindow.h"
 #include "CompositionProcessorEngine.h"
-#include "SampleIMEBaseStructure.h"
+#include "MetasequoiaIMEBaseStructure.h"
 #include "KeyHandlerEditSession.h"
 #include "TfTextLayoutSink.h"
 
@@ -32,7 +32,7 @@ class CCandidateListUIPresenter : public CTfTextLayoutSink,
                                   public ITfIntegratableCandidateListUIElement
 {
   public:
-    CCandidateListUIPresenter(_In_ CSampleIME *pTextService, ATOM atom, KEYSTROKE_CATEGORY Category,
+    CCandidateListUIPresenter(_In_ CMetasequoiaIME *pTextService, ATOM atom, KEYSTROKE_CATEGORY Category,
                               _In_ CCandidateRange *pIndexRange, BOOL hideWindow);
     virtual ~CCandidateListUIPresenter();
 
@@ -75,7 +75,7 @@ class CCandidateListUIPresenter : public CTfTextLayoutSink,
     void _EndCandidateList();
 
     void _NotifyUI();
-    void _SetText(_In_ CSampleImeArray<CCandidateListItem> *pCandidateList, BOOL isAddFindKeyCode);
+    void _SetText(_In_ CMetasequoiaImeArray<CCandidateListItem> *pCandidateList, BOOL isAddFindKeyCode);
     void _ClearList();
     VOID _SetTextColor(COLORREF crColor, COLORREF crBkColor);
     VOID _SetFillColor(HBRUSH hBrush);
@@ -100,7 +100,7 @@ class CCandidateListUIPresenter : public CTfTextLayoutSink,
     virtual HRESULT OnSetThreadFocus();
     virtual HRESULT OnKillThreadFocus();
 
-    void RemoveSpecificCandidateFromList(_In_ LCID Locale, _Inout_ CSampleImeArray<CCandidateListItem> &candidateList,
+    void RemoveSpecificCandidateFromList(_In_ LCID Locale, _Inout_ CMetasequoiaImeArray<CCandidateListItem> &candidateList,
                                          _In_ CStringRange &srgCandidateString);
     void AdviseUIChangedByArrowKey(_In_ KEYSTROKE_FUNCTION arrowKey);
 
@@ -123,9 +123,9 @@ class CCandidateListUIPresenter : public CTfTextLayoutSink,
     HRESULT MakeCandidateWindow(_In_ ITfContext *pContextDocument, _In_ UINT wndWidth);
     void DisposeCandidateWindow();
 
-    void AddCandidateToCandidateListUI(_In_ CSampleImeArray<CCandidateListItem> *pCandidateList, BOOL isAddFindKeyCode);
+    void AddCandidateToCandidateListUI(_In_ CMetasequoiaImeArray<CCandidateListItem> *pCandidateList, BOOL isAddFindKeyCode);
 
-    void SetPageIndexWithScrollInfo(_In_ CSampleImeArray<CCandidateListItem> *pCandidateList);
+    void SetPageIndexWithScrollInfo(_In_ CMetasequoiaImeArray<CCandidateListItem> *pCandidateList);
 
   protected:
     CCandidateWindow *_pCandidateWnd;
@@ -139,6 +139,6 @@ class CCandidateListUIPresenter : public CTfTextLayoutSink,
     KEYSTROKE_CATEGORY _Category;
     DWORD _updatedFlags;
     DWORD _uiElementId;
-    CSampleIME *_pTextService;
+    CMetasequoiaIME *_pTextService;
     LONG _refCount;
 };

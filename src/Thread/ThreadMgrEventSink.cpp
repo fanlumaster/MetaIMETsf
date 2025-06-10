@@ -7,7 +7,7 @@
 
 #include "Private.h"
 #include "Globals.h"
-#include "SampleIME.h"
+#include "MetasequoiaIME.h"
 #include "CandidateListUIPresenter.h"
 
 //+---------------------------------------------------------------------------
@@ -18,7 +18,7 @@
 // a document.
 //----------------------------------------------------------------------------
 
-STDAPI CSampleIME::OnInitDocumentMgr(_In_ ITfDocumentMgr *pDocMgr)
+STDAPI CMetasequoiaIME::OnInitDocumentMgr(_In_ ITfDocumentMgr *pDocMgr)
 {
     pDocMgr;
     return E_NOTIMPL;
@@ -32,7 +32,7 @@ STDAPI CSampleIME::OnInitDocumentMgr(_In_ ITfDocumentMgr *pDocMgr)
 // document.
 //----------------------------------------------------------------------------
 
-STDAPI CSampleIME::OnUninitDocumentMgr(_In_ ITfDocumentMgr *pDocMgr)
+STDAPI CMetasequoiaIME::OnUninitDocumentMgr(_In_ ITfDocumentMgr *pDocMgr)
 {
     pDocMgr;
     return E_NOTIMPL;
@@ -47,7 +47,7 @@ STDAPI CSampleIME::OnUninitDocumentMgr(_In_ ITfDocumentMgr *pDocMgr)
 // focus document, or now no document holds the input focus.
 //----------------------------------------------------------------------------
 
-STDAPI CSampleIME::OnSetFocus(_In_ ITfDocumentMgr *pDocMgrFocus, _In_ ITfDocumentMgr *pDocMgrPrevFocus)
+STDAPI CMetasequoiaIME::OnSetFocus(_In_ ITfDocumentMgr *pDocMgrFocus, _In_ ITfDocumentMgr *pDocMgrPrevFocus)
 {
     pDocMgrPrevFocus;
 
@@ -101,7 +101,7 @@ STDAPI CSampleIME::OnSetFocus(_In_ ITfDocumentMgr *pDocMgrFocus, _In_ ITfDocumen
 // Sink called by the framework when a context is pushed.
 //----------------------------------------------------------------------------
 
-STDAPI CSampleIME::OnPushContext(_In_ ITfContext *pContext)
+STDAPI CMetasequoiaIME::OnPushContext(_In_ ITfContext *pContext)
 {
     pContext;
 
@@ -115,7 +115,7 @@ STDAPI CSampleIME::OnPushContext(_In_ ITfContext *pContext)
 // Sink called by the framework when a context is popped.
 //----------------------------------------------------------------------------
 
-STDAPI CSampleIME::OnPopContext(_In_ ITfContext *pContext)
+STDAPI CMetasequoiaIME::OnPopContext(_In_ ITfContext *pContext)
 {
     pContext;
 
@@ -129,7 +129,7 @@ STDAPI CSampleIME::OnPopContext(_In_ ITfContext *pContext)
 // Advise our sink.
 //----------------------------------------------------------------------------
 
-BOOL CSampleIME::_InitThreadMgrEventSink()
+BOOL CMetasequoiaIME::_InitThreadMgrEventSink()
 {
     ITfSource *pSource = nullptr;
     BOOL ret = FALSE;
@@ -160,7 +160,7 @@ Exit:
 // Unadvise our sink.
 //----------------------------------------------------------------------------
 
-void CSampleIME::_UninitThreadMgrEventSink()
+void CMetasequoiaIME::_UninitThreadMgrEventSink()
 {
     ITfSource *pSource = nullptr;
 

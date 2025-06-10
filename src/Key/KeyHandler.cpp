@@ -1,10 +1,10 @@
 #include "Private.h"
 #include "Globals.h"
 #include "EditSession.h"
-#include "SampleIME.h"
+#include "MetasequoiaIME.h"
 #include "CandidateListUIPresenter.h"
 #include "CompositionProcessorEngine.h"
-#include "SampleIMEBaseStructure.h"
+#include "MetasequoiaIMEBaseStructure.h"
 #include <debugapi.h>
 #include <minwindef.h>
 #include <string>
@@ -13,7 +13,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-// CSampleIME class
+// CMetasequoiaIME class
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -25,7 +25,7 @@
 //
 //----------------------------------------------------------------------------
 
-BOOL CSampleIME::_IsRangeCovered(TfEditCookie ec, _In_ ITfRange *pRangeTest, _In_ ITfRange *pRangeCover)
+BOOL CMetasequoiaIME::_IsRangeCovered(TfEditCookie ec, _In_ ITfRange *pRangeTest, _In_ ITfRange *pRangeCover)
 {
     LONG lResult = 0;
     ;
@@ -49,7 +49,7 @@ BOOL CSampleIME::_IsRangeCovered(TfEditCookie ec, _In_ ITfRange *pRangeTest, _In
 //
 //----------------------------------------------------------------------------
 
-VOID CSampleIME::_DeleteCandidateList(BOOL isForce, _In_opt_ ITfContext *pContext)
+VOID CMetasequoiaIME::_DeleteCandidateList(BOOL isForce, _In_opt_ ITfContext *pContext)
 {
     isForce;
     pContext;
@@ -73,7 +73,7 @@ VOID CSampleIME::_DeleteCandidateList(BOOL isForce, _In_opt_ ITfContext *pContex
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandleComplete(TfEditCookie ec, _In_ ITfContext *pContext)
+HRESULT CMetasequoiaIME::_HandleComplete(TfEditCookie ec, _In_ ITfContext *pContext)
 {
     _DeleteCandidateList(FALSE, pContext);
 
@@ -89,7 +89,7 @@ HRESULT CSampleIME::_HandleComplete(TfEditCookie ec, _In_ ITfContext *pContext)
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandleCancel(TfEditCookie ec, _In_ ITfContext *pContext)
+HRESULT CMetasequoiaIME::_HandleCancel(TfEditCookie ec, _In_ ITfContext *pContext)
 {
     _RemoveDummyCompositionForComposing(ec, _pComposition);
 
@@ -100,7 +100,7 @@ HRESULT CSampleIME::_HandleCancel(TfEditCookie ec, _In_ ITfContext *pContext)
     return S_OK;
 }
 
-HRESULT CSampleIME::_HandleToogleIMEMode(TfEditCookie ec, _In_ ITfContext *pContext)
+HRESULT CMetasequoiaIME::_HandleToogleIMEMode(TfEditCookie ec, _In_ ITfContext *pContext)
 {
     CStringRange keyStrokebuffer = _pCompositionProcessorEngine->GetKeystrokeBuffer();
     if (keyStrokebuffer.GetLength())
@@ -130,7 +130,7 @@ HRESULT CSampleIME::_HandleToogleIMEMode(TfEditCookie ec, _In_ ITfContext *pCont
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandleCompositionInput(TfEditCookie ec, _In_ ITfContext *pContext, WCHAR wch)
+HRESULT CMetasequoiaIME::_HandleCompositionInput(TfEditCookie ec, _In_ ITfContext *pContext, WCHAR wch)
 {
     ITfRange *pRangeComposition = nullptr;
     TF_SELECTION tfSelection;
@@ -191,11 +191,11 @@ Exit:
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandleCompositionInputWorker(_In_ CCompositionProcessorEngine *pCompositionProcessorEngine,
+HRESULT CMetasequoiaIME::_HandleCompositionInputWorker(_In_ CCompositionProcessorEngine *pCompositionProcessorEngine,
                                                   TfEditCookie ec, _In_ ITfContext *pContext)
 {
     HRESULT hr = S_OK;
-    CSampleImeArray<CStringRange> readingStrings;
+    CMetasequoiaImeArray<CStringRange> readingStrings;
     BOOL isWildcardIncluded = FALSE;
 
     //
@@ -222,7 +222,7 @@ HRESULT CSampleIME::_HandleCompositionInputWorker(_In_ CCompositionProcessorEngi
     //
     // Get candidate string from composition processor engine
     //
-    CSampleImeArray<CCandidateListItem> candidateList;
+    CMetasequoiaImeArray<CCandidateListItem> candidateList;
 
     //
     // Important: Generate candidate list here
@@ -259,7 +259,7 @@ HRESULT CSampleIME::_HandleCompositionInputWorker(_In_ CCompositionProcessorEngi
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_CreateAndStartCandidate(_In_ CCompositionProcessorEngine *pCompositionProcessorEngine,
+HRESULT CMetasequoiaIME::_CreateAndStartCandidate(_In_ CCompositionProcessorEngine *pCompositionProcessorEngine,
                                              TfEditCookie ec, _In_ ITfContext *pContext)
 {
     HRESULT hr = S_OK;
@@ -315,7 +315,7 @@ HRESULT CSampleIME::_CreateAndStartCandidate(_In_ CCompositionProcessorEngine *p
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandleCompositionFinalize(TfEditCookie ec, _In_ ITfContext *pContext, BOOL isCandidateList)
+HRESULT CMetasequoiaIME::_HandleCompositionFinalize(TfEditCookie ec, _In_ ITfContext *pContext, BOOL isCandidateList)
 {
     HRESULT hr = S_OK;
 
@@ -379,11 +379,11 @@ HRESULT CSampleIME::_HandleCompositionFinalize(TfEditCookie ec, _In_ ITfContext 
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandleCompositionConvert(TfEditCookie ec, _In_ ITfContext *pContext, BOOL isWildcardSearch)
+HRESULT CMetasequoiaIME::_HandleCompositionConvert(TfEditCookie ec, _In_ ITfContext *pContext, BOOL isWildcardSearch)
 {
     HRESULT hr = S_OK;
 
-    CSampleImeArray<CCandidateListItem> candidateList;
+    CMetasequoiaImeArray<CCandidateListItem> candidateList;
 
     //
     // Get candidate string from composition processor engine
@@ -455,7 +455,7 @@ HRESULT CSampleIME::_HandleCompositionConvert(TfEditCookie ec, _In_ ITfContext *
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandleCompositionBackspace(TfEditCookie ec, _In_ ITfContext *pContext)
+HRESULT CMetasequoiaIME::_HandleCompositionBackspace(TfEditCookie ec, _In_ ITfContext *pContext)
 {
     ITfRange *pRangeComposition = nullptr;
     TF_SELECTION tfSelection;
@@ -522,7 +522,7 @@ Exit:
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandleCompositionArrowKey(TfEditCookie ec, _In_ ITfContext *pContext,
+HRESULT CMetasequoiaIME::_HandleCompositionArrowKey(TfEditCookie ec, _In_ ITfContext *pContext,
                                                KEYSTROKE_FUNCTION keyFunction)
 {
     ITfRange *pRangeComposition = nullptr;
@@ -563,7 +563,7 @@ Exit:
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITfContext *pContext, WCHAR wch)
+HRESULT CMetasequoiaIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITfContext *pContext, WCHAR wch)
 {
     HRESULT hr = S_OK;
 #ifdef FANY_DEBUG
@@ -626,7 +626,7 @@ HRESULT CSampleIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITfConte
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandleCompositionDoubleSingleByte(TfEditCookie ec, _In_ ITfContext *pContext, WCHAR wch)
+HRESULT CMetasequoiaIME::_HandleCompositionDoubleSingleByte(TfEditCookie ec, _In_ ITfContext *pContext, WCHAR wch)
 {
     HRESULT hr = S_OK;
 
@@ -661,7 +661,7 @@ HRESULT CSampleIME::_HandleCompositionDoubleSingleByte(TfEditCookie ec, _In_ ITf
 //    [in] dwKeyFunction - Function regarding virtual key
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_InvokeKeyHandler(_In_ ITfContext *pContext, UINT code, WCHAR wch, DWORD flags,
+HRESULT CMetasequoiaIME::_InvokeKeyHandler(_In_ ITfContext *pContext, UINT code, WCHAR wch, DWORD flags,
                                       _KEYSTROKE_STATE keyState)
 {
     flags;

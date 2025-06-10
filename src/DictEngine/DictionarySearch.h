@@ -9,7 +9,7 @@
 
 #include "File.h"
 #include "DictionaryParser.h"
-#include "SampleIMEBaseStructure.h"
+#include "MetasequoiaIMEBaseStructure.h"
 
 class CDictionaryResult;
 
@@ -75,5 +75,5 @@ class CDictionaryResult
 
     CStringRange _SearchKeyCode;
     CStringRange _FindKeyCode;
-    CSampleImeArray<CStringRange> _FindPhraseList;
+    CMetasequoiaImeArray<CStringRange> _FindPhraseList;
 };

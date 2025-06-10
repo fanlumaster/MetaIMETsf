@@ -7,12 +7,12 @@
 
 #include "Private.h"
 #include "Globals.h"
-#include "SampleIME.h"
+#include "MetasequoiaIME.h"
 #include "CompositionProcessorEngine.h"
 
-BOOL CSampleIME::VerifySampleIMECLSID(_In_ REFCLSID clsid)
+BOOL CMetasequoiaIME::VerifyMetasequoiaIMECLSID(_In_ REFCLSID clsid)
 {
-    if (IsEqualCLSID(clsid, Global::SampleIMECLSID))
+    if (IsEqualCLSID(clsid, Global::MetasequoiaIMECLSID))
     {
         return TRUE;
     }
@@ -26,11 +26,11 @@ BOOL CSampleIME::VerifySampleIMECLSID(_In_ REFCLSID clsid)
 // Sink called by the framework when changes activate language profile.
 //----------------------------------------------------------------------------
 
-STDAPI CSampleIME::OnActivated(_In_ REFCLSID clsid, _In_ REFGUID guidProfile, _In_ BOOL isActivated)
+STDAPI CMetasequoiaIME::OnActivated(_In_ REFCLSID clsid, _In_ REFGUID guidProfile, _In_ BOOL isActivated)
 {
     guidProfile;
 
-    if (FALSE == VerifySampleIMECLSID(clsid))
+    if (FALSE == VerifyMetasequoiaIMECLSID(clsid))
     {
         return S_OK;
     }
@@ -68,7 +68,7 @@ STDAPI CSampleIME::OnActivated(_In_ REFCLSID clsid, _In_ REFGUID guidProfile, _I
 // Advise a active language profile notify sink.
 //----------------------------------------------------------------------------
 
-BOOL CSampleIME::_InitActiveLanguageProfileNotifySink()
+BOOL CMetasequoiaIME::_InitActiveLanguageProfileNotifySink()
 {
     ITfSource *pSource = nullptr;
     BOOL ret = FALSE;
@@ -99,7 +99,7 @@ Exit:
 // Unadvise a active language profile notify sink.  Assumes we have advised one already.
 //----------------------------------------------------------------------------
 
-void CSampleIME::_UninitActiveLanguageProfileNotifySink()
+void CMetasequoiaIME::_UninitActiveLanguageProfileNotifySink()
 {
     ITfSource *pSource = nullptr;
 

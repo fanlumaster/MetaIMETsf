@@ -13,7 +13,7 @@
 class CKeyHandlerEditSession : public CEditSessionBase
 {
   public:
-    CKeyHandlerEditSession(CSampleIME *pTextService, ITfContext *pContext, UINT uCode, WCHAR wch,
+    CKeyHandlerEditSession(CMetasequoiaIME *pTextService, ITfContext *pContext, UINT uCode, WCHAR wch,
                            _KEYSTROKE_STATE keyState)
         : CEditSessionBase(pTextService, pContext)
     {

@@ -12,8 +12,8 @@
 
 #define TEXTSERVICE_MODEL L"Apartment"
 #define TEXTSERVICE_LANGID MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)
-#define TEXTSERVICE_ICON_INDEX -IDIS_SAMPLEIME
-#define TEXTSERVICE_DIC L"SampleIMESimplifiedQuanPin.txt"
+#define TEXTSERVICE_ICON_INDEX -IDIS_METASEQUOIAIME
+#define TEXTSERVICE_DIC L"MetasequoiaIMESimplifiedQuanPin.txt"
 #define TEXTSERVICE_DIC_DB L"cutted_flyciku_with_jp.db"
 #define FANYLOGFILE_ "fanydebug.log"
 #define FANYLOGFILE L"fanydebug_w.log"
@@ -25,8 +25,8 @@
 #define IME_PUNCTUATION_ON_INDEX IDI_PUNCTUATION_ON
 #define IME_PUNCTUATION_OFF_INDEX IDI_PUNCTUATION_OFF
 
-#define SAMPLEIME_FONT_DEFAULT L"Microsoft YaHei UI"
-#define SAMPLEIME_LOCALE_DEFAULT L"zh-CN"
+#define METASEQUOIAIME_FONT_DEFAULT L"Microsoft YaHei UI"
+#define METASEQUOIAIME_LOCALE_DEFAULT L"zh-CN"
 
 //---------------------------------------------------------------------
 // defined Candidated Window

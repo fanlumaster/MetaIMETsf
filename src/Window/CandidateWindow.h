@@ -9,10 +9,10 @@
 
 #include "Private.h"
 #include "BaseWindow.h"
-#include "SampleIME.h"
+#include "MetasequoiaIME.h"
 #include "ShadowWindow.h"
 #include "ScrollBarWindow.h"
-#include "SampleIMEBaseStructure.h"
+#include "MetasequoiaIMEBaseStructure.h"
 
 enum CANDWND_ACTION
 {
@@ -25,7 +25,7 @@ class CCandidateWindow : public CBaseWindow
 {
   public:
     CCandidateWindow(_In_ CANDWNDCALLBACK pfnCallback, _In_ void *pv, _In_ CCandidateRange *pIndexRange,
-                     _In_ BOOL isStoreAppMode, _In_ CSampleIME *pTextService);
+                     _In_ BOOL isStoreAppMode, _In_ CMetasequoiaIME *pTextService);
     virtual ~CCandidateWindow();
 
     BOOL _Create(ATOM atom, _In_ UINT wndWidth, _In_opt_ HWND parentWndHandle);
@@ -93,9 +93,9 @@ class CCandidateWindow : public CBaseWindow
 
   private:
     UINT _currentSelection;
-    CSampleImeArray<CCandidateListItem> _candidateList;
-    CSampleImeArray<UINT> _PageIndex;
-    CSampleIME *_pTextService;
+    CMetasequoiaImeArray<CCandidateListItem> _candidateList;
+    CMetasequoiaImeArray<UINT> _PageIndex;
+    CMetasequoiaIME *_pTextService;
 
     COLORREF _crTextColor;
     COLORREF _crBkColor;

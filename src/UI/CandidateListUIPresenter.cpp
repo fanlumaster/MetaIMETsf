@@ -1,10 +1,10 @@
 #include "Globals.h"
 #include "Private.h"
-#include "SampleIME.h"
+#include "MetasequoiaIME.h"
 #include "CandidateWindow.h"
 #include "CandidateListUIPresenter.h"
 #include "CompositionProcessorEngine.h"
-#include "SampleIMEBaseStructure.h"
+#include "MetasequoiaIMEBaseStructure.h"
 #include "define.h"
 #include <debugapi.h>
 #include <intsafe.h>
@@ -15,7 +15,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-// CSampleIME candidate key handler methods
+// CMetasequoiaIME candidate key handler methods
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -30,7 +30,7 @@ const int MOVETO_BOTTOM = -1;
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfContext *pContext)
+HRESULT CMetasequoiaIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfContext *pContext)
 {
     HRESULT hr = S_OK;
 
@@ -74,7 +74,7 @@ NoPresenter:
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandleCandidateFinalizeForVKReturn(TfEditCookie ec, _In_ ITfContext *pContext)
+HRESULT CMetasequoiaIME::_HandleCandidateFinalizeForVKReturn(TfEditCookie ec, _In_ ITfContext *pContext)
 {
     HRESULT hr = S_OK;
 
@@ -116,7 +116,7 @@ NoPresenter:
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandleCandidateConvert(TfEditCookie ec, _In_ ITfContext *pContext)
+HRESULT CMetasequoiaIME::_HandleCandidateConvert(TfEditCookie ec, _In_ ITfContext *pContext)
 {
     return _HandleCandidateWorker(ec, pContext);
 }
@@ -127,14 +127,14 @@ HRESULT CSampleIME::_HandleCandidateConvert(TfEditCookie ec, _In_ ITfContext *pC
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandleCandidateWorker(TfEditCookie ec, _In_ ITfContext *pContext)
+HRESULT CMetasequoiaIME::_HandleCandidateWorker(TfEditCookie ec, _In_ ITfContext *pContext)
 {
     HRESULT hrReturn = E_FAIL;
     DWORD_PTR candidateLen = 0;
     const WCHAR *pCandidateString = nullptr;
     BSTR pbstr = nullptr;
     CStringRange candidateString;
-    CSampleImeArray<CCandidateListItem> candidatePhraseList;
+    CMetasequoiaImeArray<CCandidateListItem> candidatePhraseList;
 
     if (nullptr == _pCandidateListUIPresenter)
     {
@@ -253,7 +253,7 @@ Exit:
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandleCandidateArrowKey(TfEditCookie ec, _In_ ITfContext *pContext,
+HRESULT CMetasequoiaIME::_HandleCandidateArrowKey(TfEditCookie ec, _In_ ITfContext *pContext,
                                              _In_ KEYSTROKE_FUNCTION keyFunction)
 {
     ec;
@@ -270,7 +270,7 @@ HRESULT CSampleIME::_HandleCandidateArrowKey(TfEditCookie ec, _In_ ITfContext *p
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandleCandidateSelectByNumber(TfEditCookie ec, _In_ ITfContext *pContext, _In_ UINT uCode)
+HRESULT CMetasequoiaIME::_HandleCandidateSelectByNumber(TfEditCookie ec, _In_ ITfContext *pContext, _In_ UINT uCode)
 {
     int iSelectAsNumber = _pCompositionProcessorEngine->GetCandidateListIndexRange()->GetIndex(uCode);
     if (iSelectAsNumber == -1)
@@ -295,7 +295,7 @@ HRESULT CSampleIME::_HandleCandidateSelectByNumber(TfEditCookie ec, _In_ ITfCont
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandlePhraseFinalize(TfEditCookie ec, _In_ ITfContext *pContext)
+HRESULT CMetasequoiaIME::_HandlePhraseFinalize(TfEditCookie ec, _In_ ITfContext *pContext)
 {
     HRESULT hr = S_OK;
 
@@ -326,7 +326,7 @@ HRESULT CSampleIME::_HandlePhraseFinalize(TfEditCookie ec, _In_ ITfContext *pCon
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandlePhraseArrowKey(TfEditCookie ec, _In_ ITfContext *pContext,
+HRESULT CMetasequoiaIME::_HandlePhraseArrowKey(TfEditCookie ec, _In_ ITfContext *pContext,
                                           _In_ KEYSTROKE_FUNCTION keyFunction)
 {
     ec;
@@ -343,7 +343,7 @@ HRESULT CSampleIME::_HandlePhraseArrowKey(TfEditCookie ec, _In_ ITfContext *pCon
 //
 //----------------------------------------------------------------------------
 
-HRESULT CSampleIME::_HandlePhraseSelectByNumber(TfEditCookie ec, _In_ ITfContext *pContext, _In_ UINT uCode)
+HRESULT CMetasequoiaIME::_HandlePhraseSelectByNumber(TfEditCookie ec, _In_ ITfContext *pContext, _In_ UINT uCode)
 {
     // isSelectAsNumber starts from 0
     int iSelectAsNumber = _pCompositionProcessorEngine->GetCandidateListIndexRange()->GetIndex(uCode);
@@ -375,7 +375,7 @@ HRESULT CSampleIME::_HandlePhraseSelectByNumber(TfEditCookie ec, _In_ ITfContext
 //
 //----------------------------------------------------------------------------
 
-CCandidateListUIPresenter::CCandidateListUIPresenter(_In_ CSampleIME *pTextService, ATOM atom,
+CCandidateListUIPresenter::CCandidateListUIPresenter(_In_ CMetasequoiaIME *pTextService, ATOM atom,
                                                      KEYSTROKE_CATEGORY Category, _In_ CCandidateRange *pIndexRange,
                                                      BOOL hideWindow)
     : CTfTextLayoutSink(pTextService)
@@ -512,7 +512,7 @@ STDAPI CCandidateListUIPresenter::GetDescription(BSTR *pbstr)
 
 STDAPI CCandidateListUIPresenter::GetGUID(GUID *pguid)
 {
-    *pguid = Global::SampleIMEGuidCandUIElement;
+    *pguid = Global::MetasequoiaIMEGuidCandUIElement;
     return S_OK;
 }
 
@@ -898,7 +898,7 @@ void CCandidateListUIPresenter::_NotifyUI()
 //
 //----------------------------------------------------------------------------
 
-void CCandidateListUIPresenter::_SetText(_In_ CSampleImeArray<CCandidateListItem> *pCandidateList,
+void CCandidateListUIPresenter::_SetText(_In_ CMetasequoiaImeArray<CCandidateListItem> *pCandidateList,
                                          BOOL isAddFindKeyCode)
 {
     AddCandidateToCandidateListUI(pCandidateList, isAddFindKeyCode);
@@ -918,7 +918,7 @@ void CCandidateListUIPresenter::_SetText(_In_ CSampleImeArray<CCandidateListItem
     }
 }
 
-void CCandidateListUIPresenter::AddCandidateToCandidateListUI(_In_ CSampleImeArray<CCandidateListItem> *pCandidateList,
+void CCandidateListUIPresenter::AddCandidateToCandidateListUI(_In_ CMetasequoiaImeArray<CCandidateListItem> *pCandidateList,
                                                               BOOL isAddFindKeyCode)
 {
     for (UINT index = 0; index < pCandidateList->Count(); index++)
@@ -927,7 +927,7 @@ void CCandidateListUIPresenter::AddCandidateToCandidateListUI(_In_ CSampleImeArr
     }
 }
 
-void CCandidateListUIPresenter::SetPageIndexWithScrollInfo(_In_ CSampleImeArray<CCandidateListItem> *pCandidateList)
+void CCandidateListUIPresenter::SetPageIndexWithScrollInfo(_In_ CMetasequoiaImeArray<CCandidateListItem> *pCandidateList)
 {
     UINT candCntInPage = _pIndexRange->Count();
     UINT bufferSize = pCandidateList->Count() / candCntInPage + 1;
@@ -1238,7 +1238,7 @@ HRESULT CCandidateListUIPresenter::OnKillThreadFocus()
 }
 
 void CCandidateListUIPresenter::RemoveSpecificCandidateFromList(
-    _In_ LCID Locale, _Inout_ CSampleImeArray<CCandidateListItem> &candidateList, _In_ CStringRange &candidateString)
+    _In_ LCID Locale, _Inout_ CMetasequoiaImeArray<CCandidateListItem> &candidateList, _In_ CStringRange &candidateString)
 {
     for (UINT index = 0; index < candidateList.Count();)
     {

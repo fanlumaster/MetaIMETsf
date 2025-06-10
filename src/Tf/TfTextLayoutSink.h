@@ -9,12 +9,12 @@
 
 #include "Private.h"
 
-class CSampleIME;
+class CMetasequoiaIME;
 
 class CTfTextLayoutSink : public ITfTextLayoutSink
 {
   public:
-    CTfTextLayoutSink(_In_ CSampleIME *pTextService);
+    CTfTextLayoutSink(_In_ CMetasequoiaIME *pTextService);
     virtual ~CTfTextLayoutSink();
 
     // IUnknown methods
@@ -45,7 +45,7 @@ class CTfTextLayoutSink : public ITfTextLayoutSink
     ITfRange *_pRangeComposition;
     ITfContext *_pContextDocument;
     TfEditCookie _tfEditCookie;
-    CSampleIME *_pTextService;
+    CMetasequoiaIME *_pTextService;
     DWORD _dwCookieTextLayoutSink;
     LONG _refCount;
 };

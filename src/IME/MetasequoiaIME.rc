@@ -15,7 +15,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDIS_SAMPLEIME          ICON                    "..\\..\\image\\FeatherIME.ico"
+IDIS_METASEQUOIAIME          ICON                    "..\\..\\image\\FeatherIME.ico"
 IDI_IME_MODE_ON         ICON                    "..\\..\\image\\ImeModeOn.ico"
 IDI_IME_MODE_OFF        ICON                    "..\\..\\image\\ImeModeOff.ico"
 IDI_DOUBLE_SINGLE_BYTE_ON ICON                    "..\\..\\image\\DoubleSingleByteOn.ico"
@@ -46,12 +46,12 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "MSFT"
-            VALUE "FileDescription", "The Sample code of Windows 8 IME"
+            VALUE "FileDescription", "The Metasequoia code of Windows 8 IME"
             VALUE "FileVersion", "1.0.0.1"
-            VALUE "InternalName", "SampleIM.dll"
+            VALUE "InternalName", "MetasequoiaIM.dll"
             VALUE "LegalCopyright", "Copyright (C)"
-            VALUE "OriginalFilename", "SampleIM.dll"
-            VALUE "ProductName", "SampleIME"
+            VALUE "OriginalFilename", "MetasequoiaIM.dll"
+            VALUE "ProductName", "MetasequoiaIME"
             VALUE "ProductVersion", "1.0.0.1"
         END
     END
@@ -94,7 +94,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDIS_SAMPLEIME          "Chinese Simplified QuanPin (version 6.0)"
+    IDIS_METASEQUOIAIME          "Chinese Simplified QuanPin (version 6.0)"
     IDS_DEFAULT_FONT        "Microsoft YaHei UI"
 END
 

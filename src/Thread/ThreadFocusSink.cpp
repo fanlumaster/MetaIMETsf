@@ -7,7 +7,7 @@
 
 #include "Ipc.h"
 #include "Private.h"
-#include "SampleIME.h"
+#include "MetasequoiaIME.h"
 #include "CandidateListUIPresenter.h"
 #include <debugapi.h>
 
@@ -17,7 +17,7 @@
 //
 //----------------------------------------------------------------------------
 
-STDAPI CSampleIME::OnSetThreadFocus()
+STDAPI CMetasequoiaIME::OnSetThreadFocus()
 {
     // Connect to namedpipe
     InitNamedpipe();
@@ -45,7 +45,7 @@ STDAPI CSampleIME::OnSetThreadFocus()
 //
 //----------------------------------------------------------------------------
 
-STDAPI CSampleIME::OnKillThreadFocus()
+STDAPI CMetasequoiaIME::OnKillThreadFocus()
 {
     // Disconnect from namedpipe
     CloseNamedpipe();
@@ -72,7 +72,7 @@ STDAPI CSampleIME::OnKillThreadFocus()
     return S_OK;
 }
 
-BOOL CSampleIME::_InitThreadFocusSink()
+BOOL CMetasequoiaIME::_InitThreadFocusSink()
 {
     ITfSource *pSource = nullptr;
 
@@ -92,7 +92,7 @@ BOOL CSampleIME::_InitThreadFocusSink()
     return TRUE;
 }
 
-void CSampleIME::_UninitThreadFocusSink()
+void CMetasequoiaIME::_UninitThreadFocusSink()
 {
     ITfSource *pSource = nullptr;
 

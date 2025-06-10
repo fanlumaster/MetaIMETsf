@@ -7,7 +7,7 @@
 
 #include "Private.h"
 #include "Globals.h"
-#include "SampleIME.h"
+#include "MetasequoiaIME.h"
 
 // from Register.cpp
 BOOL RegisterProfiles();
@@ -173,7 +173,7 @@ STDAPI CClassFactory::LockServer(BOOL fLock)
 
 void BuildGlobalObjects(void)
 {
-    classFactoryObjects[0] = new (std::nothrow) CClassFactory(Global::SampleIMECLSID, CSampleIME::CreateInstance);
+    classFactoryObjects[0] = new (std::nothrow) CClassFactory(Global::MetasequoiaIMECLSID, CMetasequoiaIME::CreateInstance);
 }
 
 //+---------------------------------------------------------------------------
