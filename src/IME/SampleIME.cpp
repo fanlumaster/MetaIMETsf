@@ -156,7 +156,7 @@ STDAPI CSampleIME::QueryInterface(REFIID riid, _Outptr_ void **ppvObj)
     }
     else if (IsEqualIID(riid, IID_ITfCompositionSink))
     {
-        *ppvObj = (ITfKeyEventSink *)this;
+        *ppvObj = (ITfCompositionSink *)this;
     }
     else if (IsEqualIID(riid, IID_ITfDisplayAttributeProvider))
     {
