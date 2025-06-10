@@ -8,7 +8,7 @@
 #pragma once
 #include "resource.h"
 
-#define IME_NAME L"FanImeTsf"
+#define IME_NAME L"MetasequoiaImeTsf"
 
 #define TEXTSERVICE_MODEL L"Apartment"
 #define TEXTSERVICE_LANGID MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)

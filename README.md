@@ -1,6 +1,6 @@
-## FanImeTsf
+## MetasequoiaImeTsf
 
-This is TSF end of [FanImeServer](https://github.com/fanlumaster/FanImeServer).
+This is TSF end of [MetasequoiaImeServer](https://github.com/fanlumaster/MetasequoiaImeServer).
 
 Notice: now only support 64-bit Apps.
 
@@ -23,13 +23,13 @@ Make sure vcpkg and gsudo is installed by **Scoop**.
 First, clone the repository,
 
 ```powershell
-git clone --recursive https://github.com/fanlumaster/FanImeTsf.git
+git clone --recursive https://github.com/fanlumaster/MetasequoiaImeTsf.git
 ```
 
 Then, prepare the environment,
 
 ```powershell
-cd FanImeTsf
+cd MetasequoiaImeTsf
 python .\scripts\prepare_env.py
 ```
 
@@ -45,25 +45,25 @@ Launch powershell as administrator, make sure you turn on the system `Enable sud
 
 ![](https://i.postimg.cc/zJCn9Cnn/image.png)
 
-Then, create a folder in `C:\Program Files\` named `FanImeTsf`, and copy the `FanImeTsf.dll` to it,
+Then, create a folder in `C:\Program Files\` named `MetasequoiaImeTsf`, and copy the `MetasequoiaImeTsf.dll` to it,
 
 ```powershell
 gsudo
-Copy-Item -Path ".\FanImeTsf\build64\Debug\FanImeTsf.dll" -Destination "C:\Program Files\FanImeTsf"
+Copy-Item -Path ".\MetasequoiaImeTsf\build64\Debug\MetasequoiaImeTsf.dll" -Destination "C:\Program Files\MetasequoiaImeTsf"
 ```
 
 Then, install it,
 
 ```powershell
-cd "C:\Program Files\FanImeTsf"
-sudo regsvr32 .\FanImeTsf.dll
+cd "C:\Program Files\MetasequoiaImeTsf"
+sudo regsvr32 .\MetasequoiaImeTsf.dll
 ```
 
 ### Uninstall
 
 ```powershell
-cd "C:\Program Files\FanImeTsf"
-sudo regsvr32 /u .\FanImeTsf.dll
+cd "C:\Program Files\MetasequoiaImeTsf"
+sudo regsvr32 /u .\MetasequoiaImeTsf.dll
 ```
 
 ## Screenshots

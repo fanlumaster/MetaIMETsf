@@ -1,4 +1,4 @@
-LIBRARY FanImeTsf.dll
+LIBRARY MetasequoiaImeTsf.dll
 
 EXPORTS
         DllGetClassObject    PRIVATE

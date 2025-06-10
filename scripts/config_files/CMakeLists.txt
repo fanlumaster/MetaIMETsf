@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25.0)
-set(PROJECT_NAME FanImeTsf)
+set(PROJECT_NAME MetasequoiaImeTsf)
 project(${PROJECT_NAME} LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 17)
