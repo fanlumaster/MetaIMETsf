@@ -1,7 +1,5 @@
 //////////////////////////////////////////////////////////////////////
 //
-//  Copyright (C) Microsoft Corporation.  All rights reserved.
-//
 //  CMetasequoiaIMEMetasequoiaIMEStructureArray.h
 //
 //          CMetasequoiaIMEStructureArray declaration.

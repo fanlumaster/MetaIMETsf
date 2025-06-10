@@ -1,7 +1,5 @@
 //////////////////////////////////////////////////////////////////////
 //
-//  Copyright (C) 2005  Microsoft Corporation.  All rights reserved.
-//
 //  ScrollBarWindow.h
 //
 // CScrollBarWindow declaration.
