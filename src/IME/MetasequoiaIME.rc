@@ -46,7 +46,7 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "MSFT"
-            VALUE "FileDescription", "The Metasequoia code of Windows 8 IME"
+            VALUE "FileDescription", "The Metasequoia code of Windows 11 IME"
             VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "MetasequoiaIM.dll"
             VALUE "LegalCopyright", "Copyright (C)"
