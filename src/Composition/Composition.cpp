@@ -68,7 +68,8 @@ void CMetasequoiaIME::_SetComposition(_In_ ITfComposition *pComposition)
 //
 //----------------------------------------------------------------------------
 
-HRESULT CMetasequoiaIME::_AddComposingAndChar(TfEditCookie ec, _In_ ITfContext *pContext, _In_ CStringRange *pstrAddString)
+HRESULT CMetasequoiaIME::_AddComposingAndChar(TfEditCookie ec, _In_ ITfContext *pContext,
+                                              _In_ CStringRange *pstrAddString)
 {
 #ifdef FANY_DEBUG
     OutputDebugString(fmt::format(L"You entered _AddComposingAndChar{}\n", pstrAddString->Get()).c_str());
@@ -96,6 +97,7 @@ HRESULT CMetasequoiaIME::_AddComposingAndChar(TfEditCookie ec, _In_ ITfContext *
 
             std::wstring strAddString(pstrAddString->Get(), pstrAddString->GetLength());
 
+            Global::IsVSCodeLike = false;
             if (!Global::IsVSCodeLike)
             {
 
@@ -137,7 +139,8 @@ HRESULT CMetasequoiaIME::_AddComposingAndChar(TfEditCookie ec, _In_ ITfContext *
 //
 //----------------------------------------------------------------------------
 
-HRESULT CMetasequoiaIME::_AddCharAndFinalize(TfEditCookie ec, _In_ ITfContext *pContext, _In_ CStringRange *pstrAddString)
+HRESULT CMetasequoiaIME::_AddCharAndFinalize(TfEditCookie ec, _In_ ITfContext *pContext,
+                                             _In_ CStringRange *pstrAddString)
 {
     HRESULT hr = E_FAIL;
 
@@ -170,7 +173,7 @@ HRESULT CMetasequoiaIME::_AddCharAndFinalize(TfEditCookie ec, _In_ ITfContext *p
 //----------------------------------------------------------------------------
 
 BOOL CMetasequoiaIME::_FindComposingRange(TfEditCookie ec, _In_ ITfContext *pContext, _In_ ITfRange *pSelection,
-                                     _Outptr_result_maybenull_ ITfRange **ppRange)
+                                          _Outptr_result_maybenull_ ITfRange **ppRange)
 {
     if (ppRange == nullptr)
     {
@@ -228,7 +231,7 @@ BOOL CMetasequoiaIME::_FindComposingRange(TfEditCookie ec, _In_ ITfContext *pCon
 //----------------------------------------------------------------------------
 
 HRESULT CMetasequoiaIME::_SetInputString(TfEditCookie ec, _In_ ITfContext *pContext, _Out_opt_ ITfRange *pRange,
-                                    _In_ CStringRange *pstrAddString, BOOL exist_composing)
+                                         _In_ CStringRange *pstrAddString, BOOL exist_composing)
 {
     ITfRange *pRangeInsert = nullptr;
     if (!exist_composing)
@@ -279,8 +282,8 @@ HRESULT CMetasequoiaIME::_SetInputString(TfEditCookie ec, _In_ ITfContext *pCont
 //
 //----------------------------------------------------------------------------
 
-HRESULT CMetasequoiaIME::_InsertAtSelection(TfEditCookie ec, _In_ ITfContext *pContext, _In_ CStringRange *pstrAddString,
-                                       _Outptr_ ITfRange **ppCompRange)
+HRESULT CMetasequoiaIME::_InsertAtSelection(TfEditCookie ec, _In_ ITfContext *pContext,
+                                            _In_ CStringRange *pstrAddString, _Outptr_ ITfRange **ppCompRange)
 {
     ITfRange *rangeInsert = nullptr;
     ITfInsertAtSelection *pias = nullptr;
