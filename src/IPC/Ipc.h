@@ -1,6 +1,6 @@
 #pragma once
-#include <Windows.h>
 #include <string>
+#include <windows.h>
 #include <vector>
 
 inline const wchar_t *FANY_IME_SHARED_MEMORY = L"Local\\FanyImeSharedMemory";
