@@ -285,7 +285,7 @@ STDAPI CLangBarItemButton::GetStatus(_Out_ DWORD *pdwStatus)
 {
     if (pdwStatus == nullptr)
     {
-        E_INVALIDARG;
+        return E_INVALIDARG;
     }
 
     *pdwStatus = _status;
