@@ -1,0 +1,38 @@
+{
+    fmt = {
+        linkdirs = [[C:\Users\24810\AppData\Local\.xmake\packages\f\fmt\11.2.0\b7405442b25445eab2a3dbd4c6478c78\lib]],
+        __requirestr = "fmt",
+        static = true,
+        installdir = [[C:\Users\24810\AppData\Local\.xmake\packages\f\fmt\11.2.0\b7405442b25445eab2a3dbd4c6478c78]],
+        sysincludedirs = [[C:\Users\24810\AppData\Local\.xmake\packages\f\fmt\11.2.0\b7405442b25445eab2a3dbd4c6478c78\include]],
+        links = "fmt",
+        libfiles = [[C:\Users\24810\AppData\Local\.xmake\packages\f\fmt\11.2.0\b7405442b25445eab2a3dbd4c6478c78\lib\fmt.lib]],
+        cxxflags = "/utf-8",
+        __enabled = true,
+        version = "11.2.0",
+        envs = {
+            PATH = {
+                [[C:\Users\24810\AppData\Local\.xmake\packages\n\ninja\v1.12.1\f99acdf63a7d4fc88c165b22351691b6\bin]],
+                [[C:\Users\24810\AppData\Local\.xmake\packages\c\cmake\4.0.3\5249d11949644178abe2f58a6ffb0624\bin]]
+            }
+        },
+        license = "MIT"
+    },
+    utfcpp = {
+        version = "v4.0.6",
+        installdir = [[C:\Users\24810\AppData\Local\.xmake\packages\u\utfcpp\v4.0.6\0c721799924c4d83919add4c5a97184a]],
+        __requirestr = "utfcpp",
+        __enabled = true,
+        envs = {
+            PATH = {
+                [[C:\Users\24810\AppData\Local\.xmake\packages\n\ninja\v1.12.1\f99acdf63a7d4fc88c165b22351691b6\bin]],
+                [[C:\Users\24810\AppData\Local\.xmake\packages\c\cmake\4.0.3\5249d11949644178abe2f58a6ffb0624\bin]]
+            }
+        },
+        sysincludedirs = {
+            [[C:\Users\24810\AppData\Local\.xmake\packages\u\utfcpp\v4.0.6\0c721799924c4d83919add4c5a97184a\include]],
+            [[C:\Users\24810\AppData\Local\.xmake\packages\u\utfcpp\v4.0.6\0c721799924c4d83919add4c5a97184a\include\utf8cpp]]
+        },
+        license = "BSL-1.0"
+    }
+}

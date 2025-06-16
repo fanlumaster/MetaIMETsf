@@ -1,0 +1,12 @@
+{
+    artifacts_urls = {
+        "https://github.com/xmake-mirror/build-artifacts.git",
+        "https://gitee.com/xmake-mirror/build-artifacts.git",
+        "https://gitlab.com/xmake-mirror/build-artifacts.git"
+    },
+    mainurls = {
+        "https://github.com/xmake-io/xmake-repo.git",
+        "https://gitee.com/tboox/xmake-repo.git",
+        "https://gitlab.com/tboox/xmake-repo.git"
+    }
+}

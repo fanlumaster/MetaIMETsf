@@ -1,9 +1,11 @@
+#include <windows.h>
 #include "Ipc.h"
 #include <debugapi.h>
 #include <handleapi.h>
 #include <minwindef.h>
 #include <winnt.h>
 #include <winuser.h>
+
 #include "Globals.h"
 
 static HANDLE hMapFile = nullptr;

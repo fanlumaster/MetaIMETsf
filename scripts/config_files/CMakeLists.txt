@@ -102,10 +102,10 @@ add_library(${PROJECT_NAME} SHARED
     "./src/Global/Globals.cpp"
     "./src/Global/Globals.h"
     # Header
+    "./src/Header/stdafx.h"
     "./src/Header/Define.h"
     "./src/Header/Private.h"
     "./src/Header/resource.h"
-    "./src/Header/stdafx.h"
     # IME
     "./src/IME/ActiveLanguageProfileNotifySink.cpp"
     "./src/IME/FunctionProviderSink.cpp"

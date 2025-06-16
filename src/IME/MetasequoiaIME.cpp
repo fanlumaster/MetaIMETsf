@@ -1,3 +1,5 @@
+
+#include <Windows.h>
 #include "Private.h"
 #include "Globals.h"
 #include "MetasequoiaIME.h"
@@ -8,7 +10,6 @@
 #include <debugapi.h>
 #include <winnt.h>
 #include <winuser.h>
-#include <Windows.h>
 #include "FanyLog.h"
 #include "Ipc.h"
 #include "CommonUtils.h"
