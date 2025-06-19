@@ -884,6 +884,14 @@ void CCompositionProcessorEngine::OnPreservedKey(ITfContext *pContext, REFGUID r
 
         *pIsEaten = TRUE;
         *pNeedToggleIMEMode = TRUE;
+
+        Global::Keycode = VK_SHIFT;
+        if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+            Global::ModifiersDown |= 0b00000001;
+        else
+            Global::ModifiersDown &= ~0b00000001;
+        WriteDataToSharedMemory(Global::Keycode, Global::ModifiersDown, nullptr, 0, L"", 0b00011);
+        SendKeyEventToUIProcess();
     }
     else if (IsEqualGUID(rguid, _PreservedKey_DoubleSingleByte.Guid))
     {
@@ -977,14 +985,16 @@ void CCompositionProcessorEngine::SetupLanguageBar(_In_ ITfThreadMgr *pThreadMgr
                             Global::LangbarDoubleSingleByteDescription, Global::DoubleSingleByteDescription,
                             Global::DoubleSingleByteOnIcoIndex, Global::DoubleSingleByteOffIcoIndex,
                             &_pLanguageBar_DoubleSingleByte, isSecureMode);
-    CreateLanguageBarButton(dwEnable, Global::MetasequoiaIMEGuidLangBarPunctuation, Global::LangbarPunctuationDescription,
-                            Global::PunctuationDescription, Global::PunctuationOnIcoIndex,
-                            Global::PunctuationOffIcoIndex, &_pLanguageBar_Punctuation, isSecureMode);
+    CreateLanguageBarButton(dwEnable, Global::MetasequoiaIMEGuidLangBarPunctuation,
+                            Global::LangbarPunctuationDescription, Global::PunctuationDescription,
+                            Global::PunctuationOnIcoIndex, Global::PunctuationOffIcoIndex, &_pLanguageBar_Punctuation,
+                            isSecureMode);
 
     InitLanguageBar(_pLanguageBar_IMEMode, pThreadMgr, tfClientId, GUID_COMPARTMENT_KEYBOARD_OPENCLOSE);
     InitLanguageBar(_pLanguageBar_DoubleSingleByte, pThreadMgr, tfClientId,
                     Global::MetasequoiaIMEGuidCompartmentDoubleSingleByte);
-    InitLanguageBar(_pLanguageBar_Punctuation, pThreadMgr, tfClientId, Global::MetasequoiaIMEGuidCompartmentPunctuation);
+    InitLanguageBar(_pLanguageBar_Punctuation, pThreadMgr, tfClientId,
+                    Global::MetasequoiaIMEGuidCompartmentPunctuation);
 
     _pCompartmentConversion =
         new (std::nothrow) CCompartment(pThreadMgr, tfClientId, GUID_COMPARTMENT_KEYBOARD_INPUTMODE_CONVERSION);
@@ -1003,7 +1013,8 @@ void CCompositionProcessorEngine::SetupLanguageBar(_In_ ITfThreadMgr *pThreadMgr
     }
     if (_pCompartmentDoubleSingleByteEventSink)
     {
-        _pCompartmentDoubleSingleByteEventSink->_Advise(pThreadMgr, Global::MetasequoiaIMEGuidCompartmentDoubleSingleByte);
+        _pCompartmentDoubleSingleByteEventSink->_Advise(pThreadMgr,
+                                                        Global::MetasequoiaIMEGuidCompartmentDoubleSingleByte);
     }
     if (_pCompartmentPunctuationEventSink)
     {
@@ -1178,13 +1189,15 @@ void CCompositionProcessorEngine::SetupPunctuationPair()
     *pPuncNestPair = punc_angle_bracket;
 }
 
-void CCompositionProcessorEngine::InitializeMetasequoiaIMECompartment(_In_ ITfThreadMgr *pThreadMgr, TfClientId tfClientId)
+void CCompositionProcessorEngine::InitializeMetasequoiaIMECompartment(_In_ ITfThreadMgr *pThreadMgr,
+                                                                      TfClientId tfClientId)
 {
     // set initial mode
     CCompartment CompartmentKeyboardOpen(pThreadMgr, tfClientId, GUID_COMPARTMENT_KEYBOARD_OPENCLOSE);
     CompartmentKeyboardOpen._SetCompartmentBOOL(TRUE);
 
-    CCompartment CompartmentDoubleSingleByte(pThreadMgr, tfClientId, Global::MetasequoiaIMEGuidCompartmentDoubleSingleByte);
+    CCompartment CompartmentDoubleSingleByte(pThreadMgr, tfClientId,
+                                             Global::MetasequoiaIMEGuidCompartmentDoubleSingleByte);
     CompartmentDoubleSingleByte._SetCompartmentBOOL(FALSE);
 
     CCompartment CompartmentPunctuation(pThreadMgr, tfClientId, Global::MetasequoiaIMEGuidCompartmentPunctuation);
@@ -1256,7 +1269,8 @@ void CCompositionProcessorEngine::ConversionModeCompartmentUpdated(_In_ ITfThrea
     }
 
     BOOL isDouble = FALSE;
-    CCompartment CompartmentDoubleSingleByte(pThreadMgr, _tfClientId, Global::MetasequoiaIMEGuidCompartmentDoubleSingleByte);
+    CCompartment CompartmentDoubleSingleByte(pThreadMgr, _tfClientId,
+                                             Global::MetasequoiaIMEGuidCompartmentDoubleSingleByte);
     if (SUCCEEDED(CompartmentDoubleSingleByte._GetCompartmentBOOL(isDouble)))
     {
         if (!isDouble && (conversionMode & TF_CONVERSIONMODE_FULLSHAPE))
@@ -1320,7 +1334,8 @@ void CCompositionProcessorEngine::PrivateCompartmentsUpdated(_In_ ITfThreadMgr *
     conversionModePrev = conversionMode;
 
     BOOL isDouble = FALSE;
-    CCompartment CompartmentDoubleSingleByte(pThreadMgr, _tfClientId, Global::MetasequoiaIMEGuidCompartmentDoubleSingleByte);
+    CCompartment CompartmentDoubleSingleByte(pThreadMgr, _tfClientId,
+                                             Global::MetasequoiaIMEGuidCompartmentDoubleSingleByte);
     if (SUCCEEDED(CompartmentDoubleSingleByte._GetCompartmentBOOL(isDouble)))
     {
         if (!isDouble && (conversionMode & TF_CONVERSIONMODE_FULLSHAPE))
@@ -1465,7 +1480,7 @@ CCompositionProcessorEngine::XPreservedKey::~XPreservedKey()
 //----------------------------------------------------------------------------
 
 HRESULT CMetasequoiaIME::CreateInstance(REFCLSID rclsid, REFIID riid, _Outptr_result_maybenull_ LPVOID *ppv,
-                                   _Out_opt_ HINSTANCE *phInst, BOOL isComLessMode)
+                                        _Out_opt_ HINSTANCE *phInst, BOOL isComLessMode)
 {
     HRESULT hr = S_OK;
     if (phInst == nullptr)
@@ -1494,7 +1509,7 @@ HRESULT CMetasequoiaIME::CreateInstance(REFCLSID rclsid, REFIID riid, _Outptr_re
 //----------------------------------------------------------------------------
 
 HRESULT CMetasequoiaIME::ComLessCreateInstance(REFGUID rclsid, REFIID riid, _Outptr_result_maybenull_ void **ppv,
-                                          _Out_opt_ HINSTANCE *phInst)
+                                               _Out_opt_ HINSTANCE *phInst)
 {
     HRESULT hr = S_OK;
     HINSTANCE metasequoiaIMEDllHandle = nullptr;
@@ -2359,9 +2374,9 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyKeystrokeComposition(UINT uCode, _
 //
 //----------------------------------------------------------------------------
 
-BOOL CCompositionProcessorEngine::IsVirtualKeyKeystrokeCandidate(UINT uCode, _In_ _KEYSTROKE_STATE *pKeyState,
-                                                                 CANDIDATE_MODE candidateMode, _Out_ BOOL *pfRetCode,
-                                                                 _In_ CMetasequoiaImeArray<_KEYSTROKE> *pKeystrokeMetric)
+BOOL CCompositionProcessorEngine::IsVirtualKeyKeystrokeCandidate(
+    UINT uCode, _In_ _KEYSTROKE_STATE *pKeyState, CANDIDATE_MODE candidateMode, _Out_ BOOL *pfRetCode,
+    _In_ CMetasequoiaImeArray<_KEYSTROKE> *pKeystrokeMetric)
 {
     if (pfRetCode == nullptr)
     {
