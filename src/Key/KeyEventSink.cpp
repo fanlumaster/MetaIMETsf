@@ -329,7 +329,15 @@ STDAPI CMetasequoiaIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lP
     WCHAR wch = '\0';
     UINT code = 0;
 
-    *pIsEaten = _IsKeyEaten(pContext, (UINT)wParam, &code, &wch, &KeystrokeState);
+    *pIsEaten = _IsKeyEaten( //
+        pContext,            //
+        (UINT)wParam,        //
+        &code,               //
+        &wch,                //
+        &KeystrokeState      //
+    );
+
+    /* Send key event to server process */
     if (*pIsEaten)
     {
         Global::Keycode = code;
@@ -341,61 +349,30 @@ STDAPI CMetasequoiaIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lP
         SendKeyEventToUIProcess();
     }
     Global::firefox_like_cnt = 0;
-#ifdef FANY_DEBUG
-    if (Global::Keycode == VK_TAB)
-    {
-        OutputDebugString(L"Tab key pressed.");
-        OutputDebugString(fmt::format(L"eat: {}", *pIsEaten).c_str());
-    }
-#endif
 
 #ifdef FANY_DEBUG
     std::wstring msg = L"Whether to eat it?" + std::to_wstring(*pIsEaten);
-    // TODO: Log msg
+    OutputDebugString(msg.c_str());
 #endif
 
     if (*pIsEaten)
     {
-#ifdef FANY_DEBUG
-        OutputDebugString(L"Yes, eat it.");
-#endif
         bool needInvokeKeyHandler = true;
-        //
-        // Invoke key handler edit session
-        //
+        /* Invoke key handler edit session */
         if (code == VK_ESCAPE)
         {
             KeystrokeState.Category = CATEGORY_COMPOSING;
         }
 
-        // Always eat THIRDPARTY_NEXTPAGE and THIRDPARTY_PREVPAGE keys, but don't always process them.
+        /* Always eat THIRDPARTY_NEXTPAGE and THIRDPARTY_PREVPAGE
+        keys, but don't always process them. */
         if ((wch == THIRDPARTY_NEXTPAGE) || (wch == THIRDPARTY_PREVPAGE))
         {
-            needInvokeKeyHandler =
-                !((KeystrokeState.Category == CATEGORY_NONE) && (KeystrokeState.Function == FUNCTION_NONE));
+            needInvokeKeyHandler = !((KeystrokeState.Category == CATEGORY_NONE) && //
+                                     (KeystrokeState.Function == FUNCTION_NONE));
         }
-
         if (needInvokeKeyHandler)
         {
-            TF_STATUS tfStatus;
-            if (SUCCEEDED(pContext->GetStatus(&tfStatus)))
-            {
-                if (tfStatus.dwDynamicFlags & TF_SD_READONLY)
-                {
-                    std::wstring str = std::wstring(1, wch);
-                    FanyUtils::SendKeys(str);
-#ifdef FANY_DEBUG
-                    OutputDebugString(L"pContext is read-only");
-#endif
-                }
-                else
-                {
-#ifdef FANY_DEBUG
-                    OutputDebugString(L"pContext is editable");
-#endif
-                }
-            }
-
             _InvokeKeyHandler(pContext, code, wch, (DWORD)lParam, KeystrokeState);
         }
     }

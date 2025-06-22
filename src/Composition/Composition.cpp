@@ -105,17 +105,13 @@ HRESULT CMetasequoiaIME::_AddComposingAndChar(TfEditCookie ec, _In_ ITfContext *
             }
             else
             {
-                bool isPreeditChars = strAddString.size() > 0 &&                               //
-                                      ((strAddString[0] >= L'a' && strAddString[0] <= L'z') || //
-                                       (strAddString[0] >= L'A' && strAddString[0] <= L'Z'));
-                if (!isPreeditChars)
-                {
-                    _SetInputString(ec, pContext, pRange, pstrAddString, exist_composing);
-                }
+                _SetInputString(ec, pContext, pRange, pstrAddString, exist_composing);
             }
 
-            OutputDebugString(fmt::format(L"{}: _AddComposingAndChar\n", pstrAddString->Get()).c_str());
-
+#ifdef FANY_DEBUG
+            std::wstring msg(pstrAddString->Get(), pstrAddString->GetLength());
+            OutputDebugString(fmt::format(L"{}: _AddComposingAndChar\n", msg).c_str());
+#endif
             if (pRange)
             {
                 pRange->Release();
