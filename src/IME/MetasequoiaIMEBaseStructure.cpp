@@ -292,44 +292,75 @@ int CCandidateRange::GetIndex(UINT vKey)
 CPunctuationPair::CPunctuationPair()
 {
     _punctuation._Code = 0;
-    _punctuation._Punctuation = 0;
-    _pairPunctuation = 0;
+    _punctuation._Punctuation[0] = 0;
+    _pairPunctuation[0] = 0;
     _isPairToggle = FALSE;
 }
 
-CPunctuationPair::CPunctuationPair(WCHAR code, WCHAR punctuation, WCHAR pair)
+CPunctuationPair::CPunctuationPair( //
+    WCHAR code,                     //
+    const WCHAR *punctuation,       //
+    const WCHAR *pair               //
+)
 {
     _punctuation._Code = code;
-    _punctuation._Punctuation = punctuation;
-    _pairPunctuation = pair;
+
+    wcsncpy_s(_punctuation._Punctuation, _countof(_punctuation._Punctuation), punctuation, _TRUNCATE);
+    wcsncpy_s(_pairPunctuation, _countof(_pairPunctuation), pair, _TRUNCATE);
     _isPairToggle = FALSE;
 }
 
 CPunctuationNestPair::CPunctuationNestPair()
 {
     _punctuation_begin._Code = 0;
-    _punctuation_begin._Punctuation = 0;
-    _pairPunctuation_begin = 0;
+    _punctuation_begin._Punctuation[0] = 0;
+    _pairPunctuation_begin[0] = 0;
 
     _punctuation_end._Code = 0;
-    _punctuation_end._Punctuation = 0;
-    _pairPunctuation_end = 0;
+    _punctuation_end._Punctuation[0] = 0;
+    _pairPunctuation_end[0] = 0;
 
     _nestCount = 0;
 }
 
-CPunctuationNestPair::CPunctuationNestPair(WCHAR codeBegin, WCHAR punctuationBegin, WCHAR pairBegin, WCHAR codeEnd,
-                                           WCHAR punctuationEnd, WCHAR pairEnd)
+CPunctuationNestPair::CPunctuationNestPair( //
+    WCHAR codeBegin,                        //
+    const WCHAR *punctuationBegin,          //
+    const WCHAR *pairBegin,                 //
+    const WCHAR codeEnd,                    //
+    const WCHAR *punctuationEnd,            //
+    const WCHAR *pairEnd                    //
+)
 {
     pairEnd;
     punctuationEnd;
     _punctuation_begin._Code = codeBegin;
-    _punctuation_begin._Punctuation = punctuationBegin;
-    _pairPunctuation_begin = pairBegin;
+    wcsncpy_s(                                     //
+        _punctuation_begin._Punctuation,           //
+        _countof(_punctuation_begin._Punctuation), //
+        punctuationBegin,                          //
+        _TRUNCATE                                  //
+    );
+    wcsncpy_s(                            //
+        _pairPunctuation_begin,           //
+        _countof(_pairPunctuation_begin), //
+        pairBegin,                        //
+        _TRUNCATE                         //
+    );
 
     _punctuation_end._Code = codeEnd;
-    _punctuation_end._Punctuation = punctuationBegin;
-    _pairPunctuation_end = pairBegin;
+    wcsncpy_s(                                   //
+        _punctuation_end._Punctuation,           //
+        _countof(_punctuation_end._Punctuation), //
+        punctuationEnd,                          //
+        _TRUNCATE                                //
+    );
+    wcsncpy_s(                          //
+        _pairPunctuation_end,           //
+        _countof(_pairPunctuation_end), //
+        pairEnd,                        //
+        _TRUNCATE                       //
+    );
 
     _nestCount = 0;
 }

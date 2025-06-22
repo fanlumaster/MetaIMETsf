@@ -49,9 +49,14 @@ class CCompositionProcessorEngine
     };
     WCHAR GetVirtualKey(DWORD_PTR dwIndex);
 
-    void GetReadingStrings(_Inout_ CMetasequoiaImeArray<CStringRange> *pReadingStrings, _Out_ BOOL *pIsWildcardIncluded);
-    void GetCandidateList(_Inout_ CMetasequoiaImeArray<CCandidateListItem> *pCandidateList, BOOL isIncrementalWordSearch,
-                          BOOL isWildcardSearch);
+    void GetReadingStrings(                                          //
+        _Inout_ CMetasequoiaImeArray<CStringRange> *pReadingStrings, //
+        _Out_ BOOL *pIsWildcardIncluded                              //
+    );
+    void GetCandidateList(                                                //
+        _Inout_ CMetasequoiaImeArray<CCandidateListItem> *pCandidateList, //
+        BOOL isIncrementalWordSearch, BOOL isWildcardSearch               //
+    );
     void GetCandidateStringInConverted(CStringRange &searchString,
                                        _In_ CMetasequoiaImeArray<CCandidateListItem> *pCandidateList);
 
@@ -64,7 +69,7 @@ class CCompositionProcessorEngine
 
     // Punctuation
     BOOL IsPunctuation(WCHAR wch);
-    WCHAR GetPunctuation(WCHAR wch);
+    const WCHAR *GetPunctuation(WCHAR wch);
 
     BOOL IsDoubleSingleByte(WCHAR wch);
     BOOL IsWildcard()

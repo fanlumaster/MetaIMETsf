@@ -57,8 +57,13 @@ __inline UINT VKeyFromVKPacketAndWchar(UINT vk, WCHAR wch)
 //
 //----------------------------------------------------------------------------
 
-BOOL CMetasequoiaIME::_IsKeyEaten(_In_ ITfContext *pContext, UINT codeIn, _Out_ UINT *pCodeOut, _Out_writes_(1) WCHAR *pwch,
-                             _Out_opt_ _KEYSTROKE_STATE *pKeyState)
+BOOL CMetasequoiaIME::_IsKeyEaten(        //
+    _In_ ITfContext *pContext,            //
+    UINT codeIn,                          //
+    _Out_ UINT *pCodeOut,                 //
+    _Out_writes_(1) WCHAR *pwch,          //
+    _Out_opt_ _KEYSTROKE_STATE *pKeyState //
+)
 {
     pContext;
 
@@ -99,10 +104,6 @@ BOOL CMetasequoiaIME::_IsKeyEaten(_In_ ITfContext *pContext, UINT codeIn, _Out_ 
     BOOL isTouchKeyboardSpecialKeys = FALSE;
     WCHAR wch = ConvertVKey(codeIn);
     *pCodeOut = VKeyFromVKPacketAndWchar(codeIn, wch);
-#ifdef FANY_DEBUG
-    std::wstring msg = fmt::format(L"fany iseat: codeIn: {}, wch: {}, *pCodeOut: {}", codeIn, wch, *pCodeOut);
-    OutputDebugString(msg.c_str());
-#endif
     if ((wch == THIRDPARTY_NEXTPAGE) || (wch == THIRDPARTY_PREVPAGE))
     {
         // We always eat the above softkeyboard special keys
@@ -137,19 +138,29 @@ BOOL CMetasequoiaIME::_IsKeyEaten(_In_ ITfContext *pContext, UINT codeIn, _Out_ 
         //
         // eat only keys that CKeyHandlerEditSession can handles.
         //
-        if (pCompositionProcessorEngine->IsVirtualKeyNeed(*pCodeOut, pwch, _IsComposing(), _candidateMode,
-                                                          _isCandidateWithWildcard, pKeyState))
+        auto ret = pCompositionProcessorEngine->IsVirtualKeyNeed( //
+            *pCodeOut,                                            //
+            pwch,                                                 //
+            _IsComposing(),                                       //
+            _candidateMode,                                       //
+            _isCandidateWithWildcard,                             //
+            pKeyState                                             //
+        );
+        if (ret)
         {
             return TRUE;
         }
     }
 
+    OutputDebugString(
+        fmt::format(L"IsPunctuation _candidateMode: {}, isPunctuation: {}", (int)_candidateMode, isPunctuation)
+            .c_str());
     //
     // Punctuation
     //
     if (pCompositionProcessorEngine->IsPunctuation(wch))
     {
-        if ((_candidateMode == CANDIDATE_NONE) && isPunctuation)
+        if ((_candidateMode == CANDIDATE_NONE || _candidateMode == CANDIDATE_INCREMENTAL) && isPunctuation)
         {
             if (pKeyState)
             {

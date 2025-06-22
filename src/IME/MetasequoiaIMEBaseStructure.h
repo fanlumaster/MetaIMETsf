@@ -86,7 +86,7 @@ struct _KEYSTROKE_STATE
 struct _PUNCTUATION
 {
     WCHAR _Code;
-    WCHAR _Punctuation;
+    WCHAR _Punctuation[3];
 };
 
 BOOL CLSIDToString(REFGUID refGUID, _Out_writes_(39) WCHAR *pCLSIDString);
@@ -241,10 +241,10 @@ class CPunctuationPair
 {
   public:
     CPunctuationPair();
-    CPunctuationPair(WCHAR code, WCHAR punctuation, WCHAR pair);
+    CPunctuationPair(WCHAR code, const WCHAR *punctuation, const WCHAR *pair);
 
     struct _PUNCTUATION _punctuation;
-    WCHAR _pairPunctuation;
+    WCHAR _pairPunctuation[3];
     BOOL _isPairToggle;
 };
 
@@ -252,14 +252,20 @@ class CPunctuationNestPair
 {
   public:
     CPunctuationNestPair();
-    CPunctuationNestPair(WCHAR wchCode_begin, WCHAR wch_begin, WCHAR wchPair_begin, WCHAR wchCode_end, WCHAR wch_end,
-                         WCHAR wchPair_end);
+    CPunctuationNestPair(              //
+        WCHAR codeBegin,               //
+        const WCHAR *punctuationBegin, //
+        const WCHAR *pairBegin,        //
+        const WCHAR codeEnd,           //
+        const WCHAR *punctuationEnd,   //
+        const WCHAR *pairEnd           //
+    );
 
     struct _PUNCTUATION _punctuation_begin;
-    WCHAR _pairPunctuation_begin;
+    WCHAR _pairPunctuation_begin[3];
 
     struct _PUNCTUATION _punctuation_end;
-    WCHAR _pairPunctuation_end;
+    WCHAR _pairPunctuation_end[3];
 
     int _nestCount;
 };

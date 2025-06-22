@@ -192,7 +192,7 @@ Exit:
 //----------------------------------------------------------------------------
 
 HRESULT CMetasequoiaIME::_HandleCompositionInputWorker(_In_ CCompositionProcessorEngine *pCompositionProcessorEngine,
-                                                  TfEditCookie ec, _In_ ITfContext *pContext)
+                                                       TfEditCookie ec, _In_ ITfContext *pContext)
 {
     HRESULT hr = S_OK;
     CMetasequoiaImeArray<CStringRange> readingStrings;
@@ -260,7 +260,7 @@ HRESULT CMetasequoiaIME::_HandleCompositionInputWorker(_In_ CCompositionProcesso
 //----------------------------------------------------------------------------
 
 HRESULT CMetasequoiaIME::_CreateAndStartCandidate(_In_ CCompositionProcessorEngine *pCompositionProcessorEngine,
-                                             TfEditCookie ec, _In_ ITfContext *pContext)
+                                                  TfEditCookie ec, _In_ ITfContext *pContext)
 {
     HRESULT hr = S_OK;
 
@@ -523,7 +523,7 @@ Exit:
 //----------------------------------------------------------------------------
 
 HRESULT CMetasequoiaIME::_HandleCompositionArrowKey(TfEditCookie ec, _In_ ITfContext *pContext,
-                                               KEYSTROKE_FUNCTION keyFunction)
+                                                    KEYSTROKE_FUNCTION keyFunction)
 {
     ITfRange *pRangeComposition = nullptr;
     TF_SELECTION tfSelection;
@@ -566,11 +566,6 @@ Exit:
 HRESULT CMetasequoiaIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITfContext *pContext, WCHAR wch)
 {
     HRESULT hr = S_OK;
-#ifdef FANY_DEBUG
-    std::wstring msg = L"You pressed punctuation key: ";
-    msg += wch;
-    OutputDebugString(msg.c_str());
-#endif
     if (_candidateMode != CANDIDATE_NONE && _pCandidateListUIPresenter)
     {
         DWORD_PTR candidateLen = 0;
@@ -583,7 +578,8 @@ HRESULT CMetasequoiaIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITf
 
         if (candidateLen)
         {
-            _AddComposingAndChar(ec, pContext, &candidateString);
+            /* TODO: Currently we do not commit selected candidate while typing punctuation */
+            // _AddComposingAndChar(ec, pContext, &candidateString);
         }
     }
     //
@@ -592,21 +588,10 @@ HRESULT CMetasequoiaIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITf
     CCompositionProcessorEngine *pCompositionProcessorEngine = nullptr;
     pCompositionProcessorEngine = _pCompositionProcessorEngine;
 
-    WCHAR punctuation = pCompositionProcessorEngine->GetPunctuation(wch);
+    const WCHAR *punctuation = pCompositionProcessorEngine->GetPunctuation(wch);
 
     CStringRange punctuationString;
-    if (punctuation == L'…')
-    {
-        punctuationString.Set(L"……", 2);
-    }
-    else if (punctuation == L'—')
-    {
-        punctuationString.Set(L"——", 2);
-    }
-    else
-    {
-        punctuationString.Set(&punctuation, 1);
-    }
+    punctuationString.Set(punctuation, wcslen(punctuation));
 
     // Finalize character
     hr = _AddCharAndFinalize(ec, pContext, &punctuationString);
@@ -615,7 +600,7 @@ HRESULT CMetasequoiaIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITf
         return hr;
     }
 
-    _HandleCancel(ec, pContext);
+    _HandleComplete(ec, pContext);
 
     return S_OK;
 }
@@ -662,7 +647,7 @@ HRESULT CMetasequoiaIME::_HandleCompositionDoubleSingleByte(TfEditCookie ec, _In
 //----------------------------------------------------------------------------
 
 HRESULT CMetasequoiaIME::_InvokeKeyHandler(_In_ ITfContext *pContext, UINT code, WCHAR wch, DWORD flags,
-                                      _KEYSTROKE_STATE keyState)
+                                           _KEYSTROKE_STATE keyState)
 {
     flags;
 

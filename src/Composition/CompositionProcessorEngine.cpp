@@ -1,5 +1,6 @@
 ﻿#ifndef UNICODE
 #define UNICODE
+#include <debugapi.h>
 #endif
 
 #include "Private.h"
@@ -615,7 +616,7 @@ BOOL CCompositionProcessorEngine::IsPunctuation(WCHAR wch)
 //
 //----------------------------------------------------------------------------
 
-WCHAR CCompositionProcessorEngine::GetPunctuation(WCHAR wch)
+const WCHAR *CCompositionProcessorEngine::GetPunctuation(WCHAR wch)
 {
     for (int i = 0; i < ARRAYSIZE(Global::PunctuationTable); i++)
     {
@@ -1167,9 +1168,9 @@ void CCompositionProcessorEngine::SetupPunctuationPair()
     // Punctuation pair
     const int pair_count = 2;
     // Left quotation mark and right quotation mark “”
-    CPunctuationPair punc_quotation_mark(L'"', 0x201C, 0x201D);
+    CPunctuationPair punc_quotation_mark(L'"', L"“", L"”");
     // Left single quotation mark and right single quotation mark ‘’
-    CPunctuationPair punc_apostrophe(L'\'', 0x2018, 0x2019);
+    CPunctuationPair punc_apostrophe(L'\'', L"‘", L"’");
 
     CPunctuationPair puncPairs[pair_count] = {
         punc_quotation_mark,
@@ -1183,7 +1184,7 @@ void CCompositionProcessorEngine::SetupPunctuationPair()
     }
 
     // Punctuation nest pair
-    CPunctuationNestPair punc_angle_bracket(L'<', 0x300A, 0x3008, L'>', 0x300B, 0x3009);
+    CPunctuationNestPair punc_angle_bracket(L'<', L"《", L"〈", L'>', L"》", L"〉");
 
     CPunctuationNestPair *pPuncNestPair = _PunctuationNestPair.Append();
     *pPuncNestPair = punc_angle_bracket;
@@ -1678,9 +1679,14 @@ void CCompositionProcessorEngine::SetDefaultCandidateTextFont()
 //     If engine need this virtual key code, returns true. Otherwise returns false.
 //----------------------------------------------------------------------------
 
-BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCHAR *pwch, BOOL fComposing,
-                                                   CANDIDATE_MODE candidateMode, BOOL hasCandidateWithWildcard,
-                                                   _Out_opt_ _KEYSTROKE_STATE *pKeyState)
+BOOL CCompositionProcessorEngine::IsVirtualKeyNeed( //
+    UINT uCode,                                     //
+    _In_reads_(1) WCHAR *pwch,                      //
+    BOOL fComposing,                                //
+    CANDIDATE_MODE candidateMode,                   //
+    BOOL hasCandidateWithWildcard,                  //
+    _Out_opt_ _KEYSTROKE_STATE *pKeyState           //
+)
 {
     if (pKeyState)
     {
@@ -2303,6 +2309,7 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCH
 
     if (*pwch && !IsVirtualKeyKeystrokeComposition(uCode, pKeyState, FUNCTION_NONE))
     {
+        OutputDebugString(L"Will commit original keystroke string.");
         if (pKeyState)
         {
             pKeyState->Category = CATEGORY_INVOKE_COMPOSITION_EDIT_SESSION;
@@ -2323,8 +2330,11 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed(UINT uCode, _In_reads_(1) WCH
 //
 //----------------------------------------------------------------------------
 
-BOOL CCompositionProcessorEngine::IsVirtualKeyKeystrokeComposition(UINT uCode, _Out_opt_ _KEYSTROKE_STATE *pKeyState,
-                                                                   KEYSTROKE_FUNCTION function)
+BOOL CCompositionProcessorEngine::IsVirtualKeyKeystrokeComposition( //
+    UINT uCode,                                                     //
+    _Out_opt_ _KEYSTROKE_STATE *pKeyState,                          //
+    KEYSTROKE_FUNCTION function                                     //
+)
 {
 #ifdef FANY_DEBUG
     OutputDebugString(L"Fany Here: IsVirtualKeyKeystrokeComposition 26.");

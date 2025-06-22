@@ -133,7 +133,7 @@ extern const GUID MetasequoiaIMEGuidCompartmentDoubleSingleByte;
 extern const GUID MetasequoiaIMEGuidCompartmentPunctuation;
 
 extern const WCHAR FullWidthCharTable[];
-extern const struct _PUNCTUATION PunctuationTable[19];
+extern const struct _PUNCTUATION PunctuationTable[24];
 
 extern const GUID MetasequoiaIMEGuidLangBarIMEMode;
 extern const GUID MetasequoiaIMEGuidLangBarDoubleSingleByte;
