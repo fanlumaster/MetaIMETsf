@@ -347,6 +347,7 @@ STDAPI CMetasequoiaIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lP
             Global::ModifiersDown &= ~0b00000001;
         WriteDataToSharedMemory(Global::Keycode, Global::ModifiersDown, nullptr, 0, L"", 0b00011);
         SendKeyEventToUIProcess();
+        ClearNamedpipeDataIfExists();
     }
     Global::firefox_like_cnt = 0;
 

@@ -445,6 +445,83 @@ void SendToNamedpipe()
     }
 }
 
+/**
+ * @brief Clear namedpipe data if exists, cause sometimes there may be some useless data sent by last key event from
+ * server
+ *
+ */
+void ClearNamedpipeDataIfExists()
+{
+    bool isSpaceOrNumber = Global::Keycode == VK_SPACE || (Global::Keycode > '0' && Global::Keycode < '9');
+    /* Only clear namedpipe data if keycode is space or number, for better performance */
+    if (!isSpaceOrNumber)
+    {
+        return;
+    }
+
+    if (!hFromServerPipe || hFromServerPipe == INVALID_HANDLE_VALUE) // Try to reconnect
+    {
+        hFromServerPipe = CreateFile(     //
+            FANY_IME_TO_TSF_NAMED_PIPE,   //
+            GENERIC_READ | GENERIC_WRITE, //
+            0,                            //
+            nullptr,                      //
+            OPEN_EXISTING,                //
+            0,                            //
+            nullptr                       //
+        );
+        if (hFromServerPipe == INVALID_HANDLE_VALUE)
+        {
+            // TODO: Log
+            return;
+        }
+        else
+        {
+            // TODO: Log
+        }
+    }
+
+    wchar_t buffer[512];
+    DWORD bytesAvailable = 0;
+    DWORD bytesRead = 0;
+    while (true)
+    {
+        BOOL peekOk = PeekNamedPipe( //
+            hFromServerPipe,         //
+            nullptr,                 //
+            0,                       //
+            nullptr,                 //
+            &bytesAvailable,         //
+            nullptr                  //
+        );
+
+        if (!peekOk || bytesAvailable == 0)
+        {
+            break; // no more data or pipe error
+        }
+
+        BOOL readOk = ReadFile( //
+            hFromServerPipe,    //
+            buffer,             //
+            sizeof(buffer),     //
+            &bytesRead,         //
+            NULL                //
+        );
+
+        if (!readOk || bytesRead == 0)
+        {
+            break;
+        }
+    }
+}
+
+/**
+ * @brief Read data sent by server
+ *
+ * TODO: Cancel when time exceed, we should set a timeout
+ *
+ * @return std::wstring
+ */
 std::wstring ReadDataFromServerViaNamedPipe()
 {
     if (!hFromServerPipe || hFromServerPipe == INVALID_HANDLE_VALUE) // Try to reconnect

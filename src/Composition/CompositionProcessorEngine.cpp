@@ -893,6 +893,7 @@ void CCompositionProcessorEngine::OnPreservedKey(ITfContext *pContext, REFGUID r
             Global::ModifiersDown &= ~0b00000001;
         WriteDataToSharedMemory(Global::Keycode, Global::ModifiersDown, nullptr, 0, L"", 0b00011);
         SendKeyEventToUIProcess();
+        ClearNamedpipeDataIfExists();
     }
     else if (IsEqualGUID(rguid, _PreservedKey_DoubleSingleByte.Guid))
     {

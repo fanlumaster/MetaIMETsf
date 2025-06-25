@@ -93,6 +93,7 @@ int SendKeyEventToUIProcessViaNamedPipe();
 int SendHideCandidateWndEventToUIProcessViaNamedPipe();
 int SendShowCandidateWndEventToUIProcessViaNamedPipe();
 int SendMoveCandidateWndEventToUIProcessViaNamedPipe();
+void ClearNamedpipeDataIfExists();
 std::wstring ReadDataFromServerViaNamedPipe();
 
 //
