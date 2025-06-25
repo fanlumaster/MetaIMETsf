@@ -49,7 +49,7 @@ Then, create a folder in `C:\Program Files\` named `MetasequoiaImeTsf`, and copy
 
 ```powershell
 gsudo
-Copy-Item -Path ".\MetasequoiaImeTsf\build64\Debug\MetasequoiaImeTsf.dll" -Destination "C:\Program Files\MetasequoiaImeTsf"
+Copy-Item -Path ".\build64\Debug\MetasequoiaImeTsf.dll" -Destination "C:\Program Files\MetasequoiaImeTsf"
 ```
 
 Then, install it,
