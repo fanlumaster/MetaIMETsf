@@ -1,9 +1,4 @@
-﻿#ifndef UNICODE
-#define UNICODE
-#include <debugapi.h>
-#endif
-
-#include "Private.h"
+﻿#include "Private.h"
 #include "MetasequoiaIME.h"
 #include "CompositionProcessorEngine.h"
 #include "TableDictionaryEngine.h"
@@ -17,6 +12,7 @@
 #include <fmt/xchar.h>
 #include "Ipc.h"
 #include "FanyUtils.h"
+#include "FanyLog.h"
 
 //////////////////////////////////////////////////////////////////////
 //

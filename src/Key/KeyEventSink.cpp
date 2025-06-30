@@ -11,6 +11,7 @@
 #include <string>
 #include "Ipc.h"
 #include "FanyUtils.h"
+#include "FanyLog.h"
 
 // 0xF003, 0xF004 are the keys that the touch keyboard sends for next/previous
 #define THIRDPARTY_NEXTPAGE static_cast<WORD>(0xF003)
@@ -152,9 +153,10 @@ BOOL CMetasequoiaIME::_IsKeyEaten(        //
         }
     }
 
-    OutputDebugString(
-        fmt::format(L"IsPunctuation _candidateMode: {}, isPunctuation: {}", (int)_candidateMode, isPunctuation)
-            .c_str());
+#ifdef FANY_DEBUG
+    DebugLog(L"IsPunctuation _candidateMode: {}, isPunctuation: {}", (int)_candidateMode, isPunctuation);
+#endif
+
     //
     // Punctuation
     //

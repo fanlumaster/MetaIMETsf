@@ -29,7 +29,8 @@ extern const CLSID MetasequoiaIMECLSID = {0xd2291a80, 0x84d8, 0x4641, {0x9a, 0xb
 // Profile GUID
 //---------------------------------------------------------------------
 // {83955C0E-2C09-47a5-BCF3-F2B98E11EE8B}
-extern const GUID MetasequoiaIMEGuidProfile = {0x83955c0e, 0x2c09, 0x47a5, {0xbc, 0xf3, 0xf2, 0xb9, 0x8e, 0x11, 0xee, 0x8b}};
+extern const GUID MetasequoiaIMEGuidProfile = {
+    0x83955c0e, 0x2c09, 0x47a5, {0xbc, 0xf3, 0xf2, 0xb9, 0x8e, 0x11, 0xee, 0x8b}};
 
 //---------------------------------------------------------------------
 // PreserveKey GUID
@@ -260,7 +261,7 @@ extern const WCHAR FullWidthCharTable[] = {
 //---------------------------------------------------------------------
 // defined punctuation characters
 //---------------------------------------------------------------------
-extern const struct _PUNCTUATION PunctuationTable[24] = {
+extern const struct _PUNCTUATION PunctuationTable[23] = {
     {L'`', L"·"},   // ·
     {L'~', L"~"},   // ~
     {L'!', L"！"},  // ！
