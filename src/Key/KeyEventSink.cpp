@@ -374,6 +374,17 @@ STDAPI CMetasequoiaIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lP
         }
         if (needInvokeKeyHandler)
         {
+
+            TF_STATUS tfStatus;
+            if (SUCCEEDED(pContext->GetStatus(&tfStatus)))
+            {
+                /* pContext is read-only, DO NOT eat the key */
+                if (tfStatus.dwDynamicFlags & TF_SD_READONLY)
+                {
+                    *pIsEaten = FALSE;
+                    return S_OK;
+                }
+            }
             _InvokeKeyHandler(pContext, code, wch, (DWORD)lParam, KeystrokeState);
         }
     }
