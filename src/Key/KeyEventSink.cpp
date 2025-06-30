@@ -74,6 +74,18 @@ BOOL CMetasequoiaIME::_IsKeyEaten(        //
     CCompartment CompartmentKeyboardOpen(_pThreadMgr, _tfClientId, GUID_COMPARTMENT_KEYBOARD_OPENCLOSE);
     CompartmentKeyboardOpen._GetCompartmentBOOL(isOpen);
 
+    TF_STATUS tfStatus;
+    if (SUCCEEDED(pContext->GetStatus(&tfStatus)))
+    {
+        /* pContext is read-only, DO NOT eat the key */
+        if (tfStatus.dwDynamicFlags & TF_SD_READONLY)
+        {
+            DebugLog(L"Context is now read-only, DO NOT eat the key");
+            // Make a fake keyboard state
+            isOpen = false;
+        }
+    }
+
     BOOL isDoubleSingleByte = FALSE;
     CCompartment CompartmentDoubleSingleByte(_pThreadMgr, _tfClientId,
                                              Global::MetasequoiaIMEGuidCompartmentDoubleSingleByte);
@@ -325,17 +337,6 @@ STDAPI CMetasequoiaIME::OnTestKeyDown(ITfContext *pContext, WPARAM wParam, LPARA
 
 STDAPI CMetasequoiaIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lParam, BOOL *pIsEaten)
 {
-    TF_STATUS tfStatus;
-    if (SUCCEEDED(pContext->GetStatus(&tfStatus)))
-    {
-        /* pContext is read-only, DO NOT eat the key */
-        if (tfStatus.dwDynamicFlags & TF_SD_READONLY)
-        {
-            *pIsEaten = FALSE;
-            return S_OK;
-        }
-    }
-
     Global::UpdateModifiers(wParam, lParam);
 
     _KEYSTROKE_STATE KeystrokeState;
