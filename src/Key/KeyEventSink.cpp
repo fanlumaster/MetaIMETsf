@@ -325,6 +325,17 @@ STDAPI CMetasequoiaIME::OnTestKeyDown(ITfContext *pContext, WPARAM wParam, LPARA
 
 STDAPI CMetasequoiaIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lParam, BOOL *pIsEaten)
 {
+    TF_STATUS tfStatus;
+    if (SUCCEEDED(pContext->GetStatus(&tfStatus)))
+    {
+        /* pContext is read-only, DO NOT eat the key */
+        if (tfStatus.dwDynamicFlags & TF_SD_READONLY)
+        {
+            *pIsEaten = FALSE;
+            return S_OK;
+        }
+    }
+
     Global::UpdateModifiers(wParam, lParam);
 
     _KEYSTROKE_STATE KeystrokeState;
@@ -339,6 +350,8 @@ STDAPI CMetasequoiaIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lP
         &KeystrokeState      //
     );
 
+    Global::firefox_like_cnt = 0;
+
     /* Send key event to server process */
     if (*pIsEaten)
     {
@@ -351,12 +364,6 @@ STDAPI CMetasequoiaIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lP
         SendKeyEventToUIProcess();
         ClearNamedpipeDataIfExists();
     }
-    Global::firefox_like_cnt = 0;
-
-#ifdef FANY_DEBUG
-    std::wstring msg = L"Whether to eat it?" + std::to_wstring(*pIsEaten);
-    OutputDebugString(msg.c_str());
-#endif
 
     if (*pIsEaten)
     {
@@ -376,17 +383,6 @@ STDAPI CMetasequoiaIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lP
         }
         if (needInvokeKeyHandler)
         {
-
-            TF_STATUS tfStatus;
-            if (SUCCEEDED(pContext->GetStatus(&tfStatus)))
-            {
-                /* pContext is read-only, DO NOT eat the key */
-                if (tfStatus.dwDynamicFlags & TF_SD_READONLY)
-                {
-                    *pIsEaten = FALSE;
-                    return S_OK;
-                }
-            }
             _InvokeKeyHandler(pContext, code, wch, (DWORD)lParam, KeystrokeState);
         }
     }
