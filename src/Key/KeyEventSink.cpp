@@ -74,18 +74,6 @@ BOOL CMetasequoiaIME::_IsKeyEaten(        //
     CCompartment CompartmentKeyboardOpen(_pThreadMgr, _tfClientId, GUID_COMPARTMENT_KEYBOARD_OPENCLOSE);
     CompartmentKeyboardOpen._GetCompartmentBOOL(isOpen);
 
-    TF_STATUS tfStatus;
-    if (SUCCEEDED(pContext->GetStatus(&tfStatus)))
-    {
-        /* pContext is read-only, DO NOT eat the key */
-        if (tfStatus.dwDynamicFlags & TF_SD_READONLY)
-        {
-            DebugLog(L"Context is now read-only, DO NOT eat the key");
-            // Make a fake keyboard state
-            isOpen = false;
-        }
-    }
-
     BOOL isDoubleSingleByte = FALSE;
     CCompartment CompartmentDoubleSingleByte(_pThreadMgr, _tfClientId,
                                              Global::MetasequoiaIMEGuidCompartmentDoubleSingleByte);
@@ -105,7 +93,7 @@ BOOL CMetasequoiaIME::_IsKeyEaten(        //
         *pwch = L'\0';
     }
 
-    // If the keyboard is disabled(means IME is English mode), we don't eat keys.
+    // If the keyboard is disabled(e.g. no focused edit control), we don't eat keys.
     if (_IsKeyboardDisabled())
     {
         return FALSE;
@@ -247,41 +235,61 @@ WCHAR CMetasequoiaIME::ConvertVKey(UINT code)
 
 BOOL CMetasequoiaIME::_IsKeyboardDisabled()
 {
-    ITfDocumentMgr *pDocMgrFocus = nullptr;
-    ITfContext *pContext = nullptr;
-    BOOL isDisabled = FALSE;
+    /* Steal from weasel: https://github.com/rime/weasel */
+    ITfCompartmentMgr *pCompMgr = NULL;
+    ITfDocumentMgr *pDocMgrFocus = NULL;
+    ITfContext *pContext = NULL;
+    BOOL fDisabled = FALSE;
 
-    if ((_pThreadMgr->GetFocus(&pDocMgrFocus) != S_OK) || (pDocMgrFocus == nullptr))
+    if ((_pThreadMgr->GetFocus(&pDocMgrFocus) != S_OK) || (pDocMgrFocus == NULL))
     {
-        // if there is no focus document manager object, the keyboard
-        // is disabled.
-        isDisabled = TRUE;
-    }
-    else if ((pDocMgrFocus->GetTop(&pContext) != S_OK) || (pContext == nullptr))
-    {
-        // if there is no context object, the keyboard is disabled.
-        isDisabled = TRUE;
-    }
-    else
-    {
-        CCompartment CompartmentKeyboardDisabled(_pThreadMgr, _tfClientId, GUID_COMPARTMENT_KEYBOARD_DISABLED);
-        CompartmentKeyboardDisabled._GetCompartmentBOOL(isDisabled);
-
-        CCompartment CompartmentEmptyContext(_pThreadMgr, _tfClientId, GUID_COMPARTMENT_EMPTYCONTEXT);
-        CompartmentEmptyContext._GetCompartmentBOOL(isDisabled);
+        fDisabled = TRUE;
+        goto Exit;
     }
 
+    if ((pDocMgrFocus->GetTop(&pContext) != S_OK) || (pContext == NULL))
+    {
+        fDisabled = TRUE;
+        goto Exit;
+    }
+
+    if (pContext->QueryInterface(IID_ITfCompartmentMgr, (void **)&pCompMgr) == S_OK)
+    {
+        ITfCompartment *pCompartmentDisabled;
+        ITfCompartment *pCompartmentEmptyContext;
+
+        /* Check GUID_COMPARTMENT_KEYBOARD_DISABLED */
+        if (pCompMgr->GetCompartment(GUID_COMPARTMENT_KEYBOARD_DISABLED, &pCompartmentDisabled) == S_OK)
+        {
+            VARIANT var;
+            if (pCompartmentDisabled->GetValue(&var) == S_OK)
+            {
+                if (var.vt == VT_I4) // Even VT_EMPTY, GetValue() can succeed
+                    fDisabled = (BOOL)var.lVal;
+            }
+            pCompartmentDisabled->Release();
+        }
+
+        /* Check GUID_COMPARTMENT_EMPTYCONTEXT */
+        if (pCompMgr->GetCompartment(GUID_COMPARTMENT_EMPTYCONTEXT, &pCompartmentEmptyContext) == S_OK)
+        {
+            VARIANT var;
+            if (pCompartmentEmptyContext->GetValue(&var) == S_OK)
+            {
+                if (var.vt == VT_I4) // Even VT_EMPTY, GetValue() can succeed
+                    fDisabled = (BOOL)var.lVal;
+            }
+            pCompartmentEmptyContext->Release();
+        }
+        pCompMgr->Release();
+    }
+
+Exit:
     if (pContext)
-    {
         pContext->Release();
-    }
-
     if (pDocMgrFocus)
-    {
         pDocMgrFocus->Release();
-    }
-
-    return isDisabled;
+    return fDisabled;
 }
 
 //+---------------------------------------------------------------------------
