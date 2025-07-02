@@ -4,4 +4,7 @@
   "[cpp]": {
     "editor.tabSize": 4
   },
+  "[json]": {
+    "editor.tabSize": 2
+  }
 }
