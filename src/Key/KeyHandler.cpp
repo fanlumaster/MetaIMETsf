@@ -8,8 +8,9 @@
 #include <debugapi.h>
 #include <minwindef.h>
 #include <string>
-#include "fmt/xchar.h"
+#include <fmt/xchar.h>
 #include "FanyUtils.h"
+#include "Ipc.h"
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -566,22 +567,6 @@ Exit:
 HRESULT CMetasequoiaIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITfContext *pContext, WCHAR wch)
 {
     HRESULT hr = S_OK;
-    if (_candidateMode != CANDIDATE_NONE && _pCandidateListUIPresenter)
-    {
-        DWORD_PTR candidateLen = 0;
-        const WCHAR *pCandidateString = nullptr;
-
-        candidateLen = _pCandidateListUIPresenter->_GetSelectedCandidateString(&pCandidateString);
-
-        CStringRange candidateString;
-        candidateString.Set(pCandidateString, candidateLen);
-
-        if (candidateLen)
-        {
-            /* TODO: Currently we do not commit selected candidate while typing punctuation */
-            // _AddComposingAndChar(ec, pContext, &candidateString);
-        }
-    }
     //
     // Get punctuation char from composition processor engine
     //
@@ -589,11 +574,25 @@ HRESULT CMetasequoiaIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITf
     pCompositionProcessorEngine = _pCompositionProcessorEngine;
 
     const WCHAR *punctuation = pCompositionProcessorEngine->GetPunctuation(wch);
+    std::wstring punctuationStr(punctuation, wcslen(punctuation));
+
+    if (_candidateMode != CANDIDATE_NONE && _pCandidateListUIPresenter)
+    {
+        //
+        // Request for first candidate string for some
+        //
+        if (Global::CommitWithFirstCandPunc.count(wch) > 0)
+        {
+            std::wstring receivedData = ReadDataFromServerViaNamedPipe();
+            punctuationStr = receivedData + punctuationStr;
+        }
+    }
 
     CStringRange punctuationString;
-    punctuationString.Set(punctuation, wcslen(punctuation));
+    punctuationString.Set(punctuationStr.c_str(), punctuationStr.length());
 
-    // Finalize character
+    /* Finalize character */
+    _RemoveDummyCompositionForComposing(ec, _pComposition); // Clear dummy original pinyin composition
     hr = _AddCharAndFinalize(ec, pContext, &punctuationString);
     if (FAILED(hr))
     {

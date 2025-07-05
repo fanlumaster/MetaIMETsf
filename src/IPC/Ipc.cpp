@@ -180,6 +180,7 @@ int CloseNamedpipe()
 
 int WriteDataToSharedMemory(           //
     UINT keycode,                      //
+    WCHAR wch,                         //
     UINT modifiers_down,               //
     const int point[2],                //
     int pinyin_length,                 //
@@ -189,7 +190,7 @@ int WriteDataToSharedMemory(           //
 {
     if (!canUseSharedMemory)
     {
-        return WriteDataToNamedPipe(keycode, modifiers_down, point, pinyin_length, pinyin_string, write_flag);
+        return WriteDataToNamedPipe(keycode, wch, modifiers_down, point, pinyin_length, pinyin_string, write_flag);
     }
 
     if (write_flag >> 0 & 1u)
@@ -199,21 +200,26 @@ int WriteDataToSharedMemory(           //
 
     if (write_flag >> 1 & 1u)
     {
-        sharedData->modifiers_down = modifiers_down;
+        sharedData->wch = wch;
     }
 
     if (write_flag >> 2 & 1u)
+    {
+        sharedData->modifiers_down = modifiers_down;
+    }
+
+    if (write_flag >> 3 & 1u)
     {
         sharedData->point[0] = point[0];
         sharedData->point[1] = point[1];
     }
 
-    if (write_flag >> 3 & 1u)
+    if (write_flag >> 4 & 1u)
     {
         sharedData->pinyin_length = pinyin_length;
     }
 
-    if (write_flag >> 4 & 1u)
+    if (write_flag >> 5 & 1u)
     {
         wcscpy_s(sharedData->pinyin_string, pinyin_string.c_str());
         sharedData->pinyin_string[pinyin_length] = L'\0';
@@ -235,6 +241,7 @@ int WriteDataToSharedMemory(           //
  */
 int WriteDataToNamedPipe(              //
     UINT keycode,                      //
+    WCHAR wch,                         //
     UINT modifiers_down,               //
     const int point[2],                //
     int pinyin_length,                 //
@@ -249,21 +256,26 @@ int WriteDataToNamedPipe(              //
 
     if (write_flag >> 1 & 1u)
     {
-        namedpipeData.modifiers_down = modifiers_down;
+        namedpipeData.wch = wch;
     }
 
     if (write_flag >> 2 & 1u)
+    {
+        namedpipeData.modifiers_down = modifiers_down;
+    }
+
+    if (write_flag >> 3 & 1u)
     {
         namedpipeData.point[0] = point[0];
         namedpipeData.point[1] = point[1];
     }
 
-    if (write_flag >> 3 & 1u)
+    if (write_flag >> 4 & 1u)
     {
         namedpipeData.pinyin_length = pinyin_length;
     }
 
-    if (write_flag >> 4 & 1u)
+    if (write_flag >> 5 & 1u)
     {
         wcscpy_s(namedpipeData.pinyin_string, pinyin_string.c_str());
         namedpipeData.pinyin_string[pinyin_length] = L'\0';

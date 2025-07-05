@@ -29,6 +29,7 @@ inline const std::vector<std::wstring> FANY_IME_EVENT_ARRAY = {
 struct FanyImeSharedMemoryData
 {
     UINT keycode;
+    WCHAR wch;
     UINT modifiers_down = 0;
     int point[2] = {100, 100};
     int pinyin_length = 0;
@@ -51,6 +52,7 @@ struct FanyImeNamedpipeData
 {
     UINT event_type;
     UINT keycode;
+    WCHAR wch;
     UINT modifiers_down = 0;
     int point[2] = {100, 100};
     int pinyin_length = 0;
@@ -66,7 +68,8 @@ int CloseNamedpipe();
 // For shared memory
 //
 int WriteDataToSharedMemory(           //
-    UINT keycode,                      //
+    UINT keycode,                      // VkCode
+    WCHAR wch,                         // Unicode character converted from vkcode
     UINT modifiers_down,               //
     const int point[2],                //
     int pinyin_length,                 //
@@ -83,6 +86,7 @@ int SendMoveCandidateWndEventToUIProcess();
 //
 int WriteDataToNamedPipe(              //
     UINT keycode,                      //
+    WCHAR wch,                         //
     UINT modifiers_down,               //
     const int point[2],                //
     int pinyin_length,                 //
@@ -101,10 +105,12 @@ std::wstring ReadDataFromServerViaNamedPipe();
 //     0b00000001: Shift
 //     0b00000010: Control
 //     0b00000100: Alt
+// TODO: Make it able to denote explicit modifiers, e.g. LShift, RShift, we could use left keys
 //
 namespace Global
 {
 inline UINT Keycode = 0;
+inline WCHAR wch = L'\0';
 inline UINT ModifiersDown = 0;
 inline int Point[2] = {100, 100};
 inline int PinyinLength = 0;

@@ -47,11 +47,6 @@ HRESULT CMetasequoiaIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfConte
 
     if (candidateLen)
     {
-        if (Global::Keycode == VK_SPACE || (Global::Keycode > '0' && Global::Keycode < '9'))
-        {
-            WriteDataToSharedMemory(Global::Keycode, 0, nullptr, 0, L"", 0b00001);
-            // SendKeyEventToUIProcess();
-        }
         std::wstring receivedData = ReadDataFromServerViaNamedPipe();
         candidateString.Set(receivedData.c_str(), receivedData.length());
         hr = _AddComposingAndChar(ec, pContext, &candidateString);
@@ -253,8 +248,11 @@ Exit:
 //
 //----------------------------------------------------------------------------
 
-HRESULT CMetasequoiaIME::_HandleCandidateArrowKey(TfEditCookie ec, _In_ ITfContext *pContext,
-                                             _In_ KEYSTROKE_FUNCTION keyFunction)
+HRESULT CMetasequoiaIME::_HandleCandidateArrowKey( //
+    TfEditCookie ec,                               //
+    _In_ ITfContext *pContext,                     //
+    _In_ KEYSTROKE_FUNCTION keyFunction            //
+)
 {
     ec;
     pContext;
@@ -327,7 +325,7 @@ HRESULT CMetasequoiaIME::_HandlePhraseFinalize(TfEditCookie ec, _In_ ITfContext 
 //----------------------------------------------------------------------------
 
 HRESULT CMetasequoiaIME::_HandlePhraseArrowKey(TfEditCookie ec, _In_ ITfContext *pContext,
-                                          _In_ KEYSTROKE_FUNCTION keyFunction)
+                                               _In_ KEYSTROKE_FUNCTION keyFunction)
 {
     ec;
     pContext;
@@ -882,14 +880,14 @@ void CCandidateListUIPresenter::_NotifyUI()
     Global::PinyinLength = pinyinString.length();
     WriteDataToSharedMemory(   //
         Global::Keycode,       //
+        Global::wch,           //
         Global::ModifiersDown, //
         Global::Point,         //
         Global::PinyinLength,  //
         Global::PinyinString,  //
-        0b11111                //
+        0b111111               //
     );
     SendShowCandidateWndEventToUIProcess();
-    // SendKeyEventToUIProcess();
 }
 
 //+---------------------------------------------------------------------------
@@ -918,8 +916,10 @@ void CCandidateListUIPresenter::_SetText(_In_ CMetasequoiaImeArray<CCandidateLis
     }
 }
 
-void CCandidateListUIPresenter::AddCandidateToCandidateListUI(_In_ CMetasequoiaImeArray<CCandidateListItem> *pCandidateList,
-                                                              BOOL isAddFindKeyCode)
+void CCandidateListUIPresenter::AddCandidateToCandidateListUI(     //
+    _In_ CMetasequoiaImeArray<CCandidateListItem> *pCandidateList, //
+    BOOL isAddFindKeyCode                                          //
+)
 {
     for (UINT index = 0; index < pCandidateList->Count(); index++)
     {
@@ -927,7 +927,9 @@ void CCandidateListUIPresenter::AddCandidateToCandidateListUI(_In_ CMetasequoiaI
     }
 }
 
-void CCandidateListUIPresenter::SetPageIndexWithScrollInfo(_In_ CMetasequoiaImeArray<CCandidateListItem> *pCandidateList)
+void CCandidateListUIPresenter::SetPageIndexWithScrollInfo(       //
+    _In_ CMetasequoiaImeArray<CCandidateListItem> *pCandidateList //
+)
 {
     UINT candCntInPage = _pIndexRange->Count();
     UINT bufferSize = pCandidateList->Count() / candCntInPage + 1;
@@ -1087,7 +1089,15 @@ VOID CCandidateListUIPresenter::_LayoutChangeNotification(_In_ RECT *lpRect)
 #ifdef FANY_DEBUG
     // TODO: Log _LayoutChangeNotification firefox cnt: Global::firefox_like_cnt
 #endif
-    WriteDataToSharedMemory(Global::Keycode, 0, Global::Point, Global::PinyinLength, Global::PinyinString, 0b00100);
+    WriteDataToSharedMemory(  //
+        Global::Keycode,      //
+        Global::wch,          //
+        0,                    //
+        Global::Point,        //
+        Global::PinyinLength, //
+        Global::PinyinString, //
+        0b001000              //
+    );
     SendMoveCandidateWndEventToUIProcess();
 }
 
@@ -1237,8 +1247,11 @@ HRESULT CCandidateListUIPresenter::OnKillThreadFocus()
     return S_OK;
 }
 
-void CCandidateListUIPresenter::RemoveSpecificCandidateFromList(
-    _In_ LCID Locale, _Inout_ CMetasequoiaImeArray<CCandidateListItem> &candidateList, _In_ CStringRange &candidateString)
+void CCandidateListUIPresenter::RemoveSpecificCandidateFromList(     //
+    _In_ LCID Locale,                                                //
+    _Inout_ CMetasequoiaImeArray<CCandidateListItem> &candidateList, //
+    _In_ CStringRange &candidateString                               //
+)
 {
     for (UINT index = 0; index < candidateList.Count();)
     {
@@ -1268,21 +1281,11 @@ void CCandidateListUIPresenter::AdviseUIChangedByArrowKey(_In_ KEYSTROKE_FUNCTIO
     }
     case FUNCTION_MOVE_PAGE_UP: {
         // Page prev
-        WriteDataToSharedMemory(Global::Keycode, Global::ModifiersDown, nullptr, 0, L"", 0b00011);
-        // SendKeyEventToUIProcess();
-#ifdef FANY_DEBUG
-        OutputDebugString(fmt::format(L"Page up, prev, modifiers: {}", Global::ModifiersDown).c_str());
-#endif
         _MovePage(MOVEUP_ONE);
         break;
     }
     case FUNCTION_MOVE_PAGE_DOWN: {
         // Page next
-        WriteDataToSharedMemory(Global::Keycode, 0, nullptr, 0, L"", 0b00001);
-        // SendKeyEventToUIProcess();
-#ifdef FANY_DEBUG
-        OutputDebugString(L"Page down, next\n");
-#endif
         _MovePage(MOVEDOWN_ONE);
         break;
     }

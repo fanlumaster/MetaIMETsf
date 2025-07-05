@@ -887,7 +887,7 @@ void CCompositionProcessorEngine::OnPreservedKey(ITfContext *pContext, REFGUID r
             Global::ModifiersDown |= 0b00000001;
         else
             Global::ModifiersDown &= ~0b00000001;
-        WriteDataToSharedMemory(Global::Keycode, Global::ModifiersDown, nullptr, 0, L"", 0b00011);
+        WriteDataToSharedMemory(Global::Keycode, L'\0', Global::ModifiersDown, nullptr, 0, L"", 0b000111);
         SendKeyEventToUIProcess();
         ClearNamedpipeDataIfExists();
     }
@@ -2306,7 +2306,6 @@ BOOL CCompositionProcessorEngine::IsVirtualKeyNeed( //
 
     if (*pwch && !IsVirtualKeyKeystrokeComposition(uCode, pKeyState, FUNCTION_NONE))
     {
-        OutputDebugString(L"Will commit original keystroke string.");
         if (pKeyState)
         {
             pKeyState->Category = CATEGORY_INVOKE_COMPOSITION_EDIT_SESSION;

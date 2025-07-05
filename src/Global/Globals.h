@@ -1,15 +1,12 @@
 #pragma once
 
-#ifndef UNICODE
-#define UNICODE
-#endif
-
 #include "Private.h"
 #include "define.h"
 #include "MetasequoiaIMEBaseStructure.h"
 #include <iostream>
 #include <string>
 #include <wrl.h>
+#include <unordered_set>
 
 void DllAddRef();
 void DllRelease();
@@ -134,6 +131,7 @@ extern const GUID MetasequoiaIMEGuidCompartmentPunctuation;
 
 extern const WCHAR FullWidthCharTable[];
 extern const struct _PUNCTUATION PunctuationTable[23];
+extern const std::unordered_set<WCHAR> CommitWithFirstCandPunc;
 
 extern const GUID MetasequoiaIMEGuidLangBarIMEMode;
 extern const GUID MetasequoiaIMEGuidLangBarDoubleSingleByte;

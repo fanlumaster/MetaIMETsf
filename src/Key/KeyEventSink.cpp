@@ -365,11 +365,12 @@ STDAPI CMetasequoiaIME::OnKeyDown(ITfContext *pContext, WPARAM wParam, LPARAM lP
     if (*pIsEaten)
     {
         Global::Keycode = code;
+        Global::wch = wch;
         if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
             Global::ModifiersDown |= 0b00000001;
         else
             Global::ModifiersDown &= ~0b00000001;
-        WriteDataToSharedMemory(Global::Keycode, Global::ModifiersDown, nullptr, 0, L"", 0b00011);
+        WriteDataToSharedMemory(Global::Keycode, wch, Global::ModifiersDown, nullptr, 0, L"", 0b000111);
         SendKeyEventToUIProcess();
         ClearNamedpipeDataIfExists();
     }

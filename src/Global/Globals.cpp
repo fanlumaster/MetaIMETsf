@@ -4,6 +4,7 @@
 #include "BaseWindow.h"
 #include "define.h"
 #include "MetasequoiaIMEBaseStructure.h"
+#include <unordered_set>
 #include <windows.h>
 #include <fstream>
 #include <string>
@@ -285,6 +286,39 @@ extern const struct _PUNCTUATION PunctuationTable[23] = {
     {L'.', L"。"},  // 。
     {L'>', L"》"},  // 》
     {L'?', L"？"},  // ？
+};
+
+//
+// Will commit first candidate string with punctuation char
+//
+extern const std::unordered_set<WCHAR> CommitWithFirstCandPunc = {
+    L'`',  //
+    L'!',  //
+    L'@',  //
+    L'#',  //
+    L'$',  //
+    L'%',  //
+    L'^',  //
+    L'&',  //
+    L'*',  //
+    L'(',  //
+    L')',  //
+    L'-',  //
+    L'_',  //
+    L'=',  //
+    L'+',  //
+    L'[',  //
+    L']',  //
+    L'\\', //
+    L';',  //
+    L':',  //
+    L'\'', //
+    L'"',  //
+    L',',  //
+    L'<',  //
+    L'.',  //
+    L'>',  //
+    L'?'   //
 };
 
 //+---------------------------------------------------------------------------
