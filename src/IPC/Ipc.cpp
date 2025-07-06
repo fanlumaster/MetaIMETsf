@@ -5,6 +5,7 @@
 #include <winnt.h>
 #include <winuser.h>
 #include "Globals.h"
+#include <fmt/xchar.h>
 
 static HANDLE hMapFile = nullptr;
 static void *pBuf;
@@ -464,7 +465,9 @@ void SendToNamedpipe()
  */
 void ClearNamedpipeDataIfExists()
 {
-    bool isSpaceOrNumber = Global::Keycode == VK_SPACE || (Global::Keycode > '0' && Global::Keycode < '9');
+    bool isSpaceOrNumber = Global::Keycode == VK_SPACE ||                      //
+                           (Global::Keycode > '0' && Global::Keycode < '9') || //
+                           (Global::CommitWithFirstCandPunc.count(Global::wch) > 0);
     /* Only clear namedpipe data if keycode is space or number, for better performance */
     if (!isSpaceOrNumber)
     {
@@ -528,6 +531,55 @@ void ClearNamedpipeDataIfExists()
 }
 
 /**
+ * @brief Try to read selected candiate string data from server pipe with timeout
+ *
+ * @return std::wstring
+ */
+std::wstring TryReadDataFromServerPipeWithTimeout()
+{
+    int timeoutMs = 20; // Default timeout 20ms
+    int intervalMs = 1; // Default interval 1ms
+
+    if (!hFromServerPipe || hFromServerPipe == INVALID_HANDLE_VALUE) // Try to reconnect
+    {
+        hFromServerPipe = CreateFile(     //
+            FANY_IME_TO_TSF_NAMED_PIPE,   //
+            GENERIC_READ | GENERIC_WRITE, //
+            0,                            //
+            nullptr,                      //
+            OPEN_EXISTING,                //
+            0,                            //
+            nullptr                       //
+        );
+        if (hFromServerPipe == INVALID_HANDLE_VALUE)
+        {
+            // TODO: Log
+            return L"PipeOpenError";
+        }
+        else
+        {
+            // TODO: Log
+        }
+    }
+
+    DWORD bytesAvailable = 0;
+    int waited = 0;
+    while (waited < timeoutMs)
+    {
+        // TODO: Do not log
+        OutputDebugString(fmt::format(L"current waited: {}", waited).c_str());
+        if (PeekNamedPipe(hFromServerPipe, nullptr, 0, nullptr, &bytesAvailable, nullptr) && bytesAvailable > 0)
+        {
+            OutputDebugString(fmt::format(L"PeekNamedPipe: {}", waited).c_str());
+            return ReadDataFromServerViaNamedPipe();
+        }
+        Sleep(intervalMs); // TODO: Maybe could use less time
+        waited += intervalMs;
+    }
+    return L"ReadDataTimeout";
+}
+
+/**
  * @brief Read data sent by server
  *
  * TODO: Cancel when time exceed, we should set a timeout
@@ -577,7 +629,7 @@ std::wstring ReadDataFromServerViaNamedPipe()
         OutputDebugString(message.c_str());
         return message;
     }
-    return L"";
+    return L"PipeError";
 }
 
 void SendToAuxNamedpipe(std::wstring pipeData)

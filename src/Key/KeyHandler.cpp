@@ -583,7 +583,7 @@ HRESULT CMetasequoiaIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITf
         //
         if (Global::CommitWithFirstCandPunc.count(wch) > 0)
         {
-            std::wstring receivedData = ReadDataFromServerViaNamedPipe();
+            std::wstring receivedData = TryReadDataFromServerPipeWithTimeout();
             punctuationStr = receivedData + punctuationStr;
         }
     }

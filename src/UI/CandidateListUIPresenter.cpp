@@ -47,7 +47,7 @@ HRESULT CMetasequoiaIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfConte
 
     if (candidateLen)
     {
-        std::wstring receivedData = ReadDataFromServerViaNamedPipe();
+        std::wstring receivedData = TryReadDataFromServerPipeWithTimeout();
         candidateString.Set(receivedData.c_str(), receivedData.length());
         hr = _AddComposingAndChar(ec, pContext, &candidateString);
         if (FAILED(hr))
