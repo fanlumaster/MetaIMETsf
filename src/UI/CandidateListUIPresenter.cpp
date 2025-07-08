@@ -6,6 +6,7 @@
 #include "CompositionProcessorEngine.h"
 #include "MetasequoiaIMEBaseStructure.h"
 #include "define.h"
+#include <cwchar>
 #include <debugapi.h>
 #include <intsafe.h>
 #include <minwindef.h>
@@ -47,8 +48,12 @@ HRESULT CMetasequoiaIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfConte
 
     if (candidateLen)
     {
-        std::wstring receivedData = TryReadDataFromServerPipeWithTimeout();
-        candidateString.Set(receivedData.c_str(), receivedData.length());
+        struct FanyImeNamedpipeDataToTsf *receivedData = TryReadDataFromServerPipeWithTimeout();
+        if (receivedData->msg_type == 1) // Candidate index out of range
+        {
+            return hr;
+        }
+        candidateString.Set(receivedData->candidate_string, wcslen(receivedData->candidate_string));
         hr = _AddComposingAndChar(ec, pContext, &candidateString);
         if (FAILED(hr))
         {

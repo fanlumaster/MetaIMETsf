@@ -2,6 +2,7 @@
 #include <debugapi.h>
 #include <handleapi.h>
 #include <minwindef.h>
+#include <utility>
 #include <winnt.h>
 #include <winuser.h>
 #include "Globals.h"
@@ -15,7 +16,11 @@ static bool canUseSharedMemory = false;
 static HANDLE hPipe = nullptr;
 static HANDLE hFromServerPipe = nullptr;
 
-static FanyImeNamedpipeData namedpipeData;
+static FanyImeNamedpipeData namedpipeData = {};
+FanyImeNamedpipeDataToTsf namedpipeDataFromServer = {};
+
+/* Data size transfered from Server process */
+static const int ServerDtPipeDataSize = 512;
 
 void SendToAuxNamedpipe(std::wstring pipeData);
 
@@ -496,7 +501,6 @@ void ClearNamedpipeDataIfExists()
         }
     }
 
-    wchar_t buffer[512];
     DWORD bytesAvailable = 0;
     DWORD bytesRead = 0;
     while (true)
@@ -515,12 +519,12 @@ void ClearNamedpipeDataIfExists()
             break; // no more data or pipe error
         }
 
-        BOOL readOk = ReadFile( //
-            hFromServerPipe,    //
-            buffer,             //
-            sizeof(buffer),     //
-            &bytesRead,         //
-            NULL                //
+        BOOL readOk = ReadFile(              //
+            hFromServerPipe,                 //
+            &namedpipeDataFromServer,        //
+            sizeof(namedpipeDataFromServer), //
+            &bytesRead,                      //
+            NULL                             //
         );
 
         if (!readOk || bytesRead == 0)
@@ -533,11 +537,12 @@ void ClearNamedpipeDataIfExists()
 /**
  * @brief Try to read selected candiate string data from server pipe with timeout
  *
- * @return std::wstring
+ * @return struct FanyImeNamedpipeDataToTsf*
  */
-std::wstring TryReadDataFromServerPipeWithTimeout()
+struct FanyImeNamedpipeDataToTsf *TryReadDataFromServerPipeWithTimeout()
 {
-    int timeoutMs = 20; // Default timeout 20ms
+    std::pair<UINT, std::wstring> ret = {0, L""};
+    int timeoutMs = 10; // Default timeout 20ms
     int intervalMs = 1; // Default interval 1ms
 
     if (!hFromServerPipe || hFromServerPipe == INVALID_HANDLE_VALUE) // Try to reconnect
@@ -554,7 +559,9 @@ std::wstring TryReadDataFromServerPipeWithTimeout()
         if (hFromServerPipe == INVALID_HANDLE_VALUE)
         {
             // TODO: Log
-            return L"PipeOpenError";
+            namedpipeDataFromServer.msg_type = 0;
+            wcscpy_s(namedpipeDataFromServer.candidate_string, L"PipeOpenError");
+            return &namedpipeDataFromServer;
         }
         else
         {
@@ -570,13 +577,17 @@ std::wstring TryReadDataFromServerPipeWithTimeout()
         OutputDebugString(fmt::format(L"current waited: {}", waited).c_str());
         if (PeekNamedPipe(hFromServerPipe, nullptr, 0, nullptr, &bytesAvailable, nullptr) && bytesAvailable > 0)
         {
+            auto ret = ReadDataFromServerViaNamedPipe();
             OutputDebugString(fmt::format(L"PeekNamedPipe: {}", waited).c_str());
-            return ReadDataFromServerViaNamedPipe();
+            return ret;
         }
         Sleep(intervalMs); // TODO: Maybe could use less time
         waited += intervalMs;
     }
-    return L"ReadDataTimeout";
+
+    namedpipeDataFromServer.msg_type = 0;
+    wcscpy_s(namedpipeDataFromServer.candidate_string, L"ReadDataTimeout");
+    return &namedpipeDataFromServer;
 }
 
 /**
@@ -584,9 +595,9 @@ std::wstring TryReadDataFromServerPipeWithTimeout()
  *
  * TODO: Cancel when time exceed, we should set a timeout
  *
- * @return std::wstring
+ * @return struct FanyImeNamedpipeDataToTsf*
  */
-std::wstring ReadDataFromServerViaNamedPipe()
+struct FanyImeNamedpipeDataToTsf *ReadDataFromServerViaNamedPipe()
 {
     if (!hFromServerPipe || hFromServerPipe == INVALID_HANDLE_VALUE) // Try to reconnect
     {
@@ -602,7 +613,9 @@ std::wstring ReadDataFromServerViaNamedPipe()
         if (hFromServerPipe == INVALID_HANDLE_VALUE)
         {
             // TODO: Log
-            return L"";
+            namedpipeDataFromServer.msg_type = 0;
+            wcscpy_s(namedpipeDataFromServer.candidate_string, L"PipeOpenError");
+            return &namedpipeDataFromServer;
         }
         else
         {
@@ -610,14 +623,13 @@ std::wstring ReadDataFromServerViaNamedPipe()
         }
     }
 
-    wchar_t buffer[512] = {0};
     DWORD bytesRead = 0;
-    BOOL readResult = ReadFile( //
-        hFromServerPipe,        //
-        buffer,                 //
-        sizeof(buffer),         //
-        &bytesRead,             //
-        NULL                    //
+    BOOL readResult = ReadFile(          //
+        hFromServerPipe,                 //
+        &namedpipeDataFromServer,        //
+        sizeof(namedpipeDataFromServer), //
+        &bytesRead,                      //
+        NULL                             //
     );
     if (!readResult || bytesRead == 0) // Disconnected or error
     {
@@ -625,11 +637,13 @@ std::wstring ReadDataFromServerViaNamedPipe()
     }
     else
     {
-        std::wstring message(buffer, bytesRead / sizeof(wchar_t));
-        OutputDebugString(message.c_str());
-        return message;
+        OutputDebugString(namedpipeDataFromServer.candidate_string);
+        return &namedpipeDataFromServer;
     }
-    return L"PipeError";
+
+    namedpipeDataFromServer.msg_type = 0;
+    wcscpy_s(namedpipeDataFromServer.candidate_string, L"ReadDataError");
+    return &namedpipeDataFromServer;
 }
 
 void SendToAuxNamedpipe(std::wstring pipeData)

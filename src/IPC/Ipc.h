@@ -59,6 +59,19 @@ struct FanyImeNamedpipeData
     wchar_t pinyin_string[128];
 };
 
+//
+// Data received from server end
+//
+// msg_type
+//   0: success
+//   1: candidate index out of range error
+//
+struct FanyImeNamedpipeDataToTsf
+{
+    UINT msg_type;
+    wchar_t candidate_string[200]; // 200 chars at most
+};
+
 int InitIpc();
 int InitNamedpipe();
 int CloseIpc();
@@ -98,8 +111,8 @@ int SendHideCandidateWndEventToUIProcessViaNamedPipe();
 int SendShowCandidateWndEventToUIProcessViaNamedPipe();
 int SendMoveCandidateWndEventToUIProcessViaNamedPipe();
 void ClearNamedpipeDataIfExists();
-std::wstring TryReadDataFromServerPipeWithTimeout();
-std::wstring ReadDataFromServerViaNamedPipe();
+struct FanyImeNamedpipeDataToTsf *TryReadDataFromServerPipeWithTimeout();
+struct FanyImeNamedpipeDataToTsf *ReadDataFromServerViaNamedPipe();
 
 //
 // Modifiers:

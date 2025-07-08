@@ -583,8 +583,9 @@ HRESULT CMetasequoiaIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITf
         //
         if (Global::CommitWithFirstCandPunc.count(wch) > 0)
         {
-            std::wstring receivedData = TryReadDataFromServerPipeWithTimeout();
-            punctuationStr = receivedData + punctuationStr;
+            /* Here we do not need to consider index out of range, cause we always retrive first candidate */
+            struct FanyImeNamedpipeDataToTsf *receivedData = TryReadDataFromServerPipeWithTimeout();
+            punctuationStr = std::wstring(receivedData->candidate_string) + punctuationStr;
         }
     }
 
