@@ -112,6 +112,7 @@ extern HFONT defaultlFontHandle; // Global font object we use everywhere
 extern const CLSID MetasequoiaIMECLSID;
 extern const CLSID MetasequoiaIMEGuidProfile;
 extern const CLSID MetasequoiaIMEGuidImeModePreserveKey;
+extern const CLSID MetasequoiaIMEGuidImeModePreserveKey02;
 extern const CLSID MetasequoiaIMEGuidDoubleSingleBytePreserveKey;
 extern const CLSID MetasequoiaIMEGuidPunctuationPreserveKey;
 
@@ -147,6 +148,7 @@ extern const WCHAR KeywordDelimiter;
 extern const WCHAR StringDelimiter;
 
 extern const WCHAR ImeModeDescription[];
+extern const WCHAR ImeModeDescription02[];
 extern const int ImeModeOnIcoIndex;
 extern const int ImeModeOffIcoIndex;
 

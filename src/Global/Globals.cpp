@@ -40,6 +40,9 @@ extern const GUID MetasequoiaIMEGuidProfile = {
 extern const GUID MetasequoiaIMEGuidImeModePreserveKey = {
     0x4b62b54b, 0xf828, 0x43b5, {0x90, 0x95, 0xa9, 0x6d, 0xf9, 0xcb, 0xdf, 0x38}};
 
+extern const GUID MetasequoiaIMEGuidImeModePreserveKey02 = {
+    0xcebe3230, 0xbd15, 0x4d4c, {0x88, 0xb3, 0xed, 0x95, 0x3f, 0x66, 0x5d, 0x40}};
+
 // {5A08D6C4-4563-4E46-8DDB-65E75C4E73A3}
 extern const GUID MetasequoiaIMEGuidDoubleSingleBytePreserveKey = {
     0x5a08d6c4, 0x4563, 0x4e46, {0x8d, 0xdb, 0x65, 0xe7, 0x5c, 0x4e, 0x73, 0xa3}};
@@ -106,6 +109,7 @@ extern const WCHAR StringDelimiter = L'\"';
 // defined item in setting file table [PreservedKey] section
 //---------------------------------------------------------------------
 extern const WCHAR ImeModeDescription[] = L"Chinese/English input (Shift)";
+extern const WCHAR ImeModeDescription02[] = L"Chinese/English input (Ctrl+Space)";
 extern const int ImeModeOnIcoIndex = IME_MODE_ON_ICON_INDEX;
 extern const int ImeModeOffIcoIndex = IME_MODE_OFF_ICON_INDEX;
 

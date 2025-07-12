@@ -8,6 +8,7 @@
 #include "LanguageBar.h"
 #include "RegKey.h"
 #include "define.h"
+#include <msctf.h>
 #include <string>
 #include <fmt/xchar.h>
 #include "Ipc.h"
@@ -731,23 +732,49 @@ void CCompositionProcessorEngine::SetupPreserved(_In_ ITfThreadMgr *pThreadMgr, 
     TF_PRESERVEDKEY preservedKeyImeMode;
     preservedKeyImeMode.uVKey = VK_SHIFT;
     preservedKeyImeMode.uModifiers = _TF_MOD_ON_KEYUP_SHIFT_ONLY;
-    SetPreservedKey(Global::MetasequoiaIMEGuidImeModePreserveKey, preservedKeyImeMode, Global::ImeModeDescription,
-                    &_PreservedKey_IMEMode);
+    SetPreservedKey(                                  //
+        Global::MetasequoiaIMEGuidImeModePreserveKey, //
+        preservedKeyImeMode,                          //
+        Global::ImeModeDescription,                   //
+        &_PreservedKey_IMEMode                        //
+    );
+
+    TF_PRESERVEDKEY preservedKeyImeMode02;
+    preservedKeyImeMode02.uVKey = VK_SPACE;
+    preservedKeyImeMode02.uModifiers = TF_MOD_CONTROL | TF_MOD_ALT;
+    SetPreservedKey(                                    //
+        Global::MetasequoiaIMEGuidImeModePreserveKey02, //
+        preservedKeyImeMode02,                          //
+        Global::ImeModeDescription02,                   //
+        &_PreservedKey_IMEMode02                        //
+    );
 
     TF_PRESERVEDKEY preservedKeyDoubleSingleByte;
     preservedKeyDoubleSingleByte.uVKey = VK_SPACE;
     preservedKeyDoubleSingleByte.uModifiers = TF_MOD_SHIFT | TF_MOD_CONTROL;
-    SetPreservedKey(Global::MetasequoiaIMEGuidDoubleSingleBytePreserveKey, preservedKeyDoubleSingleByte,
-                    Global::DoubleSingleByteDescription, &_PreservedKey_DoubleSingleByte);
+    SetPreservedKey(                                           //
+        Global::MetasequoiaIMEGuidDoubleSingleBytePreserveKey, //
+        preservedKeyDoubleSingleByte,                          //
+        Global::DoubleSingleByteDescription,                   //
+        &_PreservedKey_DoubleSingleByte                        //
+    );
 
     TF_PRESERVEDKEY preservedKeyPunctuation;
     preservedKeyPunctuation.uVKey = VK_OEM_PERIOD;
     preservedKeyPunctuation.uModifiers = TF_MOD_CONTROL;
-    SetPreservedKey(Global::MetasequoiaIMEGuidPunctuationPreserveKey, preservedKeyPunctuation,
-                    Global::PunctuationDescription, &_PreservedKey_Punctuation);
+    SetPreservedKey(                                      //
+        Global::MetasequoiaIMEGuidPunctuationPreserveKey, //
+        preservedKeyPunctuation,                          //
+        Global::PunctuationDescription,                   //
+        &_PreservedKey_Punctuation                        //
+    );
 
+    /* Shift or Ctrl + Alt + Space: toggle IME mode, cn/en */
     InitPreservedKey(&_PreservedKey_IMEMode, pThreadMgr, tfClientId);
+    InitPreservedKey(&_PreservedKey_IMEMode02, pThreadMgr, tfClientId);
+    /* Shift + Ctrl + Space: toggle DoubleSingleByte */
     InitPreservedKey(&_PreservedKey_DoubleSingleByte, pThreadMgr, tfClientId);
+    /* Ctrl + .: toggle Punctuation */
     InitPreservedKey(&_PreservedKey_Punctuation, pThreadMgr, tfClientId);
 
     return;
@@ -857,9 +884,14 @@ BOOL CCompositionProcessorEngine::CheckShiftKeyOnly(_In_ CMetasequoiaImeArray<TF
 //
 //----------------------------------------------------------------------------
 
-void CCompositionProcessorEngine::OnPreservedKey(ITfContext *pContext, REFGUID rguid, _Out_ BOOL *pIsEaten,
-                                                 _In_ ITfThreadMgr *pThreadMgr, TfClientId tfClientId,
-                                                 BOOL *pNeedToggleIMEMode)
+void CCompositionProcessorEngine::OnPreservedKey( //
+    ITfContext *pContext,                         //
+    REFGUID rguid,                                //
+    _Out_ BOOL *pIsEaten,                         //
+    _In_ ITfThreadMgr *pThreadMgr,                //
+    TfClientId tfClientId,                        //
+    BOOL *pNeedToggleIMEMode                      //
+)
 {
     if (IsEqualGUID(rguid, _PreservedKey_IMEMode.Guid))
     {
@@ -882,6 +914,37 @@ void CCompositionProcessorEngine::OnPreservedKey(ITfContext *pContext, REFGUID r
         *pIsEaten = TRUE;
         *pNeedToggleIMEMode = TRUE;
 
+        Global::Keycode = VK_SHIFT;
+        if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+            Global::ModifiersDown |= 0b00000001;
+        else
+            Global::ModifiersDown &= ~0b00000001;
+        WriteDataToSharedMemory(Global::Keycode, L'\0', Global::ModifiersDown, nullptr, 0, L"", 0b000111);
+        SendKeyEventToUIProcess();
+        ClearNamedpipeDataIfExists();
+    }
+    else if (IsEqualGUID(rguid, _PreservedKey_IMEMode02.Guid))
+    {
+        if (!CheckShiftKeyOnly(&_PreservedKey_IMEMode02.TSFPreservedKeyTable))
+        {
+            *pIsEaten = FALSE;
+            return;
+        }
+        BOOL isOpen = FALSE;
+        CCompartment CompartmentKeyboardOpen(pThreadMgr, tfClientId, GUID_COMPARTMENT_KEYBOARD_OPENCLOSE);
+        CompartmentKeyboardOpen._GetCompartmentBOOL(isOpen);
+        CompartmentKeyboardOpen._SetCompartmentBOOL(isOpen ? FALSE : TRUE);
+
+        // Also toggle punctuation mode
+        BOOL isPunctuation = FALSE;
+        CCompartment CompartmentPunctuation(pThreadMgr, tfClientId, Global::MetasequoiaIMEGuidCompartmentPunctuation);
+        CompartmentPunctuation._GetCompartmentBOOL(isPunctuation);
+        CompartmentPunctuation._SetCompartmentBOOL(isPunctuation ? FALSE : TRUE);
+
+        *pIsEaten = TRUE;
+        *pNeedToggleIMEMode = TRUE;
+
+        // Pretend to be a shift key
         Global::Keycode = VK_SHIFT;
         if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
             Global::ModifiersDown |= 0b00000001;

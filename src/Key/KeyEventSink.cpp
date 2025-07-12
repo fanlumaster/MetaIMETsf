@@ -481,8 +481,14 @@ STDAPI CMetasequoiaIME::OnPreservedKey(ITfContext *pContext, REFGUID rguid, BOOL
 
     BOOL pNeedToggleIMEMode = FALSE;
 
-    pCompositionProcessorEngine->OnPreservedKey(pContext, rguid, pIsEaten, _GetThreadMgr(), _GetClientId(),
-                                                &pNeedToggleIMEMode);
+    pCompositionProcessorEngine->OnPreservedKey( //
+        pContext,                                //
+        rguid,                                   //
+        pIsEaten,                                //
+        _GetThreadMgr(),                         //
+        _GetClientId(),                          //
+        &pNeedToggleIMEMode                      //
+    );
 
     if (pNeedToggleIMEMode)
     {

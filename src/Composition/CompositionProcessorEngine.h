@@ -213,6 +213,7 @@ class CCompositionProcessorEngine
     };
 
     XPreservedKey _PreservedKey_IMEMode;
+    XPreservedKey _PreservedKey_IMEMode02;
     XPreservedKey _PreservedKey_DoubleSingleByte;
     XPreservedKey _PreservedKey_Punctuation;
 
