@@ -227,11 +227,13 @@ STDAPI CMetasequoiaIME::ActivateEx(ITfThreadMgr *pThreadMgr, TfClientId tfClient
     _dwActivateFlags = dwFlags;
 
     OutputDebugString(L"CMetasequoiaIME::ActivateEx\n");
+    /*
     std::wstring processName = FanyUtils::GetCurrentProcessName();
     if (Global::VSCodeSeries.find(processName) != Global::VSCodeSeries.end())
     {
         Global::IsVSCodeLike = true;
     }
+    */
     // Set up IPC(named pipe)
     InitIpc();
 
@@ -408,7 +410,8 @@ HRESULT CMetasequoiaIME::GetDescription(__RPC__deref_out_opt BSTR *pbstrDesc)
 // ITfFunctionProvider::::GetFunction
 //
 //----------------------------------------------------------------------------
-HRESULT CMetasequoiaIME::GetFunction(__RPC__in REFGUID rguid, __RPC__in REFIID riid, __RPC__deref_out_opt IUnknown **ppunk)
+HRESULT CMetasequoiaIME::GetFunction(__RPC__in REFGUID rguid, __RPC__in REFIID riid,
+                                     __RPC__deref_out_opt IUnknown **ppunk)
 {
     HRESULT hr = E_NOINTERFACE;
 

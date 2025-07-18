@@ -93,27 +93,32 @@ HRESULT CMetasequoiaIME::_AddComposingAndChar(TfEditCookie ec, _In_ ITfContext *
         if (SUCCEEDED(hr))
         {
             ITfRange *pRange = nullptr;
-            BOOL exist_composing = _FindComposingRange(ec, pContext, pAheadSelection, &pRange);
+            // BOOL exist_composing = _FindComposingRange(ec, pContext, pAheadSelection, &pRange);
+
+            _pComposition->GetRange(&pRange);
 
             std::wstring strAddString(pstrAddString->Get(), pstrAddString->GetLength());
-
-            Global::IsVSCodeLike = false;
-            if (!Global::IsVSCodeLike)
-            {
-
-                _SetInputString(ec, pContext, pRange, pstrAddString, exist_composing);
-            }
-            else
-            {
-                _SetInputString(ec, pContext, pRange, pstrAddString, exist_composing);
-            }
-
-#ifdef FANY_DEBUG
-            std::wstring msg(pstrAddString->Get(), pstrAddString->GetLength());
-            OutputDebugString(fmt::format(L"{}: _AddComposingAndChar\n", msg).c_str());
-#endif
+            // _SetInputString(ec, pContext, pRange, pstrAddString, exist_composing);
             if (pRange)
             {
+                pRange->SetText(ec, 0, strAddString.c_str(), (LONG)strAddString.length());
+
+                /* Update the selection, we'll make it an insertion point just past */
+                ITfRange *pSelection = nullptr;
+                if (pRange && SUCCEEDED(pRange->Clone(&pSelection)))
+                {
+                    pSelection->Collapse(ec, TF_ANCHOR_END);
+
+                    TF_SELECTION sel = {};
+                    sel.range = pSelection;
+                    sel.style.ase = TF_AE_NONE;
+                    sel.style.fInterimChar = FALSE;
+
+                    pContext->SetSelection(ec, 1, &sel);
+
+                    pSelection->Release();
+                }
+
                 pRange->Release();
             }
         }
