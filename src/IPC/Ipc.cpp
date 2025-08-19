@@ -586,7 +586,7 @@ struct FanyImeNamedpipeDataToTsf *TryReadDataFromServerPipeWithTimeout()
     }
 
     namedpipeDataFromServer.msg_type = 0;
-    wcscpy_s(namedpipeDataFromServer.candidate_string, L"ReadDataTimeout");
+    wcscpy_s(namedpipeDataFromServer.candidate_string, L"⚠");
     return &namedpipeDataFromServer;
 }
 
