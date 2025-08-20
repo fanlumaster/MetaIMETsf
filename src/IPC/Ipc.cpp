@@ -560,7 +560,8 @@ struct FanyImeNamedpipeDataToTsf *TryReadDataFromServerPipeWithTimeout()
         {
             // TODO: Log
             namedpipeDataFromServer.msg_type = 0;
-            wcscpy_s(namedpipeDataFromServer.candidate_string, L"PipeOpenError");
+            // wcscpy_s(namedpipeDataFromServer.candidate_string, L"PipeOpenError");
+            wcscpy_s(namedpipeDataFromServer.candidate_string, L"X");
             return &namedpipeDataFromServer;
         }
         else
@@ -586,7 +587,8 @@ struct FanyImeNamedpipeDataToTsf *TryReadDataFromServerPipeWithTimeout()
     }
 
     namedpipeDataFromServer.msg_type = 0;
-    wcscpy_s(namedpipeDataFromServer.candidate_string, L"⚠");
+    // Pipe timeout error
+    wcscpy_s(namedpipeDataFromServer.candidate_string, L"T");
     return &namedpipeDataFromServer;
 }
 
@@ -614,7 +616,8 @@ struct FanyImeNamedpipeDataToTsf *ReadDataFromServerViaNamedPipe()
         {
             // TODO: Log
             namedpipeDataFromServer.msg_type = 0;
-            wcscpy_s(namedpipeDataFromServer.candidate_string, L"PipeOpenError");
+            // wcscpy_s(namedpipeDataFromServer.candidate_string, L"PipeOpenError");
+            wcscpy_s(namedpipeDataFromServer.candidate_string, L"X");
             return &namedpipeDataFromServer;
         }
         else
