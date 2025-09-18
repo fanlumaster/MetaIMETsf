@@ -1,3 +1,4 @@
+#include "FanyDefines.h"
 #include "Private.h"
 #include "TfTextLayoutSink.h"
 #include "MetasequoiaIME.h"
@@ -216,7 +217,7 @@ HRESULT CTfTextLayoutSink::_GetTextExt(_Out_ RECT *lpRect)
 #endif
         // Set default value to make sure the window is hidden by moving it out of the screen
         lpRect->left = 0;
-        lpRect->bottom = -1000;
+        lpRect->bottom = Global::INVALID_Y;
     }
 #ifdef FANY_DEBUG
     // TODO: Log lpRect position
