@@ -209,11 +209,14 @@ HRESULT CMetasequoiaIME::_HandleCompositionInputWorker(_In_ CCompositionProcesso
 #ifdef FANY_DEBUG
         // TODO: Log reading strings
 #endif
+        OutputDebugString(fmt::format(L"create_word count: {}", readingStrings.Count()).c_str());
+        OutputDebugString(fmt::format(L"create_word: {}", readingStrings.GetAt(0)).c_str());
     }
 
     for (UINT index = 0; index < readingStrings.Count(); index++)
     {
         OutputDebugString(fmt::format(L"create_word here test!!!").c_str());
+        /*  */
         hr = _AddComposingAndChar(ec, pContext, readingStrings.GetAt(index));
         if (FAILED(hr))
         {
