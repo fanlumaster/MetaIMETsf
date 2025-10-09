@@ -561,6 +561,11 @@ Exit:
 //+---------------------------------------------------------------------------
 //
 // _HandleCompositionPunctuation
+// 处理标点的上屏：
+//   1. 没有候选词的情况下，纯标点的上屏
+//   2. 有候选词的情况下，候选词和标点的一并上屏
+//
+// 标点这里不会触发造词行为。
 //
 //----------------------------------------------------------------------------
 
@@ -579,11 +584,11 @@ HRESULT CMetasequoiaIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITf
     if (_candidateMode != CANDIDATE_NONE && _pCandidateListUIPresenter)
     {
         //
-        // Request for first candidate string for some
+        // 请求第一个候选词
         //
         if (Global::CommitWithFirstCandPunc.count(wch) > 0)
         {
-            /* Here we do not need to consider index out of range, cause we always retrive first candidate */
+            /* 这里我们不需要考虑下标超出范围，因为我们总是可以取到第一个候选词 */
             struct FanyImeNamedpipeDataToTsf *receivedData = TryReadDataFromServerPipeWithTimeout();
             punctuationStr = std::wstring(receivedData->candidate_string) + punctuationStr;
         }
