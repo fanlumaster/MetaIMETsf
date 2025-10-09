@@ -210,7 +210,12 @@ HRESULT CMetasequoiaIME::_HandleCompositionInputWorker(_In_ CCompositionProcesso
         // TODO: Log reading strings
 #endif
         OutputDebugString(fmt::format(L"create_word count: {}", readingStrings.Count()).c_str());
-        OutputDebugString(fmt::format(L"create_word: {}", readingStrings.GetAt(0)).c_str());
+
+        CStringRange* readingString = readingStrings.GetAt(0);
+        const WCHAR* reading = readingString->Get();
+        DWORD length = readingString->GetLength();
+        std::wstring readingStr(reading, reading + length);
+        OutputDebugString(fmt::format(L"create_word: {}", readingStr).c_str());
     }
 
     for (UINT index = 0; index < readingStrings.Count(); index++)
