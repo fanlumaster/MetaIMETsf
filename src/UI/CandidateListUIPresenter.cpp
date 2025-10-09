@@ -200,7 +200,7 @@ HRESULT CMetasequoiaIME::_HandleCandidateWorker(TfEditCookie ec, _In_ ITfContext
     }
 
     // set up candidate list if it is being shown
-    if (SUCCEEDED(hrStartCandidateList))
+    if (SUCCEEDED(hrStartCandidateList)) // NOTICE: always false
     {
         pTempCandListUIPresenter->_SetTextColor(RGB(0, 0x80, 0), GetSysColor(COLOR_WINDOW)); // Text color is green
         pTempCandListUIPresenter->_SetFillColor((HBRUSH)(COLOR_WINDOW + 1)); // Background color is window
@@ -209,6 +209,9 @@ HRESULT CMetasequoiaIME::_HandleCandidateWorker(TfEditCookie ec, _In_ ITfContext
 #ifdef FANY_DEBUG
         OutputDebugString(fmt::format(L"Fany here candidateString = {}", candidateString.Get()).c_str());
 #endif
+
+        OutputDebugString(fmt::format(L"Create word here?").c_str());
+        
         // Add composing character
         hrReturn = _AddComposingAndChar(ec, pContext, &candidateString);
 

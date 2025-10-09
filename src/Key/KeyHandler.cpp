@@ -213,6 +213,7 @@ HRESULT CMetasequoiaIME::_HandleCompositionInputWorker(_In_ CCompositionProcesso
 
     for (UINT index = 0; index < readingStrings.Count(); index++)
     {
+        OutputDebugString(fmt::format(L"create_word here test!!!").c_str());
         hr = _AddComposingAndChar(ec, pContext, readingStrings.GetAt(index));
         if (FAILED(hr))
         {
