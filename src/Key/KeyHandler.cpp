@@ -208,20 +208,18 @@ HRESULT CMetasequoiaIME::_HandleCompositionInputWorker(_In_ CCompositionProcesso
     {
 #ifdef FANY_DEBUG
         // TODO: Log reading strings
-#endif
         OutputDebugString(fmt::format(L"create_word count: {}", readingStrings.Count()).c_str());
-
-        CStringRange* readingString = readingStrings.GetAt(0);
-        const WCHAR* reading = readingString->Get();
-        DWORD length = readingString->GetLength();
-        std::wstring readingStr(reading, reading + length);
+        std::wstring readingStr = readingStrings.GetAt(0)->ToWString();
         OutputDebugString(fmt::format(L"create_word: {}", readingStr).c_str());
+#endif
     }
 
+    /* 一般来说，readingStrings 数组中只有一个元素，这个元素就是当前输入的拼音 */
     for (UINT index = 0; index < readingStrings.Count(); index++)
     {
+#ifdef FANY_DEBUG
         OutputDebugString(fmt::format(L"create_word here test!!!").c_str());
-        /*  */
+#endif
         hr = _AddComposingAndChar(ec, pContext, readingStrings.GetAt(index));
         if (FAILED(hr))
         {

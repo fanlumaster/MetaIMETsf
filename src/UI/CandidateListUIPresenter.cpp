@@ -40,6 +40,8 @@ HRESULT CMetasequoiaIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfConte
     DWORD_PTR candidateLen = keystrokeBufLen;
     CStringRange candidateString(keyStrokebuffer);
 
+    OutputDebugString(fmt::format(L"create_word, keystrokeBuffer: {}", keyStrokebuffer.ToWString()).c_str());
+
     // _pCandidateListUIPresenter would be null in uwp/metro apps
     if (nullptr == _pCandidateListUIPresenter)
     {
@@ -59,6 +61,11 @@ HRESULT CMetasequoiaIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfConte
         {
             return hr;
         }
+        /* 处理造词的逻辑 */
+        // 先把拼音拿到，将其和上屏的汉字串比较一下，
+        //  如果分词后发现是纯拼音，
+        //  并且没有使用辅助码，
+        //  并且上屏的汉字串的拼音比起实际输入的拼音要短，则认为是造词
     }
 
 NoPresenter:
@@ -211,7 +218,7 @@ HRESULT CMetasequoiaIME::_HandleCandidateWorker(TfEditCookie ec, _In_ ITfContext
 #endif
 
         OutputDebugString(fmt::format(L"Create word here?").c_str());
-        
+
         // Add composing character
         hrReturn = _AddComposingAndChar(ec, pContext, &candidateString);
 
