@@ -57,6 +57,7 @@ HRESULT CMetasequoiaIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfConte
         }
         else if (receivedData->msg_type == Global::DataFromServerMsgTypeNormal) // 只有正常情况下才会上屏
         {
+            OutputDebugString(fmt::format(L"create_word, normal???").c_str());
             candidateString.Set(receivedData->candidate_string, wcslen(receivedData->candidate_string));
             hr = _AddComposingAndChar(ec, pContext, &candidateString);
             if (FAILED(hr))
@@ -75,6 +76,7 @@ HRESULT CMetasequoiaIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfConte
         else if (receivedData->msg_type == Global::DataFromServerMsgTypeNeedToCreateWord)
         {
             // TODO: 更新 Composition String，应使其和候选框中的 embeded preedit string 一致
+            OutputDebugString(fmt::format(L"create_word here, really need?").c_str());
             return hr;
         }
     }
