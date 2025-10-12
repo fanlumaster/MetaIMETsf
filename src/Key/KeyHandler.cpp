@@ -61,6 +61,7 @@ VOID CMetasequoiaIME::_DeleteCandidateList(BOOL isForce, _In_opt_ ITfContext *pC
 
     if (_pCandidateListUIPresenter)
     {
+        OutputDebugString(fmt::format(L"create_word: dispose window?").c_str());
         _pCandidateListUIPresenter->_EndCandidateList();
 
         _candidateMode = CANDIDATE_NONE;

@@ -51,21 +51,32 @@ HRESULT CMetasequoiaIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfConte
     if (candidateLen)
     {
         struct FanyImeNamedpipeDataToTsf *receivedData = TryReadDataFromServerPipeWithTimeout();
-        if (receivedData->msg_type == 1) // Candidate index out of range
+        if (receivedData->msg_type == Global::DataFromServerMsgTypeOutofRange) // Candidate index out of range
         {
             return hr;
         }
-        candidateString.Set(receivedData->candidate_string, wcslen(receivedData->candidate_string));
-        hr = _AddComposingAndChar(ec, pContext, &candidateString);
-        if (FAILED(hr))
+        else if (receivedData->msg_type == Global::DataFromServerMsgTypeNormal) // 只有正常情况下才会上屏
         {
-            return hr;
+            candidateString.Set(receivedData->candidate_string, wcslen(receivedData->candidate_string));
+            hr = _AddComposingAndChar(ec, pContext, &candidateString);
+            if (FAILED(hr))
+            {
+                return hr;
+            }
         }
         /* 处理造词的逻辑 */
         // 先把拼音拿到，将其和上屏的汉字串比较一下，
-        //  如果分词后发现是纯拼音，
-        //  并且没有使用辅助码，
-        //  并且上屏的汉字串的拼音比起实际输入的拼音要短，则认为是造词
+        //  - 如果分词后发现是纯拼音，
+        //  - 并且没有使用辅助码，
+        //  - 并且上屏的汉字串的拼音比起实际输入的拼音要短，则认为是造词
+        // TSF 端需要做的事情是，将 composingString
+        // 替换成造词的状态，即把选中的汉字串替换相应的拼音部分，同时，其他的拼音部分保持不变
+        // Server 端自己会判断并处理的
+        else if (receivedData->msg_type == Global::DataFromServerMsgTypeNeedToCreateWord)
+        {
+            // TODO: 更新 Composition String，应使其和候选框中的 embeded preedit string 一致
+            return hr;
+        }
     }
 
 NoPresenter:
@@ -883,6 +894,7 @@ void CCandidateListUIPresenter::_EndCandidateList()
 {
     EndUIElement();
 
+    /* 告诉 Server 端隐藏候选框窗口 */
     DisposeCandidateWindow();
 
     _EndLayout();
