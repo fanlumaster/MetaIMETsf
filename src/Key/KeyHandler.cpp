@@ -11,6 +11,7 @@
 #include <fmt/xchar.h>
 #include "FanyUtils.h"
 #include "Ipc.h"
+#include "FanyDefines.h"
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -61,6 +62,7 @@ VOID CMetasequoiaIME::_DeleteCandidateList(BOOL isForce, _In_opt_ ITfContext *pC
 
     if (_pCandidateListUIPresenter)
     {
+        OutputDebugString(fmt::format(L"create_word: dispose window?").c_str());
         _pCandidateListUIPresenter->_EndCandidateList();
 
         _candidateMode = CANDIDATE_NONE;
@@ -92,6 +94,7 @@ HRESULT CMetasequoiaIME::_HandleComplete(TfEditCookie ec, _In_ ITfContext *pCont
 
 HRESULT CMetasequoiaIME::_HandleCancel(TfEditCookie ec, _In_ ITfContext *pContext)
 {
+    GlobalIme::word_for_creating_word = L"";
     _RemoveDummyCompositionForComposing(ec, _pComposition);
 
     _DeleteCandidateList(FALSE, pContext);
@@ -208,12 +211,41 @@ HRESULT CMetasequoiaIME::_HandleCompositionInputWorker(_In_ CCompositionProcesso
     {
 #ifdef FANY_DEBUG
         // TODO: Log reading strings
+        OutputDebugString(fmt::format(L"create_word count: {}", readingStrings.Count()).c_str());
+        std::wstring readingStr = readingStrings.GetAt(0)->ToWString();
+        OutputDebugString(fmt::format(L"create_word: {}", readingStr).c_str());
 #endif
     }
 
+    /* 一般来说，readingStrings 数组中只有一个元素，这个元素就是当前输入的拼音 */
     for (UINT index = 0; index < readingStrings.Count(); index++)
     {
-        hr = _AddComposingAndChar(ec, pContext, readingStrings.GetAt(index));
+#ifdef FANY_DEBUG
+        OutputDebugString(fmt::format(L"create_word here test!!!").c_str());
+#endif
+        CStringRange curReadingStr;
+        std::wstring readingStr = readingStrings.GetAt(0)->ToWString();
+
+        if (GlobalSettings::getTsfPreeditStyle() == GlobalSettings::TsfPreeditStyle::Raw)
+        {
+            if (!GlobalIme::word_for_creating_word.empty())
+            { /* 造词过程中 */
+                readingStr = GlobalIme::word_for_creating_word + readingStr;
+            }
+        }
+        curReadingStr.Set(readingStr.c_str(), readingStr.length());
+
+        if (GlobalSettings::getTsfPreeditStyle() == GlobalSettings::TsfPreeditStyle::Pinyin)
+        {
+            struct FanyImeNamedpipeDataToTsf *receivedData = TryReadDataFromServerPipeWithTimeout();
+            if (receivedData->msg_type == Global::DataFromServerMsgType::Preedit)
+            {
+                curReadingStr.Set(receivedData->candidate_string, wcslen(receivedData->candidate_string));
+            }
+        }
+
+        hr = _AddComposingAndChar(ec, pContext, &curReadingStr);
+
         if (FAILED(hr))
         {
             return hr;
@@ -561,6 +593,11 @@ Exit:
 //+---------------------------------------------------------------------------
 //
 // _HandleCompositionPunctuation
+// 处理标点的上屏：
+//   1. 没有候选词的情况下，纯标点的上屏
+//   2. 有候选词的情况下，候选词和标点的一并上屏
+//
+// 标点这里不会触发造词行为。
 //
 //----------------------------------------------------------------------------
 
@@ -579,11 +616,11 @@ HRESULT CMetasequoiaIME::_HandleCompositionPunctuation(TfEditCookie ec, _In_ ITf
     if (_candidateMode != CANDIDATE_NONE && _pCandidateListUIPresenter)
     {
         //
-        // Request for first candidate string for some
+        // 请求第一个候选词
         //
         if (Global::CommitWithFirstCandPunc.count(wch) > 0)
         {
-            /* Here we do not need to consider index out of range, cause we always retrive first candidate */
+            /* 这里我们不需要考虑下标超出范围，因为我们总是可以取到第一个候选词 */
             struct FanyImeNamedpipeDataToTsf *receivedData = TryReadDataFromServerPipeWithTimeout();
             punctuationStr = std::wstring(receivedData->candidate_string) + punctuationStr;
         }

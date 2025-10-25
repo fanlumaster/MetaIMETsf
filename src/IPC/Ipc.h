@@ -134,4 +134,12 @@ inline int firefox_like_cnt = 0; // Apps like firefox, e.g. firefox, zen...
 inline std::wstring current_process_name = L"";
 
 inline wchar_t app_name[512] = {0};
+
+namespace DataFromServerMsgType
+{
+constexpr UINT Normal = 0;
+constexpr UINT OutofRange = 1;
+constexpr UINT NeedToCreateWord = 2;
+constexpr UINT Preedit = 3;
+} // namespace DataFromServerMsgType
 } // namespace Global

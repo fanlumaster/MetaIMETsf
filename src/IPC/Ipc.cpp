@@ -542,7 +542,7 @@ void ClearNamedpipeDataIfExists()
 struct FanyImeNamedpipeDataToTsf *TryReadDataFromServerPipeWithTimeout()
 {
     std::pair<UINT, std::wstring> ret = {0, L""};
-    int timeoutMs = 10; // Default timeout 20ms
+    int timeoutMs = 10; // Default timeout 10ms
     int intervalMs = 1; // Default interval 1ms
 
     if (!hFromServerPipe || hFromServerPipe == INVALID_HANDLE_VALUE) // Try to reconnect
@@ -559,7 +559,7 @@ struct FanyImeNamedpipeDataToTsf *TryReadDataFromServerPipeWithTimeout()
         if (hFromServerPipe == INVALID_HANDLE_VALUE)
         {
             // TODO: Log
-            namedpipeDataFromServer.msg_type = 0;
+            namedpipeDataFromServer.msg_type = Global::DataFromServerMsgType::Normal;
             // wcscpy_s(namedpipeDataFromServer.candidate_string, L"PipeOpenError");
             wcscpy_s(namedpipeDataFromServer.candidate_string, L"X");
             return &namedpipeDataFromServer;
@@ -586,7 +586,7 @@ struct FanyImeNamedpipeDataToTsf *TryReadDataFromServerPipeWithTimeout()
         waited += intervalMs;
     }
 
-    namedpipeDataFromServer.msg_type = 0;
+    namedpipeDataFromServer.msg_type = Global::DataFromServerMsgType::Normal;
     // Pipe timeout error
     wcscpy_s(namedpipeDataFromServer.candidate_string, L"T");
     return &namedpipeDataFromServer;

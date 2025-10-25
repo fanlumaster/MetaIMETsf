@@ -213,6 +213,12 @@ class CStringRange
     void CharNext(_Inout_ CStringRange *pCharNext);
     static int Compare(LCID locale, _In_ CStringRange *pString1, _In_ CStringRange *pString2);
     static BOOL WildcardCompare(LCID locale, _In_ CStringRange *stringWithWildcard, _In_ CStringRange *targetString);
+    std::wstring ToWString() const
+    {
+        if (!_pStringBuf || _stringBufLen == 0)
+            return std::wstring();
+        return std::wstring(_pStringBuf, _pStringBuf + _stringBufLen);
+    }
 
   protected:
     DWORD_PTR _stringBufLen;  // Length is in character count.
