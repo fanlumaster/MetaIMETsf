@@ -4,6 +4,8 @@
 #include "FanyUtils.h"
 #include <utf8cpp/utf8.h>
 
+using namespace std;
+
 namespace FanyUtils
 {
 std::string GetIMEDataDirPath()
@@ -75,5 +77,16 @@ std::wstring GetCurrentProcessName()
     size_t pos = wfullPath.find_last_of(L"\\/");
     std::wstring wname = (pos != std::wstring::npos) ? wfullPath.substr(pos + 1) : wfullPath;
     return wname;
+}
+
+/**
+ * @brief Count UTF-8 chars
+ *
+ * @param str
+ * @return string::size_type
+ */
+string::size_type count_utf8_chars(const string &str)
+{
+    return utf8::distance(str.begin(), str.end());
 }
 } // namespace FanyUtils

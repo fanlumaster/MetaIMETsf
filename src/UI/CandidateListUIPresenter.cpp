@@ -1,3 +1,4 @@
+#include "FanyDefines.h"
 #include "Globals.h"
 #include "Private.h"
 #include "MetasequoiaIME.h"
@@ -13,6 +14,7 @@
 #include <winuser.h>
 #include "Ipc.h"
 #include "fmt/xchar.h"
+#include "FanyUtils.h"
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -40,6 +42,8 @@ HRESULT CMetasequoiaIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfConte
     DWORD_PTR candidateLen = keystrokeBufLen;
     CStringRange candidateString(keyStrokebuffer);
 
+    OutputDebugString(fmt::format(L"create_word, keystrokeBuffer: {}", keyStrokebuffer.ToWString()).c_str());
+
     // _pCandidateListUIPresenter would be null in uwp/metro apps
     if (nullptr == _pCandidateListUIPresenter)
     {
@@ -49,14 +53,74 @@ HRESULT CMetasequoiaIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfConte
     if (candidateLen)
     {
         struct FanyImeNamedpipeDataToTsf *receivedData = TryReadDataFromServerPipeWithTimeout();
-        if (receivedData->msg_type == 1) // Candidate index out of range
+        if (receivedData->msg_type == Global::DataFromServerMsgType::OutofRange) // Candidate index out of range
         {
             return hr;
         }
-        candidateString.Set(receivedData->candidate_string, wcslen(receivedData->candidate_string));
-        hr = _AddComposingAndChar(ec, pContext, &candidateString);
-        if (FAILED(hr))
+        else if (receivedData->msg_type == Global::DataFromServerMsgType::Normal) // 只有正常情况下才会上屏
         {
+            GlobalIme::word_for_creating_word = L"";
+            OutputDebugString(fmt::format(L"create_word, normal???").c_str());
+            candidateString.Set(receivedData->candidate_string, wcslen(receivedData->candidate_string));
+            hr = _AddComposingAndChar(ec, pContext, &candidateString);
+            if (FAILED(hr))
+            {
+                return hr;
+            }
+        }
+        /* 处理造词的逻辑 */
+        // 先把拼音拿到，将其和上屏的汉字串比较一下，
+        //  - 如果分词后发现是纯拼音，
+        //  - 并且没有使用辅助码，
+        //  - 并且上屏的汉字串的拼音比起实际输入的拼音要短，则认为是造词
+        // TSF 端需要做的事情是，将 composingString
+        // 替换成造词的状态，即把选中的汉字串替换相应的拼音部分，同时，其他的拼音部分保持不变
+        // Server 端自己会判断并处理的
+        else if (receivedData->msg_type == Global::DataFromServerMsgType::NeedToCreateWord)
+        {
+            /* 更新 TSF 的 preedit 的前面的部分为已选定的拼音，并且，去除辅助码部分 */
+            std::wstring data = receivedData->candidate_string;
+            if (data.find(L',') != std::wstring::npos)
+            {
+                std::wstring pureFullPinyin = data.substr(0, data.find(L','));
+                std::wstring curWord = data.substr(data.find(L',') + 1);
+                GlobalIme::word_for_creating_word = curWord;
+                CCompositionProcessorEngine *pCompositionProcessorEngine = nullptr;
+                pCompositionProcessorEngine = _pCompositionProcessorEngine;
+
+                // 先计算出尾部需要删除的字符数
+                DWORD_PTR vKeyLen = pCompositionProcessorEngine->GetVirtualKeyLength();
+                DWORD_PTR needToRemove = vKeyLen - pureFullPinyin.length();
+                for (DWORD_PTR i = 0; i < needToRemove; i++)
+                {
+                    DWORD_PTR curVkeyLen = pCompositionProcessorEngine->GetVirtualKeyLength();
+                    if (curVkeyLen)
+                    {
+                        pCompositionProcessorEngine->RemoveVirtualKey(vKeyLen - 1);
+                    }
+                }
+                // 再计算出头部需要删除的字符数
+                needToRemove = FanyUtils::count_utf8_chars(FanyUtils::wstring_to_string(curWord)) * 2;
+                for (DWORD_PTR i = 0; i < needToRemove; i++)
+                {
+                    DWORD_PTR curVkeyLen = pCompositionProcessorEngine->GetVirtualKeyLength();
+                    if (curVkeyLen)
+                    {
+                        pCompositionProcessorEngine->RemoveVirtualKey(0);
+                    }
+                }
+
+                if (pCompositionProcessorEngine->GetVirtualKeyLength())
+                {
+                    _HandleCompositionInputWorker(pCompositionProcessorEngine, ec, pContext);
+                }
+                else
+                {
+                    _HandleCancel(ec, pContext);
+                }
+            }
+            OutputDebugString(
+                fmt::format(L"create_word: current word part {}\n", GlobalIme::word_for_creating_word).c_str());
             return hr;
         }
     }
@@ -200,7 +264,7 @@ HRESULT CMetasequoiaIME::_HandleCandidateWorker(TfEditCookie ec, _In_ ITfContext
     }
 
     // set up candidate list if it is being shown
-    if (SUCCEEDED(hrStartCandidateList))
+    if (SUCCEEDED(hrStartCandidateList)) // NOTICE: always false
     {
         pTempCandListUIPresenter->_SetTextColor(RGB(0, 0x80, 0), GetSysColor(COLOR_WINDOW)); // Text color is green
         pTempCandListUIPresenter->_SetFillColor((HBRUSH)(COLOR_WINDOW + 1)); // Background color is window
@@ -209,6 +273,9 @@ HRESULT CMetasequoiaIME::_HandleCandidateWorker(TfEditCookie ec, _In_ ITfContext
 #ifdef FANY_DEBUG
         OutputDebugString(fmt::format(L"Fany here candidateString = {}", candidateString.Get()).c_str());
 #endif
+
+        OutputDebugString(fmt::format(L"Create word here?").c_str());
+
         // Add composing character
         hrReturn = _AddComposingAndChar(ec, pContext, &candidateString);
 
@@ -873,6 +940,7 @@ void CCandidateListUIPresenter::_EndCandidateList()
 {
     EndUIElement();
 
+    /* 告诉 Server 端隐藏候选框窗口 */
     DisposeCandidateWindow();
 
     _EndLayout();
