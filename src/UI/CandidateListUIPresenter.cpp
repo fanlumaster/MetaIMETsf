@@ -82,32 +82,34 @@ HRESULT CMetasequoiaIME::_HandleCandidateFinalize(TfEditCookie ec, _In_ ITfConte
             std::wstring data = receivedData->candidate_string;
             if (data.find(L',') != std::wstring::npos)
             {
+                /* pureFullPinyin 一直都是最初的那个完整的拼音 */
                 std::wstring pureFullPinyin = data.substr(0, data.find(L','));
                 std::wstring curWord = data.substr(data.find(L',') + 1);
+                OutputDebugString(
+                    fmt::format(L"create_word, pureFullPinyin: {}, curWord: {}\n", pureFullPinyin, curWord).c_str());
                 GlobalIme::word_for_creating_word = curWord;
                 CCompositionProcessorEngine *pCompositionProcessorEngine = nullptr;
                 pCompositionProcessorEngine = _pCompositionProcessorEngine;
 
-                // 先计算出尾部需要删除的字符数
+                //
+                // 计算出现在的拼音部分，比如，server 端传过来了 davsai 和 大塚，那么，TSF 端的拼音部分就是 ai
+                //
+                std::wstring preeditStr =
+                    pureFullPinyin.substr(FanyUtils::count_utf8_chars(FanyUtils::wstring_to_string(curWord)) * 2);
+
                 DWORD_PTR vKeyLen = pCompositionProcessorEngine->GetVirtualKeyLength();
-                DWORD_PTR needToRemove = vKeyLen - pureFullPinyin.length();
-                for (DWORD_PTR i = 0; i < needToRemove; i++)
+
+                for (DWORD_PTR i = 0; i < vKeyLen; i++)
                 {
                     DWORD_PTR curVkeyLen = pCompositionProcessorEngine->GetVirtualKeyLength();
                     if (curVkeyLen)
                     {
-                        pCompositionProcessorEngine->RemoveVirtualKey(vKeyLen - 1);
+                        pCompositionProcessorEngine->RemoveVirtualKey(curVkeyLen - 1);
                     }
                 }
-                // 再计算出头部需要删除的字符数
-                needToRemove = FanyUtils::count_utf8_chars(FanyUtils::wstring_to_string(curWord)) * 2;
-                for (DWORD_PTR i = 0; i < needToRemove; i++)
+                for (DWORD_PTR i = 0; i < preeditStr.length(); i++)
                 {
-                    DWORD_PTR curVkeyLen = pCompositionProcessorEngine->GetVirtualKeyLength();
-                    if (curVkeyLen)
-                    {
-                        pCompositionProcessorEngine->RemoveVirtualKey(0);
-                    }
+                    pCompositionProcessorEngine->AddVirtualKey(preeditStr[i]);
                 }
 
                 if (pCompositionProcessorEngine->GetVirtualKeyLength())
