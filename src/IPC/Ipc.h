@@ -47,6 +47,7 @@ struct FanyImeSharedMemoryData
 //   1: FanyHideCandidateWndEvent
 //   2: FanyShowCandidateWndEvent
 //   3: FanyMoveCandidateWndEvent
+//   4: FanyLangbarRightClickEvent
 //
 struct FanyImeNamedpipeData
 {
@@ -93,6 +94,7 @@ int SendKeyEventToUIProcess();
 int SendHideCandidateWndEventToUIProcess();
 int SendShowCandidateWndEventToUIProcess();
 int SendMoveCandidateWndEventToUIProcess();
+int SendLangbarRightClickEventToUIProcess(const RECT *prcArea);
 
 //
 // For named pipe
@@ -110,6 +112,7 @@ int SendKeyEventToUIProcessViaNamedPipe();
 int SendHideCandidateWndEventToUIProcessViaNamedPipe();
 int SendShowCandidateWndEventToUIProcessViaNamedPipe();
 int SendMoveCandidateWndEventToUIProcessViaNamedPipe();
+int SendLangbarRightClickEventToUIProcessViaNamedPipe(const RECT *prcArea);
 void ClearNamedpipeDataIfExists();
 struct FanyImeNamedpipeDataToTsf *TryReadDataFromServerPipeWithTimeout();
 struct FanyImeNamedpipeDataToTsf *ReadDataFromServerViaNamedPipe();

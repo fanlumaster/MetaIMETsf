@@ -12,6 +12,8 @@
 #include "LanguageBar.h"
 #include "Globals.h"
 #include "Compartment.h"
+#include "Ipc.h"
+#include "fmt/xchar.h"
 
 //+---------------------------------------------------------------------------
 //
@@ -105,7 +107,7 @@ CLangBarItemButton::CLangBarItemButton(REFGUID guidLangBar, LPCWSTR description,
 
     // initialize TF_LANGBARITEMINFO structure.
     _tfLangBarItemInfo.clsidService = Global::MetasequoiaIMECLSID; // This LangBarItem belongs to this TextService.
-    _tfLangBarItemInfo.guidItem = guidLangBar;                // GUID of this LangBarItem.
+    _tfLangBarItemInfo.guidItem = guidLangBar;                     // GUID of this LangBarItem.
     _tfLangBarItemInfo.dwStyle = (TF_LBI_STYLE_BTN_BUTTON | TF_LBI_STYLE_SHOWNINTRAY); // This LangBar is a button type.
     _tfLangBarItemInfo.ulSort = 0; // The position of this LangBar Item is not specified.
     StringCchCopy(_tfLangBarItemInfo.szDescription, ARRAYSIZE(_tfLangBarItemInfo.szDescription),
@@ -370,14 +372,25 @@ STDAPI CLangBarItemButton::GetTooltipString(_Out_ BSTR *pbstrToolTip)
 
 STDAPI CLangBarItemButton::OnClick(TfLBIClick click, POINT pt, _In_ const RECT *prcArea)
 {
-    click;
-    pt;
-    prcArea;
+    if (click == TF_LBI_CLK_RIGHT)
+    {
+#ifdef FANY_DEBUG
+        OutputDebugString(
+            fmt::format(L"\nprcArea: ({}, {}, {}, {})\n", prcArea->left, prcArea->top, prcArea->right, prcArea->bottom)
+                .c_str());
+        OutputDebugString(L"right click of lang bar item\n");
+#endif
+        SendLangbarRightClickEventToUIProcess(prcArea);
+        return S_OK;
+    }
 
-    BOOL isOn = FALSE;
+    if (click == TF_LBI_CLK_LEFT && _pCompartment)
+    {
+        BOOL isOn = FALSE;
 
-    _pCompartment->_GetCompartmentBOOL(isOn);
-    _pCompartment->_SetCompartmentBOOL(isOn ? FALSE : TRUE);
+        _pCompartment->_GetCompartmentBOOL(isOn);
+        _pCompartment->_SetCompartmentBOOL(isOn ? FALSE : TRUE);
+    }
 
     return S_OK;
 }

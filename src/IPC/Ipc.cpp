@@ -398,6 +398,15 @@ int SendMoveCandidateWndEventToUIProcess()
     return 0;
 }
 
+int SendLangbarRightClickEventToUIProcess(const RECT *prcArea)
+{
+    if (!canUseSharedMemory)
+    {
+        return SendLangbarRightClickEventToUIProcessViaNamedPipe(prcArea);
+    }
+    return 0;
+}
+
 //
 // Named pipe
 //
@@ -714,6 +723,19 @@ int SendShowCandidateWndEventToUIProcessViaNamedPipe()
 int SendMoveCandidateWndEventToUIProcessViaNamedPipe()
 {
     namedpipeData.event_type = 3;
+    SendToNamedpipe();
+
+    return 0;
+}
+
+int SendLangbarRightClickEventToUIProcessViaNamedPipe(const RECT *prcArea)
+{
+    namedpipeData.event_type = 4;
+    /* 利用其他的字段，把图标的坐标传递过去 */
+    namedpipeData.point[0] = prcArea->left;
+    namedpipeData.point[1] = prcArea->top;
+    namedpipeData.keycode = prcArea->right;
+    namedpipeData.modifiers_down = prcArea->bottom;
     SendToNamedpipe();
 
     return 0;

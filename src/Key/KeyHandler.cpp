@@ -233,6 +233,8 @@ HRESULT CMetasequoiaIME::_HandleCompositionInputWorker(_In_ CCompositionProcesso
                 readingStr = GlobalIme::word_for_creating_word + readingStr;
             }
         }
+        /* 如果想要设置 tsf preedit 为空，可以在这里设置 */
+        // readingStr = L"";
         curReadingStr.Set(readingStr.c_str(), readingStr.length());
 
         if (GlobalSettings::getTsfPreeditStyle() == GlobalSettings::TsfPreeditStyle::Pinyin)
