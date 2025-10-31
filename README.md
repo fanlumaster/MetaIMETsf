@@ -1,6 +1,8 @@
-# Metasequoia(水杉输入法)
+# Meta IME TSF(水杉输入法 TSF 端)
 
-This is TSF end of [MetasequoiaImeServer](https://github.com/fanlumaster/MetasequoiaImeServer), if you want to compile and run this IME, you need also compile and run [MetasequoiaImeServer](https://github.com/fanlumaster/MetasequoiaImeServer).
+Meta stands for Metasequoia.
+
+This is TSF end of [MetaIMEServer](https://github.com/fanlumaster/MetaIMEServer), if you want to compile and run this IME, you need also compile and run [MetaIMEServer](https://github.com/fanlumaster/MetaIMEServer).
 
 Notice: now only support 64-bit Apps.
 
